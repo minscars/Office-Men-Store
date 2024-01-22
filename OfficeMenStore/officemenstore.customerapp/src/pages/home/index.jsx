@@ -19,8 +19,18 @@ import { Link } from 'react-router-dom';
 import { ProfileInfoCard, MessageCard } from '@/widgets/cards';
 import { platformSettingsData, conversationsData, projectsData, servicesData } from '@/data';
 import { StatisticsCard } from '@/widgets/cards';
-
+import productApi from '@/api/productApi';
+import { useEffect, useState } from 'react';
 export function Home() {
+  const [productList, setProducts] = useState([]);
+  useEffect(() => {
+    const getall = async () => {
+      const data = await productApi.GetAll();
+      setProducts(data);
+    };
+    getall();
+  }, []);
+  console.log(import.meta.env.VITE_REACT_APP_API_URL);
   return (
     <>
       <div className="relative mt-8 h-72 w-full overflow-hidden rounded-xl bg-cover	bg-center">
@@ -50,21 +60,20 @@ export function Home() {
               SAN PHAM BAN CHAY
             </Typography>
             <div className="mt-6 grid grid-cols-1 gap-12 md:grid-cols-2 xl:grid-cols-4">
-              {projectsData.map(({ img, title, price, description, tag, route, members }) => (
-                <Card key={title} color="transparent" shadow={false}>
-                  <CardHeader floated={false} color="gray" className="mx-0 mt-0 mb-4 h-64 xl:h-40">
-                    <img src={img} alt={title} className="h-full w-full object-cover" />
-                  </CardHeader>
+              {productList?.map((row, key) => (
+                <Card color="transparent" shadow={false}>
+                  <img src={row.image} alt="" className="rounded-[10px] border-2 h-[220px] w-auto object-cover" />
+
                   <CardBody className="py-0 px-1">
                     <Typography variant="small" className="font-normal text-blue-gray-500">
-                      {tag}
+                      test
                     </Typography>
                     <Typography variant="h5" color="blue-gray" className="mt-1 mb-2">
-                      {title}
+                      {row.name}
                     </Typography>
                     <div className="flex items-center gap-4">
                       <Typography variant="h5" color="blue-gray" className="mt-1 mb-2">
-                        {price}$
+                        {row.price}$
                       </Typography>
 
                       <Typography
@@ -72,7 +81,7 @@ export function Home() {
                         color="blue-gray"
                         className="mt-1 mb-2 left-0 text-blue-gray-500 line-through"
                       >
-                        {price * 2}$
+                        {row.price * 2}$
                       </Typography>
                     </div>
 
@@ -86,31 +95,6 @@ export function Home() {
                       <img src="" alt="" />
                     </span>
                   </CardBody>
-                  {/* <CardFooter className=" mt-6 flex items-center justify-between py-0 px-1 ">
-                        <Link to={route}>
-                        <Button
-                        className="w-full xl:w-full bg-blue-gray-900/10 text-blue-gray-900 shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100 "
-                        >
-                        Add to Cart
-                        </Button>
-                        </Link>
-                        {/* <div>
-                          {members.map(({ img, name }, key) => (
-                            <Tooltip key={name} content={name}>
-                              <Avatar
-                                src={img}
-                                alt={name}
-                                size="xs"
-                                variant="circular"
-                                className={`cursor-pointer border-2 border-white ${
-                                  key === 0 ? "" : "-ml-2.5"
-                                }`}
-                              />
-                            </Tooltip>
-                          ))}
-                        </div> 
-                      </CardFooter>
-                       */}
                   <CardFooter className="pt-1 px-0">
                     <Button
                       ripple={false}
