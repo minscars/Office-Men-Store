@@ -26,8 +26,11 @@ import { useMaterialTailwindController, setOpenConfigurator, setOpenSidenav } fr
 export function DashboardNavbar() {
   const [controller, dispatch] = useMaterialTailwindController();
   const { fixedNavbar, openSidenav } = controller;
-  const { pathname } = useLocation();
-  const [layout, page] = pathname.split('/').filter((el) => el !== '');
+  // chinh lai duong dan tren thanh navbar
+  const location = useLocation();
+  const pathnames = location.pathname.split("/").filter((x) => x);
+  let breadcrumbPath = "";
+  const namepage = pathnames[pathnames.length - 1]; // Lấy phần tử cuối cùng trong mảng pathnames
 
   return (
     <Navbar
@@ -38,22 +41,31 @@ export function DashboardNavbar() {
     >
       <div className="flex flex-col-reverse justify-between gap-6 md:flex-row md:items-center">
         <div className="capitalize">
-          <Breadcrumbs className={`bg-transparent p-0 transition-all ${fixedNavbar ? 'mt-1' : ''}`}>
-            <Link to={`/${layout}`}>
-              <Typography
-                variant="small"
-                color="blue-gray"
-                className="font-normal opacity-50 transition-all hover:text-blue-500 hover:opacity-100"
-              >
-                {layout}
-              </Typography>
-            </Link>
-            <Typography variant="small" color="blue-gray" className="font-normal">
-              {page}
+  
+    <Breadcrumbs className={`bg-transparent p-0 transition-all ${fixedNavbar ? 'mt-1' : ''}`}>
+    {/* <Link to="/">Home</Link> */}
+    {pathnames.map((name, index) => {
+      breadcrumbPath += `/${name}`;
+      const isLast = index === pathnames.length - 1;
+
+      return isLast ? (
+        <Typography key={breadcrumbPath} variant="small" color="blue-gray" className="font-normal">
+          {name}
+        </Typography>
+      ) : (
+        <span key={breadcrumbPath}>
+          {" "}
+          <Link to={breadcrumbPath}>
+            <Typography variant="small" color="blue-gray" className="font-normal opacity-50 transition-all hover:text-blue-500 hover:opacity-100">
+              {name}
             </Typography>
-          </Breadcrumbs>
+          </Link>
+        </span>
+      );
+    })}
+  </Breadcrumbs>
           <Typography variant="h6" color="blue-gray">
-            {page}
+            {namepage}
           </Typography>
         </div>
         <div className="flex items-center">
