@@ -176,7 +176,7 @@ export function Product() {
                     </CardFooter>
                      */}
                   <CardFooter className="pt-1 px-0">
-                    <Link to={`/dashboard/product/${id}`}>
+                    <Link to={`/user/product/details/${id}`}>
                       <Button
                         ripple={false}
                         fullWidth={true}
