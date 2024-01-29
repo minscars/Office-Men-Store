@@ -73,7 +73,7 @@ export function Home() {
                     </Typography>
                     <div className="flex items-center gap-4">
                       <Typography variant="h5" color="blue-gray" className="mt-1 mb-2">
-                        {row.price}$
+                        {row.product}$
                       </Typography>
 
                       <Typography

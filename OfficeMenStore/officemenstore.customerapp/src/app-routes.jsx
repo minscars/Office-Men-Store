@@ -12,9 +12,11 @@ import { Dashboard, Tables, Notifications } from '@/pages/user';
 import { SignIn, SignUp } from '@/pages/auth';
 import Home from './pages/home';
 import Product from './pages/product';
-import Cart from './pages/cart';
+// import Cart from './pages/cart/';
 import Details from './pages/product/detail';
-
+// import Checkout from './pages/cart/checkout';
+import { Checkout, Cart  } from '@/pages/cart';
+import {Accounts} from '@/pages/accounts';
 const icon = {
   className: 'w-5 h-5 text-inherit',
 };
@@ -27,6 +29,7 @@ export const routes = [
       { icon: <HomeIcon {...icon} />, name: 'Home', path: '/home', element: <Home /> },
       { icon: <ShoppingBagIcon {...icon} />, name: 'product', path: '/product', element: <Product /> },
       { icon: <ShoppingCartIcon {...icon} />, name: 'Cart', path: '/cart', element: <Cart /> },
+      { icon: <UserCircleIcon {...icon} />, name: 'Account', path: '/account', element: <Accounts /> },
       {
         icon: <InformationCircleIcon {...icon} />,
         name: 'notifications',
@@ -38,6 +41,9 @@ export const routes = [
 
       //Product
       { path: '/product/details/:id', element: <Details /> },
+      
+      //Cart
+      { path: '/cart/checkout/',name: 'Checkout', element: <Checkout /> },
     ],
   },
   {

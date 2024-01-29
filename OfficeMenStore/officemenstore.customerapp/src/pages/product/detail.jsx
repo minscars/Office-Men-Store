@@ -11,26 +11,55 @@ import {
   Switch,
   Tooltip,
   Button,
+  Rating,
 } from '@material-tailwind/react';
-import { Rating } from '@mui/material';
-import { useState } from 'react';
+
+import React, { useState, useRef, useEffect } from 'react';
 import { HomeIcon, ChatBubbleLeftEllipsisIcon, Cog6ToothIcon, PencilIcon } from '@heroicons/react/24/solid';
 import { Link } from 'react-router-dom';
 import { ProfileInfoCard, MessageCard } from '@/widgets/cards';
 import { platformSettingsData, conversationsData, projectsData } from '@/data';
+import { ProductDetailsTab} from './productdetailstab.jsx';
+import { ReviewsTab} from './reviews.jsx';
 import { useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { cartActions } from '../../redux/slicse/cartSlice';
 import { toast } from 'react-toastify';
-import Image from '@/components/image/userLMK.jpg';
+import productApi from '@/api/productApi';
+
+
+
 export function ProductDetails() {
+
   const dispatch = useDispatch();
   const { id } = useParams();
   const product = projectsData.find((product) => product.id === id);
   const { img, title, tag, description, price } = product;
   const [selectedSize, setSelectedSizes] = useState(null);
   const [Quantity, setQuantity] = useState(1);
-  const [value, setValue] = useState(null); //star rating
+  const [rating, setRating] = useState(null);
+  const reviewUser = useRef('');
+  const reviewMsg = useRef('');
+  const [tab, setTab] = useState('desc');
+
+
+  // const { id } = useParams();
+  // const [product, setProduct] = useState(null);
+
+  // useEffect(() => {
+  //   const getProductDetails = async () => {
+  //     try {
+  //       const data = await productApi.GetProductById(id);
+  //       setProduct(data);
+  //     } catch (error) {
+  //       console.error('Error fetching product details:', error);
+  //     }
+  //   };
+
+  //   getProductDetails();
+  // }, [id]);
+  console.log('sanpham',product);
+
   const addTocart = (product) => {
     if (!selectedSize) {
       // Hiển thị thông báo hoặc xử lý khi không có size được chọn
@@ -54,7 +83,6 @@ export function ProductDetails() {
       toast.error('Product not found');
     }
   };
-
   console.log(product);
   // hàm tăng giảm số lượng
   const handleDec = (id) => {
@@ -71,6 +99,13 @@ export function ProductDetails() {
     // Toggle the size
     setSelectedSizes((prevSize) => (prevSize === size ? null : size));
   };
+
+  const [activeTab, setActiveTab] = useState('details');
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+  };
+
   return (
     <>
       <div className="relative mt-8 h-72 w-full overflow-hidden rounded-xl bg-[url('/img/background-image.png')] bg-cover	bg-center">
@@ -94,8 +129,65 @@ export function ProductDetails() {
                     <span class="text-lg font-medium text-rose-500">{tag}</span>
                     <h2 class="max-w-xl mt-2 mb-6 text-2xl font-bold md:text-4xl">{title}</h2>
                     <div class="flex items-center mb-6">
-                      <Rating className="items-center" name="half-rating" value={4} defaultValue={0} precision={0.5} />
-                      <p class="text-xs dark:text-gray-400 "> (2 customer reviews)</p>
+                      <ul class="flex mr-2">
+                        <li>
+                          <a href="#">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="16"
+                              height="16"
+                              fill="currentColor"
+                              class="w-4 mr-1 text-red-500 bi bi-star "
+                              viewBox="0 0 16 16"
+                            >
+                              <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z" />
+                            </svg>
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="16"
+                              height="16"
+                              fill="currentColor"
+                              class="w-4 mr-1 text-red-500 bi bi-star "
+                              viewBox="0 0 16 16"
+                            >
+                              <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z" />
+                            </svg>
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="16"
+                              height="16"
+                              fill="currentColor"
+                              class="w-4 mr-1 text-red-500 bi bi-star "
+                              viewBox="0 0 16 16"
+                            >
+                              <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z" />
+                            </svg>
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="16"
+                              height="16"
+                              fill="currentColor"
+                              class="w-4 mr-1 text-red-500 bi bi-star "
+                              viewBox="0 0 16 16"
+                            >
+                              <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z" />
+                            </svg>
+                          </a>
+                        </li>
+                      </ul>
+                      <p class="text-xs dark:text-gray-400 ">(2 customer reviews)</p>
                     </div>
                     <p class="max-w-md mb-8 text-gray-700">{description}</p>
                     <p class="inline-block mb-3 text-4xl font-bold text-gray-700 gap-3">
@@ -171,173 +263,31 @@ export function ProductDetails() {
               </div>
             </div>
           </div>
-          <div class="mb-4 h-px bg-gray-300 dark:bg-white/30" />
-          <div className="flex flex-col items-center justify-center">
-            <span className="align-center mb-3 text-[20px] font-bold text-customcolor-500">Feedback & Vote</span>
-            <div>
-              <div className="flex items-center justify-center rounded-[10px] bg-clip-border shadow-3xl shadow-shadow-500 dark:!bg-navy-800 dark:text-white dark:shadow-none">
-                <img src={Image} className="ml-3 mr-3 h-[35px] w-[35px] rounded-full" alt="" />
-                <input
-                  className="autofocus placeholder-shown:border-blue-gray-200 disabled:bg-blue-gray-50 focus:border-1 linear mb-2 mr-3 mt-2 w-[500px] resize-none rounded-[10px] rounded-[7px] bg-lightPrimary px-3 px-4 py-3 py-2.5 font-sans text-sm font-medium font-normal outline-0 transition transition-all duration-200 hover:bg-gray-100 focus:outline-0 active:bg-gray-200 disabled:resize-none disabled:border-0 dark:bg-white/5 dark:text-white dark:hover:bg-white/10 dark:active:bg-white/20"
-                  type="text"
-                  placeholder="Let's share about this product!"
-                />
-              </div>
-              <div className="row ml-[65px] mt-2 flex items-center">
-                <span className="mr-4 text-base text-gray-600">How would you rate this book?</span>
-                <Rating
-                  className="items-center"
-                  name="half-rating"
-                  value={value}
-                  defaultValue={0}
-                  precision={0.5}
-                  onChange={(event, newValue) => {
-                    setValue(newValue);
-                  }}
-                />
-                <input
-                  type="submit"
-                  value="Send"
-                  className="linear ml-20 cursor-pointer rounded-[10px] bg-cyan-700 px-4 py-2 text-base font-medium text-white transition duration-200 hover:bg-cyan-800 active:bg-cyan-700 dark:bg-brand-400 dark:hover:bg-brand-300 dark:active:opacity-90"
-                />
-              </div>
-              <div className="mb-4 ml-4 mt-6 text-[18px] font-bold  text-navy-700">
-                <span>All feadbacks (1) 5/5 </span>
-              </div>
-              <div>
-                <div
-                  className={`mb-2 mt-2 flex w-full items-center justify-between rounded-2xl border-2 bg-white p-3 shadow-3xl shadow-shadow-500 dark:!bg-navy-700 dark:shadow-none`}
-                >
-                  <div className="row flex items-center">
-                    <div className="ml-4">
-                      <p className={`text-m font-bold text-navy-700 dark:text-white`}>Content feedback is here</p>
-                      <div className="mt-1 flex items-center gap-2">
-                        <img src={img} className={` h-[35px] w-[35px] rounded-full`} />
+        </CardBody>
+      </Card>
 
-                        <div className="ml-2">
-                          <p className={`text-m font-medium text-navy-700 dark:text-white`}>Username</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="ml-[200px]">
-                      <span className="mr-4 text-base text-gray-600">12/12/2023 11:11</span>
-                      <div></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+      <Card className="mx-3 mt-5 mb-6 lg:mx-4 border border-blue-gray-100">
+        <CardBody>
+          <div className="flex items-center mb-4 ">
+            <button
+              className={`py-2 px-4 mr-0 focus:outline-none ${
+                activeTab === 'details' ? 'border-b-2 border-gray-900' : ''
+              }`}
+              onClick={() => handleTabChange('details')}
+            >
+              Despcription
+            </button>
+            <button
+              className={`py-2 px-4 ml-5 focus:outline-none ${
+                activeTab === 'reviews' ? 'border-b-2 border-gray-900' : ''
+              }`}
+              onClick={() => handleTabChange('reviews')}
+            >
+              Reviews
+            </button>
           </div>
 
-          {/* the product */}
-          {/* <div className="px-4 pb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-2">
-                PRODUCT
-              </Typography>
-              <Typography
-                variant="small"
-                className="font-normal text-blue-gray-500"
-              >
-               SAN PHAM BAN CHAY
-              </Typography>
-
-              <div className="mt-6 grid grid-cols-1 gap-12 md:grid-cols-2 xl:grid-cols-4">
-                {projectsData.map(
-                  ({ img, title,price, description, tag, route, members }) => (
-                    <Card key={title} color="transparent" shadow={false}>
-                      <CardHeader
-                        floated={false}
-                        color="gray"
-                        className="mx-0 mt-0 mb-4 h-64 xl:h-40"
-                      >
-                        <img
-                          src={img}
-                          alt={title}
-                          className="h-full w-full object-cover"
-                        />
-                      </CardHeader>
-                      <CardBody className="py-0 px-1">
-                        <Typography
-                          variant="small"
-                          className="font-normal text-blue-gray-500"
-                        >
-                          {tag}
-                        </Typography>
-                        <Typography
-                          variant="h5"
-                          color="blue-gray"
-                          className="mt-1 mb-2"
-                        >
-                          {title}
-                        </Typography>
-                        <div className="flex items-center gap-4">
-                        <Typography
-                          variant="h5"
-                          color="blue-gray"
-                          className="mt-1 mb-2"
-                        >
-                          {price}$
-                        </Typography>
-
-                        <Typography
-                          variant="h6"
-                          color="blue-gray"
-                          className="mt-1 mb-2 left-0 text-blue-gray-500 line-through"
-                        >
-                          {price*2}$
-                        </Typography>
-
-                        </div>
-
-                        {/* <Typography
-                          variant="small"
-                          className="font-normal text-blue-gray-500"
-                        >
-                          {description}
-                        </Typography>
-                        <Rating
-                         size="xs"
-                         value={4} readonly className="my-2 w-[20px]" />
-                      </CardBody>
-                      {/* <CardFooter className=" mt-6 flex items-center justify-between py-0 px-1 ">
-                        <Link to={route}>
-                        <Button
-                        className="w-full xl:w-full bg-blue-gray-900/10 text-blue-gray-900 shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100 "
-                        >
-                        Add to Cart
-                        </Button>
-                        </Link>
-                        {/* <div>
-                          {members.map(({ img, name }, key) => (
-                            <Tooltip key={name} content={name}>
-                              <Avatar
-                                src={img}
-                                alt={name}
-                                size="xs"
-                                variant="circular"
-                                className={`cursor-pointer border-2 border-white ${
-                                  key === 0 ? "" : "-ml-2.5"
-                                }`}
-                              />
-                            </Tooltip>
-                          ))}
-                        </div>
-                      </CardFooter>
-
-                      <CardFooter className="pt-1 px-0">
-                      <Button
-                       ripple={false}
-                       fullWidth={true}
-                       className="bg-blue-gray-900/10 text-blue-gray-900 shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100"
-                        >
-                         Add to Cart
-                      </Button>
-                      </CardFooter>
-                    </Card>
-                  )
-                )}
-              </div>
-            </div> */}
+          {activeTab === 'details' ? <ProductDetailsTab /> : <ReviewsTab />}
         </CardBody>
       </Card>
     </>

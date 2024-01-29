@@ -246,18 +246,18 @@ export function Cart() {
             </div>
           </CardBody>
           <CardFooter className="pt-1 px-0">
-            <Link to={'/dashboard/product'}>
-              <div className="flex items-center ml-[130px]">
-                <Button
-                  ripple={false}
-                  fullWidth={false}
-                  // onClick={() => addTocart(id)}
-                  class=" py-3 px-10 text-center bg-black text-white shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100"
-                >
-                  Checkout
-                </Button>
-              </div>
-            </Link>
+          <Link to={'checkout/'}>
+                <div className="flex items-center ml-[130px]">
+                  <Button
+                    ripple={false}
+                    fullWidth={false}
+                    // onClick={() => addTocart(id)}
+                    class=" py-3 px-10 text-center bg-black text-white shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100"
+                  >
+                    Checkout
+                  </Button>
+                </div>
+              </Link>
           </CardFooter>
         </Card>
       </div>

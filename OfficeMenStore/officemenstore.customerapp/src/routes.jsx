@@ -10,7 +10,7 @@ import {
 } from '@heroicons/react/24/solid';
 import { Dashboard, Tables, Notifications } from '@/pages/user';
 import Product from '@/pages/product';
-import Cart from '@/pages/cart';
+import {Cart} from '@/pages/cart';
 import { SignIn, SignUp } from '@/pages/auth';
 
 const icon = {
