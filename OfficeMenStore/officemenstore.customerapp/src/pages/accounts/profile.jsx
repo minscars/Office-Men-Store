@@ -121,6 +121,7 @@ export function Profile() {
               </div>
             </div>
           </Card>
+          
           <div className="xl:col-span-1">
             <Card className="mt-5 mb-3 ml-5 h-100 overflow-hidden xl:col-span-2 border border-blue-gray-100 shadow-sm">
               <CardBody className=" px-0 pt-0 pb-2 mt-0">
