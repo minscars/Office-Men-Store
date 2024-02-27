@@ -14,6 +14,7 @@ namespace OfficeMenStore.Application.Mapping
         public MappingProfile()
         {
             CreateMap<Product, GetProductListResponseModel>().ReverseMap();
+            CreateMap<Product, GetProductResponseModel>().ReverseMap();
         }
 
     }
