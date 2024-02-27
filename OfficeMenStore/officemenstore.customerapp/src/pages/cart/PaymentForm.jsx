@@ -172,13 +172,6 @@ function Payment({ formData, onSubmit, handlePrev }) {
                     <p className="text-red-500 text-sm">{formik.errors.cardNumber}</p>
                   )}
                 </div>
-
-                <div className="mt-16 flex justify-between">
-                  <Button onClick={handlePrev}>Prev</Button>
-                  <Button onClick={formik.handleSubmit} disabled={!formik.isValid}>
-                    Next
-                  </Button>
-                </div>
               </form>
             </div>
           </CardBody>
@@ -199,46 +192,53 @@ function Payment({ formData, onSubmit, handlePrev }) {
           </CardHeader>
           <CardBody className="pt-0 ">
             {/* items */}
-            <div className="mt-2 mb-5 ">
-              <tbody className="mb-5">
+            <div className="mt-2 mb-5">
+              <tbody className="mb-5 w-full">
                 {cartItems?.map(
                   ({ imgUrl, quantity, productsName, members, price, id, size, category, totalPrice }, key) => {
-                    const className = `py-3 border-t-w-{15px} ${key === cartItems.length - 1 ? '' : ''}`;
+                    const className = `py-3  border-t broder-blue-gray-500 p-5 ${
+                      key === cartItems.length - 1 ? '' : ''
+                    }`;
                     return (
-                      <tr key={key} className={className}>
-                        {/* teen */}
+                      <tr key={id} className="hover:bg-gray-100 transition-colors group">
                         <td className={className}>
-                          <div className="flex gap-4">
+                          <div className="flex items-center gap-4">
                             <img
                               src={imgUrl}
                               alt=""
-                              className="w-40 aspect-[3/2] rounded-lg object-cover object-top border border-gray-200"
+                              className="w-[100px] aspect-[3/2] rounded-lg object-cover object-top border border-gray-200"
                             />
                             <div>
-                              <Typography
-                                variant="h1"
-                                color=""
-                                className="mt-0 text-lg font-semibold text-blue-gray-900"
-                              >
+                              <Typography variant="small" color="blue-gray" className="font-bold items-start">
                                 {productsName}
                               </Typography>
-                              <div class="font-medium text-gray-400">{category}</div>
-                              <div class="font-medium text-gray-400">
-                                <strong>Size: </strong>
-                                {size}
-                              </div>
-                              <div class="font-medium text-gray-400">
-                                <strong>Quantity: </strong>
-                                {quantity}
-                              </div>
+                              <div class="mt-1 font-light text-sm not-italic	 text-gray-400">Size: {size}</div>
                             </div>
                           </div>
                         </td>
-                        <td className="">
-                          <div className="flex items-end ">
-                            <Typography variant="h6" color="blue-gray" className=" font-blod mb-auto">
-                              $ {price * quantity}
-                            </Typography>
+                        {/* customername*/}
+                        <td className={className}>
+                          <div className="flex items-center gap-4">
+                            <div>
+                              <Typography variant="small" color="blue-gray" className="font-normal">
+                                x{quantity}
+                              </Typography>
+                            </div>
+                          </div>
+                        </td>
+
+                        {/*method*/}
+                        <td className={className}>
+                          <div className="flex items-center gap-4"></div>
+                        </td>
+
+                        <td className={className}>
+                          <div className="flex items-center gap-4">
+                            <div>
+                              <Typography variant="small" color="blue-gray" className="font-bold items-start">
+                                {quantity * price} $
+                              </Typography>
+                            </div>
                           </div>
                         </td>
                       </tr>
@@ -247,9 +247,10 @@ function Payment({ formData, onSubmit, handlePrev }) {
                 )}
               </tbody>
             </div>
-            <div className="flex-col gap-5 border-b border-t broder-blue-gray-500">
+
+            <div className="flex-col gap-5 border-b border-t broder-blue-gray-500 px-3">
               <Typography variant="small" color="blue-gray" className=" font-medium flex justify-between mt-5">
-                <p class="text-base leading-4 text-blue-gray-800 dark:text-gray-400">Subtotal:</p>
+                <p class="text-base leading-4 text-blue-gray-500 dark:text-gray-400">Subtotal</p>
                 <p class="text-base leading-4 text-blue-gray-900 dark:text-gray-400">{totalAmount?.toFixed(2)}$</p>
               </Typography>
 
@@ -258,22 +259,31 @@ function Payment({ formData, onSubmit, handlePrev }) {
                 variant="small"
                 className="text-xs font-medium text-blue-gray-500 flex items-center justify-between mt-3"
               >
-                <p class="text-base leading-4 text-blue-gray-800 dark:text-gray-400">Shipping:</p>
-                <p class="text-base leading-4 text-blue-gray-900 dark:text-gray-400">Free</p>
+                <p class="text-base leading-4 text-blue-gray-500 dark:text-gray-400">Shipping:</p>
+                <p class="text-base leading-4 text-blue-gray-500 dark:text-gray-400">Free</p>
               </Typography>
               <Typography variant="small" color="blue-gray" className=" font-medium flex justify-between mt-3 mb-5">
-                <p class="text-base leading-4 text-blue-gray-800 dark:text-gray-400">Discount:</p>
+                <p class="text-base leading-4 text-blue-gray-800 dark:text-gray-400">Discount</p>
                 <p class="text-base leading-4 text-blue-gray-900 dark:text-gray-400">10%</p>
               </Typography>
             </div>
 
-            <div class="flex items-center justify-between w-full mt-5">
+            <div class="flex items-center justify-between w-full mt-5 px-3">
               <Typography variant="h5" color="blue-gray" className="mb-1">
-                Total
+                Grand total
               </Typography>
-              <Typography variant="h5" color="blue-gray" className="mb-1">
+              <Typography variant="h4" color="blue-gray" className="mb-1">
                 {(totalAmount - totalAmount * 0.1).toFixed(2)}$
               </Typography>
+            </div>
+
+            <div className="mt-5 flex justify-center items-center">
+              {/* <Button onClick={handlePrev} disabled={isFirstStep}>
+                    Prev
+                  </Button> */}
+              <Button onClick={formik.handleSubmit} disabled={!formik.isValid}>
+                Coutinute to payment
+              </Button>
             </div>
             {/* san pham */}
           </CardBody>

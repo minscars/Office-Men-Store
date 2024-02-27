@@ -40,9 +40,10 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
                     Name & Address
                   </Typography>
                 </div>
+                {/* name */}
                 <div className="mb-4">
                   <Typography variant="small" color="blue-gray" className="font-medium">
-                    Your name
+                    Full name *
                   </Typography>
                   <Input
                     size="lg"
@@ -56,6 +57,46 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
                     <p className="text-red-500 text-sm">{formik.errors.name}</p>
                   )}
                 </div>
+                {/*  */}
+
+                {/* Email */}
+                <div className="mb-4 flex gap-5">
+                  <div className="w-full">
+                    <Typography variant="small" color="blue-gray" className="font-medium">
+                      Your email
+                    </Typography>
+                    <Input
+                      size="lg"
+                      placeholder="Enter your email"
+                      name="email"
+                      value={formik.values.email}
+                      onChange={formik.handleChange}
+                      error={formik.touched.email && formik.errors.email}
+                    />
+                    {formik.touched.email && formik.errors.email && (
+                      <p className="text-red-500 text-sm">{formik.errors.email}</p>
+                    )}
+                  </div>
+
+                  <div className="w-full ml-auto">
+                    <Typography variant="small" color="blue-gray" className="font-medium">
+                      Your email
+                    </Typography>
+                    <Input
+                      size="lg"
+                      placeholder="Enter your email"
+                      name="email"
+                      value={formik.values.email}
+                      onChange={formik.handleChange}
+                      error={formik.touched.email && formik.errors.email}
+                    />
+                    {formik.touched.email && formik.errors.email && (
+                      <p className="text-red-500 text-sm">{formik.errors.email}</p>
+                    )}
+                  </div>
+                </div>
+                {/*  */}
+
                 <div className="mb-4">
                   <Typography variant="small" color="blue-gray" className="font-medium">
                     Address
@@ -88,30 +129,6 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
                     <p className="text-red-500 text-sm">{formik.errors.phone}</p>
                   )}
                 </div>
-                <div className="mb-4">
-                  <Typography variant="small" color="blue-gray" className="font-medium">
-                    Your email
-                  </Typography>
-                  <Input
-                    size="lg"
-                    placeholder="Enter your email"
-                    name="email"
-                    value={formik.values.email}
-                    onChange={formik.handleChange}
-                    error={formik.touched.email && formik.errors.email}
-                  />
-                  {formik.touched.email && formik.errors.email && (
-                    <p className="text-red-500 text-sm">{formik.errors.email}</p>
-                  )}
-                </div>
-                <div className="mt-16 flex justify-between">
-                  <Button onClick={handlePrev} disabled={isFirstStep}>
-                    Prev
-                  </Button>
-                  <Button onClick={formik.handleSubmit} disabled={!formik.isValid}>
-                    Next
-                  </Button>
-                </div>
               </form>
             </div>
           </CardBody>
@@ -131,48 +148,55 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
               <strong>{cartItems.length}</strong> Items
             </Typography>
           </CardHeader>
-          <CardBody className="pt-0 ml-5 mr-5">
+          <CardBody className="pt-0 ">
             {/* items */}
             <div className="mt-2 mb-5 ">
-              <tbody className="mb-5">
+              <tbody className="mb-5 w-full">
                 {cartItems?.map(
                   ({ imgUrl, quantity, productsName, members, price, id, size, category, totalPrice }, key) => {
-                    const className = `py-3 border-t-w-{15px} ${key === cartItems.length - 1 ? '' : ''}`;
+                    const className = `py-3  border-b broder-blue-gray-500 p-5 ${
+                      key === cartItems.length - 1 ? '' : ''
+                    }`;
                     return (
-                      <tr key={key} className={className}>
-                        {/* teen */}
+                      <tr key={id} className="hover:bg-gray-100 transition-colors group">
                         <td className={className}>
-                          <div className="flex gap-4">
+                          <div className="flex items-center gap-4">
                             <img
                               src={imgUrl}
                               alt=""
-                              className="w-40 aspect-[3/2] rounded-lg object-cover object-top border border-gray-200"
+                              className="w-[100px] aspect-[3/2] rounded-lg object-cover object-top border border-gray-200"
                             />
                             <div>
-                              <Typography
-                                variant="h1"
-                                color=""
-                                className="mt-0 text-lg font-semibold text-blue-gray-900"
-                              >
+                              <Typography variant="small" color="blue-gray" className="font-bold items-start">
                                 {productsName}
                               </Typography>
-                              <div class="font-medium text-gray-400">{category}</div>
-                              <div class="font-medium text-gray-400">
-                                <strong>Size: </strong>
-                                {size}
-                              </div>
-                              <div class="font-medium text-gray-400">
-                                <strong>Quantity: </strong>
-                                {quantity}
-                              </div>
+                              <div class="mt-1 font-light text-sm not-italic	 text-gray-400">Size: {size}</div>
                             </div>
                           </div>
                         </td>
-                        <td className="">
-                          <div className="flex items-end ">
-                            <Typography variant="h6" color="blue-gray" className=" font-blod mb-auto">
-                              $ {price * quantity}
-                            </Typography>
+                        {/* customername*/}
+                        <td className={className}>
+                          <div className="flex items-center gap-4">
+                            <div>
+                              <Typography variant="small" color="blue-gray" className="font-normal">
+                                x{quantity}
+                              </Typography>
+                            </div>
+                          </div>
+                        </td>
+
+                        {/*method*/}
+                        <td className={className}>
+                          <div className="flex items-center gap-4"></div>
+                        </td>
+
+                        <td className={className}>
+                          <div className="flex items-center gap-4">
+                            <div>
+                              <Typography variant="small" color="blue-gray" className="font-bold items-start">
+                                {quantity * price} $
+                              </Typography>
+                            </div>
                           </div>
                         </td>
                       </tr>
@@ -208,6 +232,15 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
               <Typography variant="h5" color="blue-gray" className="mb-1">
                 {(totalAmount - totalAmount * 0.1).toFixed(2)}$
               </Typography>
+            </div>
+
+            <div className="mt-16 flex justify-center items-center">
+              {/* <Button onClick={handlePrev} disabled={isFirstStep}>
+                    Prev
+                  </Button> */}
+              <Button onClick={formik.handleSubmit} disabled={!formik.isValid}>
+                Coutinute to payment
+              </Button>
             </div>
             {/* san pham */}
           </CardBody>
