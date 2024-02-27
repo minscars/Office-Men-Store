@@ -56,31 +56,9 @@ export function Product() {
 
   return (
     <>
-      {/* <div className="relative mt-8 h-72 w-full overflow-hidden rounded-xl bg-[url('/img/background-image.png')] bg-cover	bg-center">
-        <div className="absolute inset-0 h-full w-full bg-gray-900/75" />
-      </div> */}
-
       <Card className="mx-3 mt-10 mb-6 lg:mx-4 border border-blue-gray-100">
         <CardBody className="p-4">
-          <div className="mb-10 flex items-center justify-between flex-wrap gap-6">
-            {/* <div className="flex items-center gap-6">
-              <Avatar
-                src="/img/bruce-mars.jpeg"
-                alt="bruce-mars"
-                size="xl"
-                variant="rounded"
-                className="rounded-lg shadow-lg shadow-blue-gray-500/40"
-              />
-              {/* <div>
-                <Typography variant="h5" color="blue-gray" className="mb-1">
-                  Richard Davis
-                </Typography>
-                <Typography variant="small" className="font-normal text-blue-gray-600">
-                  CEO / Co-Founder
-                </Typography>
-              </div> 
-            </div> */}
-          </div>
+          <div className="mb-10 flex items-center justify-between flex-wrap gap-6"></div>
           <div className="mb-12 grid h-20 gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-4">
             {servicesData.map(({ img, title }) => (
               <Card className=" flex text-cent bg-gray-200 hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100">
@@ -101,7 +79,7 @@ export function Product() {
               {/* <Typography variant="small" className="font-normal text-blue-gray-500">
                 SAN PHAM BAN CHAY
               </Typography> */}
-
+              {/* Sắp xếp */}
               <div className="w-50 ml-auto">
                 <Select label="Short by">
                   <Option>Low to High</Option>
@@ -150,31 +128,7 @@ export function Product() {
                       <img src="" alt="" />
                     </span>
                   </CardBody>
-                  {/* <CardFooter className=" mt-6 flex items-center justify-between py-0 px-1 ">
-                      <Link to={route}>
-                      <Button
-                      className="w-full xl:w-full bg-blue-gray-900/10 text-blue-gray-900 shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100 "
-                      >
-                      Add to Cart
-                      </Button>
-                      </Link>
-                      {/* <div>
-                        {members.map(({ img, name }, key) => (
-                          <Tooltip key={name} content={name}>
-                            <Avatar
-                              src={img}
-                              alt={name}
-                              size="xs"
-                              variant="circular"
-                              className={`cursor-pointer border-2 border-white ${
-                                key === 0 ? "" : "-ml-2.5"
-                              }`}
-                            />
-                          </Tooltip>
-                        ))}
-                      </div> 
-                    </CardFooter>
-                     */}
+
                   <CardFooter className="pt-1 px-0">
                     <Link to={`/user/product/details/${id}`}>
                       <Button

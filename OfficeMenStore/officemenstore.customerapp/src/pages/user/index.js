@@ -1,4 +1,4 @@
-export * from '@/pages/user/dashboard';
+export * from '@/pages/admin/dashboard';
 // export * from '@/pages/user/home';
 export * from '@/pages/user/tables';
 export * from '@/pages/user/notifications';
