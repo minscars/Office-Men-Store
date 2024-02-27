@@ -98,10 +98,10 @@ export function Accounts() {
                   Myoder
                 </Tab>
 
-                <Tab value="settings" onClick={() => handleTabChange('settings')}>
+                {/* <Tab value="settings" onClick={() => handleTabChange('settings')}>
                   <Cog6ToothIcon className="-mt-1 mr-2 inline-block h-5 w-5" />
                   Settings
-                </Tab>
+                </Tab> */}
               </TabsHeader>
             </Tabs>
           </div>

@@ -97,6 +97,7 @@ export function ReviewsTab() {
       message,
       rating,
     };
+    console.log('rating',newReview)
 
     setReviews([...reviews, newReview]);
     toast.success('Review added successfully!');

@@ -1,39 +1,33 @@
 import React from 'react';
-import {Typography, Card, CardHeader, CardBody, CardFooter, Input, Checkbox, Button } from '@material-tailwind/react';
-import { ArrowLongLeftIcon  } from '@heroicons/react/24/outline';
+import { Typography, Card, CardHeader, CardBody, CardFooter, Input, Checkbox, Button } from '@material-tailwind/react';
+import { ArrowLongLeftIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 
 function Thankorder({ formData, onSubmit, handlePrev, isFirstStep }) {
   return (
-    <div className="xl:col-span-3">
-    <Card className="mt-5 mb-3 mx-0 h-100 overflow-hidden xl:col-span-2 border border-blue-gray-100 shadow-sm mr-5 ">
-      <CardBody className=" px-0 pt-0 pb-2 mt-5">
-      <Typography variant="h1" color="blue-gray" className="ml-5">
-          {' '}
-         Thank you for placing your order!
-        </Typography>
-
-        <Typography variant="h5" color="blue-gray" className="mt-10 ml-5 ">
-          {' '}
-        Order number: 012346
-        </Typography>
-
-        <Typography variant="h5" color="blue-gray" className="mt-5 ml-5 ">
-          {' '}
-          <p class="max-w-md mb-8 text-gray-700">envdsnoijrefvmdomerpfmdzpomrelmzfdbopmvrg</p>
-        </Typography>
-      <div className="mt-16 flex items-center">
-      <Button
-      className="ml-5"
-      size='md'
-      onClick={handlePrev}>
-      <ArrowLongLeftIcon/>Prev
-      </Button>
-        
-      </div>
-      </CardBody>
-    </Card>
-  </div>
-   
+    <div className="">
+      <Card className=" mt-5 mb-3 mx-0 h-100 overflow-hidden  border border-blue-gray-100 shadow-sm mr-5 ">
+        <div class="bg-gray-100 h-screen">
+          <div class="bg-white p-6  md:mx-auto">
+            <svg viewBox="0 0 24 24" class="text-green-600 w-16 h-16 mx-auto my-6">
+              <path
+                fill="currentColor"
+                d="M12,0A12,12,0,1,0,24,12,12.014,12.014,0,0,0,12,0Zm6.927,8.2-6.845,9.289a1.011,1.011,0,0,1-1.43.188L5.764,13.769a1,1,0,1,1,1.25-1.562l4.076,3.261,6.227-8.451A1,1,0,1,1,18.927,8.2Z"
+              ></path>
+            </svg>
+            <div class="text-center">
+              <p class=" text-base text-gray-600 font-semibold text-center">Thank you </p>
+              <h3 class="md:text-2xl text-gray-900 my-2 font-semibold">Your order is confirmed</h3>
+              <p> Have a great day! </p>
+              <div class="py-10 text-center">
+                <a href="#" class="px-12 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3">
+                  GO BACK
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Card>
+    </div>
   );
 }
 
