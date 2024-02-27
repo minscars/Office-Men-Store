@@ -32,5 +32,44 @@ namespace OfficeMenStore.Api.Controllers
             }
             return BadRequest(result.Message);
         }
+
+        [HttpGet("{Id}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetByIdAsync([FromRoute] int Id)
+        {
+            var result = await _productService.GetProductByIdAsync(Id);
+            if (result.StatusCode == 200)
+            {
+                result.Data.Image = setImageName(result.Data.Image);
+                return Ok(result.Data);
+            }
+            return BadRequest(result.Message);
+        }
+
+        [HttpGet("Category/{categoryId}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetByCategoryIdAsync([FromRoute] int categoryId)
+        {
+            var result = await _productService.GetProductByCategoryIdAsync(categoryId);
+            if (result.StatusCode == 200)
+            {
+                result.Data.ForEach(s => s.Image = setImageName(s.Image));
+                return Ok(result.Data);
+            }
+            return BadRequest(result.Message);
+        }
+
+        [HttpGet("Search/{key}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> SearchProductByKeyAsync([FromRoute] string key)
+        {
+            var result = await _productService.SearchProductByKeyAsync(key);
+            if (result.StatusCode == 200)
+            {
+                result.Data.ForEach(s => s.Image = setImageName(s.Image));
+                return Ok(result.Data);
+            }
+            return BadRequest(result.Message);
+        }
     }
 }
