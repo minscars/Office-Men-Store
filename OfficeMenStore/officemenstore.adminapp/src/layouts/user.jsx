@@ -33,12 +33,13 @@ export function Dashboard() {
         <Routes>
           {appRoutes.map(
             ({ layout, pages }) =>
-              layout === 'admin' &&
-              pages.map(({ icon, path, element }) => <Route exact icon={icon} path={path} element={element} />),
+              layout === 'user' && pages.map(({icon, path, element }) => <Route exact icon={icon} path={path} element={element} />),
           )}
         </Routes>
         {/* tạo ra các đường dẫn bằng map nếu layout trùng với dasboard và pages nó trùng 2 đối tượng là  */}
-        <div className="text-blue-gray-600">{/* <Footer /> */}</div>
+        <div className="text-blue-gray-600">
+          <Footer />
+        </div>
       </div>
     </div>
   );

@@ -6,7 +6,6 @@ import { XMarkIcon } from '@heroicons/react/24/outline';
 import { Avatar, Button, IconButton, Typography } from '@material-tailwind/react';
 import { useMaterialTailwindController, setOpenSidenav } from '@/context';
 import Logo from '@/components/image/logo-store.png';
-
 export function Sidenav({ brandImg, brandName, routes }) {
   const [controller, dispatch] = useMaterialTailwindController();
   const { sidenavColor, sidenavType, openSidenav } = controller;
@@ -15,18 +14,6 @@ export function Sidenav({ brandImg, brandName, routes }) {
     white: 'bg-white shadow-sm',
     transparent: 'bg-transparent',
   };
-
-  const LINKS = [
-    {
-      title: 'Shop',
-    },
-    {
-      title: 'Contact',
-    },
-    {
-      title: 'Resource',
-    },
-  ];
 
   return (
     <aside
@@ -54,55 +41,41 @@ export function Sidenav({ brandImg, brandName, routes }) {
       {/*đăng nhập đăng xuất */}
 
       <div className="m-4">
-        {routes.map(({ layout, title, pages }, key) => (
-          <ul key={key} className="mb-4 flex flex-col gap-1">
-            {title && (
-              <li className="mx-3.5 mt-4 mb-2">
-                <Typography
-                  variant="small"
-                  color={sidenavType === 'dark' ? 'white' : 'blue-gray'}
-                  className="font-black uppercase opacity-75"
-                >
-                  {title}
-                </Typography>
-              </li>
-            )}
-            {/* chỉnh lại sidenav */}
-            {pages
-              .filter((page) => page.icon)
-              .map(({ icon, name, path }) => (
-                <li key={name}>
-                  <NavLink to={`/${layout}${path}`}>
-                    {({ isActive }) => (
-                      <Button
-                        variant={isActive ? 'gradient' : 'text'}
-                        color={isActive ? sidenavColor : sidenavType === 'dark' ? 'white' : 'blue-gray'}
-                        className="flex items-center gap-4 px-4 capitalize"
-                        fullWidth
-                      >
-                        {icon}
-                        <Typography color="inherit" className="font-medium capitalize">
-                          {name}
-                        </Typography>
-                      </Button>
-                    )}
-                  </NavLink>
-                </li>
-              ))}
-          </ul>
-        ))}
-      </div>
-<div className="absolute bottom-10 left-0 right-0">
-
-</div>
-      <div className="mx-10 grid grid-cols-3  mt-65">
-        {LINKS.map(({ title }) => (
-          <ul key={title}>
-            <Typography variant="h6" color="blue-gray" className="font-medium opacity-60 mb-auto">
-              {title}
-            </Typography>
-          </ul>
-        ))}
+      {routes.map(({ layout, title, pages }, key) => (
+  <ul key={key} className="mb-4 flex flex-col gap-1">
+    {title && (
+      <li className="mx-3.5 mt-4 mb-2">
+        <Typography
+          variant="small"
+          color={sidenavType === 'dark' ? 'white' : 'blue-gray'}
+          className="font-black uppercase opacity-75"
+        >
+          {title}
+        </Typography>
+      </li>
+    )}
+    {/* chỉnh lại sidenav */}
+    {pages.filter(page => page.icon).map(({ icon, name, path }) => (
+      <li key={name}>
+        <NavLink to={`/${layout}${path}`}>
+          {({ isActive }) => (
+            <Button
+              variant={isActive ? 'gradient' : 'text'}
+              color={isActive ? sidenavColor : sidenavType === 'dark' ? 'white' : 'blue-gray'}
+              className="flex items-center gap-4 px-4 capitalize"
+              fullWidth
+            >
+              {icon}
+              <Typography color="inherit" className="font-medium capitalize">
+                {name}
+              </Typography>
+            </Button>
+          )}
+        </NavLink>
+      </li>
+    ))}
+  </ul>
+))}
       </div>
     </aside>
   );

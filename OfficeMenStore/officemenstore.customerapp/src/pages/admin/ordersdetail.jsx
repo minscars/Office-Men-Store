@@ -30,7 +30,7 @@ import { ordersTableData } from '@/data';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
-export function MyOrderDetail() {
+export function OdersDetails() {
   const cartItems = useSelector((state) => state.cart.cartItems);
   const totalAmount = useSelector((state) => state.cart.totalAmount);
   const navigate = useNavigate();
@@ -193,6 +193,40 @@ export function MyOrderDetail() {
       <div className="xl:col-span-1">
         {/* the chi tiet don hang*/}
         <Card className=" xl:col-span-1 mt-5 border border-blue-gray-100 shadow-sm">
+          <Typography variant="h6" color="blue-gray" className="mb-1 mt-5 ml-5">
+            Customer detail
+          </Typography>
+          <div className="flex">
+            <Avatar className="mt-3 ml-5" src="https://docs.material-tailwind.com/img/face-2.jpg" alt="avatar"></Avatar>
+            <Typography variant="h6" color="blue-gray" className="mb-1 mt-5 ml-5">
+              Nguyen Trung Nhan
+            </Typography>
+          </div>
+
+          <div>
+            <Typography variant="h6" color="blue-gray" className="mb-1 mt-3  ml-5">
+              Contact infor
+            </Typography>
+
+            <Typography variant="small" color="blue-gray" className="flex mb-1 mt-3  ml-5">
+              <EnvelopeIcon className="h-5 w-5 text-blue-gray-900" />{' '}
+              <strong className="ml-3">Nhan6845@gmail.com</strong>
+            </Typography>
+            <Typography variant="small" color="blue-gray" className="flex mb-1 mt-3  ml-5">
+              <PhoneIcon className="h-5 w-5 text-blue-gray-900" />{' '}
+              <strong className="ml-3 text-blue-gray-900">0123456789</strong>
+            </Typography>
+          </div>
+          <div>
+            <Typography variant="h6" color="blue-gray" className="mb-1 mt-3  ml-5">
+              Shipping address
+            </Typography>
+
+            <Typography variant="small" color="blue-gray" className="flex mt-2  ml-5 mr-10 ">
+              Hẻm 51, Đường 3/2, phường Hưng Lợi, quận Ninh Kiều, thành phố Cần Thơ
+            </Typography>
+          </div>
+
           <div className="ml-5">
             <Typography variant="h6" color="blue-gray" className=" mt-5 mb-5">
               Activity
@@ -246,5 +280,4 @@ export function MyOrderDetail() {
     </div>
   );
 }
-
-export default MyOrderDetail;
+export default OdersDetails;
