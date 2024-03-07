@@ -1,111 +1,149 @@
 import React from 'react';
 import { Typography, Card, CardHeader, CardBody, CardFooter, Input, Checkbox, Button } from '@material-tailwind/react';
 import { ArrowLongLeftIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
-
+import { FaCircleCheck } from 'react-icons/fa6';
+import { useSelector, useDispatch } from 'react-redux';
+import thankyou from '../../components/image/thankyou.png';
 function Thankorder({ formData, onSubmit, handlePrev, isFirstStep }) {
+  const cartItems = useSelector((state) => state.cart.cartItems);
+  const totalAmount = useSelector((state) => state.cart.totalAmount);
   return (
-    <div className="xl:col-span-3">
-      <Card className=" mt-5 mb-3 mx-0 h-100 overflow-hidden xl:col-span-2 border border-blue-gray-100 shadow-sm mr-5 ">
-        <CardBody className=" pt-0 pb-2 mt-5 mr-5 ml-5">
-          <div className="w-full flex flex-col ">
-            <form className="mt-2 mb-2 mx-auto max-w-screen-lg xl:w-full" onSubmit={formik.handleSubmit}>
-              <div>
-                <Typography variant="h4" color="blue-gray" className="mb-1">
-                  Name & Address
-                </Typography>
-              </div>
-              {/* name */}
-              <div className="mb-4">
-                <Typography variant="small" color="blue-gray" className="font-medium">
-                  Full name *
-                </Typography>
-                <Input
-                  size="lg"
-                  placeholder="Enter your name"
-                  name="name"
-                  value={formik.values.name}
-                  onChange={formik.handleChange}
-                  error={formik.touched.name && formik.errors.name}
-                />
-                {formik.touched.name && formik.errors.name && (
-                  <p className="text-red-500 text-sm">{formik.errors.name}</p>
-                )}
-              </div>
-              {/*  */}
-
-              {/* Email */}
-              <div className="mb-4 flex gap-5">
-                <div className="w-full">
-                  <Typography variant="small" color="blue-gray" className="font-medium">
-                    Your email
-                  </Typography>
-                  <Input
-                    size="lg"
-                    placeholder="Enter your email"
-                    name="email"
-                    value={formik.values.email}
-                    onChange={formik.handleChange}
-                    error={formik.touched.email && formik.errors.email}
-                  />
-                  {formik.touched.email && formik.errors.email && (
-                    <p className="text-red-500 text-sm">{formik.errors.email}</p>
-                  )}
-                </div>
-
-                <div className="w-full ml-auto">
-                  <Typography variant="small" color="blue-gray" className="font-medium">
-                    Your email
-                  </Typography>
-                  <Input
-                    size="lg"
-                    placeholder="Enter your email"
-                    name="email"
-                    value={formik.values.email}
-                    onChange={formik.handleChange}
-                    error={formik.touched.email && formik.errors.email}
-                  />
-                  {formik.touched.email && formik.errors.email && (
-                    <p className="text-red-500 text-sm">{formik.errors.email}</p>
-                  )}
-                </div>
-              </div>
-              {/*  */}
-
-              <div className="mb-4">
-                <Typography variant="small" color="blue-gray" className="font-medium">
-                  Address
-                </Typography>
-                <Input
-                  size="lg"
-                  placeholder="Enter your address"
-                  name="address"
-                  value={formik.values.address}
-                  onChange={formik.handleChange}
-                  error={formik.touched.address && formik.errors.address}
-                />
-                {formik.touched.address && formik.errors.address && (
-                  <p className="text-red-500 text-sm">{formik.errors.address}</p>
-                )}
-              </div>
-              <div className="mb-4">
-                <Typography variant="small" color="blue-gray" className="font-medium">
-                  Phone number
-                </Typography>
-                <Input
-                  size="lg"
-                  placeholder="Enter your phone number"
-                  name="phone"
-                  value={formik.values.phone}
-                  onChange={formik.handleChange}
-                  error={formik.touched.phone && formik.errors.phone}
-                />
-                {formik.touched.phone && formik.errors.phone && (
-                  <p className="text-red-500 text-sm">{formik.errors.phone}</p>
-                )}
-              </div>
-            </form>
+    <div className=" grid grid-cols-1 xl:grid-cols-3 ">
+      <Card className=" gird mt-5 mb-3 mx-0 h-100 overflow-hidden xl:col-span-3 border border-blue-gray-100 shadow-sm">
+        <div></div>
+        <img src={thankyou} alt="" />
+        <div className="grid-cols-1 xl:col-span-1 items-center">
+          <div className="mx-10 mt-5 ml-5 items-start justify-center flex ">
+            <FaCircleCheck color="green" size={60} className="items-center" />
           </div>
-        </CardBody>
+          <div className="items-start justify-center flex">
+            <Typography variant="h4" color="blue-gray" className="mt-3 mb-1 justify-center">
+              Thank for your other!
+            </Typography>
+          </div>
+
+          <Card className=" grid-cols-1 px-10 mt-5 mb-3 mx-40 h-100 overflow-hidden xl:col-span-1 border border-blue-gray-100 shadow-none ">
+            <Typography variant="small" color="blue-gray" className="font-bold items-start">
+              your order
+            </Typography>
+
+            <div className="w-full flex items-start justify-center">
+              <tbody className=" mx-10 mb-5 w-full ">
+                {cartItems?.map(
+                  ({ imgUrl, quantity, productsName, members, price, id, size, category, totalPrice }, key) => {
+                    const className = `py-3  border-b broder-blue-gray-500 p-7 ${
+                      key === cartItems.length - 1 ? '' : ''
+                    }`;
+                    return (
+                      <tr key={id} className="hover:bg-gray-100 transition-colors group">
+                        <td className={className}>
+                          <div className="flex items-center gap-4">
+                            <img
+                              src={imgUrl}
+                              alt=""
+                              className="w-[100px] aspect-[3/2] rounded-lg object-cover object-top border border-gray-200"
+                            />
+                            <div>
+                              <Typography variant="small" color="blue-gray" className="font-bold items-start">
+                                {productsName}
+                              </Typography>
+                              <div class="mt-1 font-light text-sm not-italic	 text-gray-400">Size: {size}</div>
+                              <div>
+                                <Typography variant="small" color="blue-gray" className="font-normal">
+                                  x{quantity}
+                                </Typography>
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        {/* customername*/}
+                        <td className={className}>
+                          <div className="flex items-center gap-4"></div>
+                        </td>
+
+                        {/*method*/}
+                        <td className={className}>
+                          <div className="flex items-center gap-4"></div>
+                        </td>
+
+                        <td className={className}>
+                          <div className="flex items-center gap-4">
+                            <div>
+                              <Typography variant="h6" color="blue-gray" className="font-bold ml-auto">
+                                {quantity * price} $
+                              </Typography>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  },
+                )}
+              </tbody>
+            </div>
+          </Card>
+
+          <Card className=" grid-cols-1 px-10 mt-5 mb-3 mx-40 h-100 overflow-hidden xl:col-span-1 border border-blue-gray-100 shadow-none ">
+            <Typography variant="small" color="blue-gray" className="font-bold items-start">
+              your order
+            </Typography>
+
+            <div className="w-full flex items-start justify-center">
+              <tbody className=" mx-10 mb-5 w-full ">
+                {cartItems?.map(
+                  ({ imgUrl, quantity, productsName, members, price, id, size, category, totalPrice }, key) => {
+                    const className = `py-3  border-b broder-blue-gray-500 p-7 ${
+                      key === cartItems.length - 1 ? '' : ''
+                    }`;
+                    return (
+                      <tr key={id} className="hover:bg-gray-100 transition-colors group">
+                        <td className={className}>
+                          <div className="flex items-center gap-4">
+                            <img
+                              src={imgUrl}
+                              alt=""
+                              className="w-[100px] aspect-[3/2] rounded-lg object-cover object-top border border-gray-200"
+                            />
+                            <div>
+                              <Typography variant="small" color="blue-gray" className="font-bold items-start">
+                                {productsName}
+                              </Typography>
+                              <div class="mt-1 font-light text-sm not-italic	 text-gray-400">Size: {size}</div>
+                              <div>
+                                <Typography variant="small" color="blue-gray" className="font-normal">
+                                  x{quantity}
+                                </Typography>
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        {/* customername*/}
+                        <td className={className}>
+                          <div className="flex items-center gap-4"></div>
+                        </td>
+
+                        {/*method*/}
+                        <td className={className}>
+                          <div className="flex items-center gap-4"></div>
+                        </td>
+
+                        <td className={className}>
+                          <div className="flex items-center gap-4">
+                            <div>
+                              <Typography variant="h6" color="blue-gray" className="font-bold ml-auto">
+                                {quantity * price} $
+                              </Typography>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  },
+                )}
+              </tbody>
+            </div>
+          </Card>
+        </div>
       </Card>
     </div>
   );

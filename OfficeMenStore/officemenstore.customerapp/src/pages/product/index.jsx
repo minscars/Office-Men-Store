@@ -24,36 +24,7 @@ import { platformSettingsData, conversationsData, projectsData, servicesData } f
 import StarIcon from '@mui/icons-material/Star';
 import { Box } from '@mui/material';
 
-// import { useNavigate } from 'react-router-dom';
-// import { useDispatch } from 'react-redux';
-// import { cartActions } from '../../redux/slicse/cartSlice';
-
 export function Product() {
-  // // chi tiết sản phẩm
-  // const naviate = useNavigate();
-  // const navigateOderdetail = () => {
-  //   naviate(`/shop/${product.id}`);
-  // };
-  // // thêm sản phẩm vào giỏ hàng
-  // const dispatch = useDispatch();
-  // const addTocart = (product) => {
-  //   if (product) {
-  //     dispatch(
-  //       cartActions.addItem({
-  //         id: product.id,
-  //         productsName: product.productsName,
-  //         category: product.category,
-  //         price: product.price,
-  //         imgUrl: product.imgUrl,
-  //       }),
-  //     );
-  //     toast.success('Thêm sản phẩm thành công!');
-  //   } else {
-  //     toast.error('Product not found');
-  //   }
-  //   console.log(dispatch);
-  // };
-
   return (
     <>
       <Card className="mx-3 mt-10 mb-6 lg:mx-4 border border-blue-gray-100">

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   Card,
   CardHeader,
@@ -10,6 +10,7 @@ import {
   Button,
   Input,
   Textarea,
+  img,
 } from '@material-tailwind/react';
 import { EllipsisVerticalIcon, EyeIcon } from '@heroicons/react/24/outline';
 import { ordersTableData } from '@/data';
@@ -17,42 +18,34 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
-export function AddProducts() {
-  const navigate = useNavigate();
-  const navigatemyoderdetail = () => {
-    navigate('ordersdetail');
-  };
+export function UpdateProduct() {
+  const PRODUCT_DATA = [
+    {
+      name: 'Quần Vải Nam Form Slim Crop',
+      category: 'Quan au',
+      imageUrl: '/img/quan-au-05.jpg',
+      price: 20,
+      disciption: 'san pham duoc lam tu 100% soi coton',
+      createdAt: '10/01/22',
+      quantily: '10',
+      option: 'XL',
+      status: 'con hang',
+    },
+  ];
 
   const formik = useFormik({
     initialValues: {
-      email: '',
-      name: '',
-      phone: '',
-      password: '',
-      confirmedPassword: '',
-      disciption: '',
-      quantily: '',
-      price: '',
-      size: '',
+      name: PRODUCT_DATA[0].name.toString(),
+      quantily: PRODUCT_DATA[0].quantily.toString(),
+      price: PRODUCT_DATA[0].price.toString(),
+      option: PRODUCT_DATA[0].option.toString(),
+      disciption: PRODUCT_DATA[0].disciption.toString(),
+      category: PRODUCT_DATA[0].category.toString(),
+      img: PRODUCT_DATA[0].imageUrl.toString(),
+      status: PRODUCT_DATA[0].status.toString(),
     },
     validationSchema: Yup.object({
       name: Yup.string().required('Required').min(4, 'Must be 4 characters or more'),
-      email: Yup.string()
-        .required('Required')
-        .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, 'Please enter a valid email address'),
-      password: Yup.string()
-        .required('Required')
-        .matches(
-          /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d][A-Za-z\d!@#$%^&*()_+]{7,19}$/,
-          'Password must be 7-19 characters and contain at least one letter, one number and a special character',
-        ),
-      confirmedPassword: Yup.string()
-        .required('Required')
-        .oneOf([Yup.ref('password'), null], 'Password must match'),
-      phone: Yup.string()
-        .required('Required')
-        .matches(/^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/, 'Must be a valid phone number'),
-
       quantily: Yup.string()
         .required('Required')
         .matches(/^[0-9]+$/, 'Must be a number'),
@@ -62,13 +55,106 @@ export function AddProducts() {
         .required('Required')
         .matches(/^[0-9]+$/, 'Must be a number'),
       // Validation for address field
-      size: Yup.string().required('Required'), // Validation for address field
+      size: Yup.string().required('Required'),
+      category: Yup.string().required('Vui lòng chọn một loại sản phâm'),
+      img: Yup.string().required('Required'),
     }),
     onSubmit: (values) => {
       toast.success('Form submitted');
       console.log(values);
     },
   });
+  console.log(formik.values.img);
+  console.log();
+
+  const [image, setImage] = useState(null);
+  console.log(image);
+  const hiddenFileInput = useRef(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    const imgname = event.target.files[0].name;
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      const img = new Image();
+      img.src = reader.result;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const maxSize = Math.max(img.width, img.height);
+        canvas.width = maxSize;
+        canvas.height = maxSize;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, (maxSize - img.width) / 2, (maxSize - img.height) / 2);
+        canvas.toBlob(
+          (blob) => {
+            const file = new File([blob], imgname, {
+              type: 'image/png',
+              lastModified: Date.now(),
+            });
+
+            console.log(file);
+            setImage(file);
+          },
+          'image/jpeg',
+          0.8,
+        );
+      };
+    };
+  };
+
+  const handleUploadButtonClick = (file) => {
+    // Ngăn chặn hành vi mặc định của nút
+    event.preventDefault();
+
+    var myHeaders = new Headers();
+    const token = 'adhgsdaksdhk938742937423';
+    myHeaders.append('Authorization', `Bearer ${token}`);
+
+    var formdata = new FormData();
+    formdata.append('file', file);
+
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: formdata,
+      redirect: 'follow',
+    };
+
+    fetch('https://trickuweb.com/upload/profile_pic', requestOptions)
+      .then((response) => response.text())
+      .then((result) => {
+        console.log(JSON.parse(result));
+        const profileurl = JSON.parse(result);
+        setImage(profileurl.img_url);
+      })
+      .catch((error) => console.log('error', error));
+  };
+  const handleClick = () => {
+    hiddenFileInput.current.click();
+  };
+
+  const navigate = useNavigate();
+  const navigatemyoderdetail = () => {
+    navigate('ordersdetail');
+  };
+
+  useEffect(() => {
+    // Lấy giá trị của category từ PRODUCT_DATA
+    const category = PRODUCT_DATA[0].category;
+
+    // Kiểm tra xem category có trong danh sách Option hay không
+    const matchedOption = ['So mi', 'Quan au', 'Giay tay'].find(
+      (option) => option.toLowerCase() === category.toLowerCase(),
+    );
+
+    // Nếu category trùng khớp với một trong các Option, đặt giá trị mặc định cho Select
+    if (matchedOption) {
+      formik.setFieldValue('address', matchedOption); // Đặt giá trị mặc định cho Select
+    }
+  }, [formik.values.category]); // Sử dụng giá trị category từ formik.values.category
 
   useEffect(() => {
     const handleChange = (event) => {
@@ -110,49 +196,70 @@ export function AddProducts() {
     <div className="mt-12 gap-10">
       {/* avtaar */}
       <Card className="w-full bg-white xl:grid-cols-2 -mt-5 border  border-blue-gray-100 shadow-sm mb-5">
+        <div>
+          <Typography variant="h4" color="blue-gray" className=" ml-10  mt-5">
+            Update product
+          </Typography>
+        </div>
+
         <div className="grid  grid-cols-1 xl:grid-cols-2 h-full mr-5 mt-3 gap-20">
-          {/* them hinh anh */}
+          {/* chinh sua thong tin */}
           <div className=" flex-1 xl:col-span-1 mb-5 mt-0">
             <div className=" flex flex-col mt-0">
               <form className="mt-0 mb-2 mx-auto max-w-screen-lg xl:w-full ml-10" onSubmit={formik.handleSubmit}>
                 <div className=""></div>
                 {/* name */}
-                <div className="mb-1 flex flex-col gap-6 ">
-                  <Typography variant="h6" color="blue-gray" className="-mb-4  mt-5">
-                    Product name
-                  </Typography>
-                  <Input
-                    size="lg"
-                    placeholder="Enter your name"
-                    name="name"
-                    value={formik.values.name}
-                    onChange={formik.handleChange}
-                    className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-                    labelProps={{
-                      className: 'before:content-none after:content-none',
-                    }}
-                  />
-                  {formik.errors.name && (
-                    <p className="font-[0.75rem] w-full text-red-500 -mt-4"> {formik.errors.name} </p>
-                  )}
+                <div className="grid  grid-cols-1 xl:grid-cols-3 gap-5 ">
+                  <div className="xl:col-span-2">
+                    <Typography variant="h6" color="blue-gray" className=" mb-1 mt-5">
+                      Product name
+                    </Typography>
+                    <Input
+                      size="lg"
+                      placeholder="Enter your name"
+                      name="name"
+                      value={formik.values.name}
+                      onChange={formik.handleChange}
+                      className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
+                      labelProps={{
+                        className: 'before:content-none after:content-none',
+                      }}
+                    />
+                    {formik.errors.name && (
+                      <p className="font-[0.75rem] w-full text-red-500 -mt-4"> {formik.errors.name} </p>
+                    )}
+                  </div>
+                  <div>
+                    {/* Category*/}
+                    <div className="mb-1 flex flex-col gap-6 mt-5">
+                      <Typography variant="h6 " color="blue-gray" className="-mb-5 font-medium">
+                        Status
+                      </Typography>
+
+                      <Select
+                        size="lg"
+                        className=""
+                        name="category"
+                        value={formik.values.status}
+                        onChange={formik.handleChange}
+                      >
+                        {['con hang', 'het hang'].map((status) => (
+                          <Option key={status} value={status}>
+                            {status}
+                          </Option>
+                        ))}
+                      </Select>
+                      {formik.errors.status && (
+                        <p className="font-[0.75rem] w-full text-red-500 -mt-4"> {formik.errors.status} </p>
+                      )}
+                    </div>{' '}
+                  </div>
                 </div>
                 {/* Disciption */}
                 <div className="mb-1 flex flex-col gap-6 mt-5">
                   <Typography variant="h6" color="blue-gray" className="-mb-4 font-medium">
                     Disciption
                   </Typography>
-
-                  {/* <Textarea
-                    size="lg"
-                    // placeholder="name@mail.com"
-                    name="email"
-                    value={formik.values.email}
-                    onChange={formik.handleChange}
-                    className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-                    labelProps={{
-                      className: 'before:content-none after:content-none',
-                    }}
-                  /> */}
                   <div class="">
                     <form>
                       <div class="mb-4 w-full bg-gray-50 rounded-lg border border-blue-gray-200 dark:bg-gray-700 dark:border-gray-600">
@@ -384,19 +491,24 @@ export function AddProducts() {
                     }}
                   /> */}
                   <Select
-                    label="Category"
+                    label="category"
                     className=""
                     placeholder="Enter your address"
-                    name="address"
-                    value={formik.values.address}
+                    name="category"
+                    value={formik.values.category}
                     onChange={formik.handleChange}
                   >
-                    <Option>So mi</Option>
+                    {['So mi', 'Quan au', 'Giay tay'].map((category) => (
+                      <Option key={category} value={category}>
+                        {category}
+                      </Option>
+                    ))}
+                    {/* <Option name="category">So mi</Option>
                     <Option>Quan au</Option>
-                    <Option>Giay tay</Option>
+                    <Option>Giay tay</Option> */}
                   </Select>
                   {formik.errors.address && (
-                    <p className="font-[0.75rem] w-full text-red-500 -mt-4"> {formik.errors.address} </p>
+                    <p className="font-[0.75rem] w-full text-red-500 -mt-4"> {formik.errors.category} </p>
                   )}
                 </div>
                 {/*  Quantily */}
@@ -469,19 +581,52 @@ export function AddProducts() {
           </div>
 
           {/* theem hinh anh */}
-          <div className=" flex-1 xl:col-span-1 mb-5">
+          <div className=" xl:col-span-1 mb-5">
             {/* add image */}
-            <Typography variant="h6" color="blue-gray" className="mb-1 ml-5 mt-5">
+            <div className=" container  items-center w-[400px] h-[400px] mt-9 xl:col-span-1 mb-5 ">
+              <div className="flex items-center">
+                {image ? (
+                  <div className="flex items-center">
+                    <img
+                      src={URL.createObjectURL(image)}
+                      alt="upload image"
+                      className="rounded-lg flex items-center ml-20"
+                    />
+                  </div>
+                ) : (
+                  <div>
+                    <img src="./photo.png" alt="upload image" className=" rounded-lg flex items-center ml-20" />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <Typography variant="h6" color="blue-gray" className=" ml-20 mt-5">
               Add image
             </Typography>
             <section class="container w-full mx-auto items-center">
-              <div class="max-w-sm mx-auto bg-white rounded-lg overflow-hidden items-center">
-                <div class="px-4 py-6">
+              <div class="max-w-sm ml-20 bg-white rounded-lg overflow-hidden items-center">
+                <div class="px-3 py-6">
                   <div
                     id="image-preview"
-                    class="max-w-sm p-6 mb-4 bg-gray-100 border-dashed border-2 border-gray-400 rounded-lg items-center mx-auto text-center cursor-pointer"
+                    class="max-w-sm p-6 mb-4 bg-gray-100 border-dashed border-2 border-gray-400 rounded-lg text-center cursor-pointer"
+                    onClick={handleClick}
+                    style={{ cursor: 'pointer' }}
                   >
-                    <input id="upload" type="file" class="hidden" accept="image/*" />
+                    {/* {image ? (
+                      <img src={URL.createObjectURL(image)} alt="upload image" className="img-display-after" />
+                    ) : (
+                      <img src="./photo.png" alt="upload image" className="img-display-before" />
+                    )} */}
+                    <input
+                      id="image-upload-input"
+                      type="file"
+                      class="hidden"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      ref={hiddenFileInput}
+                      style={{ display: 'none' }}
+                    />
                     <label for="upload" class="cursor-pointer">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -510,28 +655,13 @@ export function AddProducts() {
                 </div>
               </div>
             </section>
-            <div class="mb-5">
-              {/* <div class="mb-8">
-                <input type="file" name="file" id="file" class="sr-only" />
-                <label
-                  for="file"
-                  class=" mx-5  flex min-h-[200px] items-center justify-center rounded-md border border-dashed border-[#e0e0e0] p-12 text-center"
-                >
-                  <div>
-                    <span class="mb-2 block text-xl font-semibold text-[#07074D]">Drop files here</span>
-                    <span class="mb-2 block text-base font-medium text-[#6B7280]">Or</span>
-                    <span class="inline-flex rounded border border-[#e0e0e0] py-2 px-7 text-base font-medium text-[#07074D]">
-                      Browse
-                    </span>
-                  </div>
-                </label>
-              </div> */}
-            </div>
+
             <div>
-              <Button className="flex items-center gap-3">Add products</Button>
+              <Button className="ml-20 flex items-center gap-3" onClick={handleUploadButtonClick}>
+                Save all
+              </Button>
             </div>
           </div>
-          {/*  */}
         </div>
       </Card>
 
@@ -541,4 +671,4 @@ export function AddProducts() {
     </div>
   );
 }
-export default AddProducts;
+export default UpdateProduct;

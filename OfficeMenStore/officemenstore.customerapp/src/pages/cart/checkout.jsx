@@ -21,7 +21,8 @@ export function Checkout() {
   const cartItems = useSelector((state) => state.cart.cartItems);
   const totalAmount = useSelector((state) => state.cart.totalAmount);
   const dispatch = useDispatch();
-
+  
+// thanh trang thai phia tren 
   const [activeStep, setActiveStep] = useState(0);
   const [isLastStep, setIsLastStep] = useState(false);
   const [isFirstStep, setIsFirstStep] = useState(true);
@@ -125,5 +126,4 @@ export function Checkout() {
     </div>
   );
 }
-
 export default Checkout;

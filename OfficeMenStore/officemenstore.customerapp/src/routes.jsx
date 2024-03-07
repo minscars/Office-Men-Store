@@ -8,9 +8,8 @@ import {
   ShoppingBagIcon,
   ShoppingCartIcon,
 } from '@heroicons/react/24/solid';
-import { Dashboard, Tables, Notifications } from '@/pages/user';
 import Product from '@/pages/product';
-import {Cart} from '@/pages/cart';
+import { Cart } from '@/pages/cart';
 import { SignIn, SignUp } from '@/pages/auth';
 
 const icon = {
@@ -40,23 +39,23 @@ export const routes = [
         path: '/cart',
         element: <Cart />,
       },
+    ],
+  },
+  {
+    title: 'auth pages',
+    layout: 'auth',
+    pages: [
       {
-        icon: <InformationCircleIcon {...icon} />,
-        name: 'notifications',
-        path: '/notifications',
-        element: <Notifications />,
+        icon: <ServerStackIcon {...icon} />,
+        name: 'sign in',
+        path: '/sign-in',
+        element: <SignIn />,
       },
       {
-        icon: <TableCellsIcon {...icon} />,
-        name: 'tables',
-        path: '/tables',
-        element: <Tables />,
-      },
-      {
-        icon: <HomeIcon {...icon} />,
-        name: 'Dashboard',
-        path: '/dashboard',
-        element: <Dashboard />,
+        icon: <RectangleStackIcon {...icon} />,
+        name: 'sign up',
+        path: '/sign-up',
+        element: <SignUp />,
       },
     ],
   },

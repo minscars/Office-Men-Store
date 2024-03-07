@@ -22,6 +22,8 @@ function Payment({ formData, onSubmit, handlePrev }) {
   const cartItems = useSelector((state) => state.cart.cartItems);
   const totalAmount = useSelector((state) => state.cart.totalAmount);
   console.log(cartItems);
+  
+  // from ddien thong tin
   const formik = useFormik({
     initialValues: {
       cardNumber: formData.cardNumber || '',
@@ -177,6 +179,7 @@ function Payment({ formData, onSubmit, handlePrev }) {
           </CardBody>
         </Card>
       </div>
+
       <div className="xl:col-span-2">
         {/* the chi tiet don hang*/}
         <Card className=" xl:col-span-1 mt-5 border border-blue-gray-100 shadow-sm">
@@ -192,11 +195,11 @@ function Payment({ formData, onSubmit, handlePrev }) {
           </CardHeader>
           <CardBody className="pt-0 ">
             {/* items */}
-            <div className="mt-2 mb-5">
+            <div className="mt-2 mb-5 ">
               <tbody className="mb-5 w-full">
                 {cartItems?.map(
                   ({ imgUrl, quantity, productsName, members, price, id, size, category, totalPrice }, key) => {
-                    const className = `py-3  border-t broder-blue-gray-500 p-5 ${
+                    const className = `py-3  border-b broder-blue-gray-500 p-5 ${
                       key === cartItems.length - 1 ? '' : ''
                     }`;
                     return (
@@ -247,32 +250,35 @@ function Payment({ formData, onSubmit, handlePrev }) {
                 )}
               </tbody>
             </div>
-
-            <div className="flex-col gap-5 border-b border-t broder-blue-gray-500 px-3">
-              <Typography variant="small" color="blue-gray" className=" font-medium flex justify-between mt-5">
-                <p class="text-base leading-4 text-blue-gray-500 dark:text-gray-400">Subtotal</p>
+            <div className="flex-col gap-5 border-b broder-blue-gray-500">
+              <Typography variant="small" color="blue-gray" className=" font-medium flex justify-between mt-5 mx-5">
+                <p class="text-base leading-4 text-blue-gray-400 dark:text-gray-400 ">Subtotal</p>
                 <p class="text-base leading-4 text-blue-gray-900 dark:text-gray-400">{totalAmount?.toFixed(2)}$</p>
               </Typography>
 
               <Typography
                 as="span"
                 variant="small"
-                className="text-xs font-medium text-blue-gray-500 flex items-center justify-between mt-3"
+                className="text-xs font-medium text-blue-gray-400 flex items-center justify-between mt-3 mx-5"
               >
-                <p class="text-base leading-4 text-blue-gray-500 dark:text-gray-400">Shipping:</p>
-                <p class="text-base leading-4 text-blue-gray-500 dark:text-gray-400">Free</p>
+                <p class="text-base leading-4 text-blue-gray-400 dark:text-gray-400">Shipping</p>
+                <p class="text-base leading-4 text-blue-gray-400 dark:text-gray-400">Free</p>
               </Typography>
-              <Typography variant="small" color="blue-gray" className=" font-medium flex justify-between mt-3 mb-5">
-                <p class="text-base leading-4 text-blue-gray-800 dark:text-gray-400">Discount</p>
-                <p class="text-base leading-4 text-blue-gray-900 dark:text-gray-400">10%</p>
+              <Typography
+                variant="small"
+                color="blue-gray"
+                className=" font-medium flex justify-between mt-3 mb-5 mx-5"
+              >
+                <p class="text-base leading-4 text-blue-gray-400 dark:text-gray-400">Discount</p>
+                <p class="text-base leading-4 text-blue-gray-400 dark:text-gray-400">10%</p>
               </Typography>
             </div>
 
-            <div class="flex items-center justify-between w-full mt-5 px-3">
-              <Typography variant="h5" color="blue-gray" className="mb-1">
+            <div class="flex items-center justify-between w-full mt-3">
+              <Typography variant="h5" color="blue-gray" className="mb-1 mx-3">
                 Grand total
               </Typography>
-              <Typography variant="h4" color="blue-gray" className="mb-1">
+              <Typography variant="h5" color="blue-gray" className="mb-1">
                 {(totalAmount - totalAmount * 0.1).toFixed(2)}$
               </Typography>
             </div>

@@ -9,6 +9,7 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
   const cartItems = useSelector((state) => state.cart.cartItems);
   const totalAmount = useSelector((state) => state.cart.totalAmount);
   const dispatch = useDispatch();
+
   const formik = useFormik({
     initialValues: {
       name: formData.name || '',
@@ -73,9 +74,7 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
                       onChange={formik.handleChange}
                       error={formik.touched.email && formik.errors.email}
                     />
-                    {formik.touched.email && formik.errors.email && (
-                      <p className="text-red-500 text-sm">{formik.errors.email}</p>
-                    )}
+                   
                   </div>
 
                   <div className="w-full ml-auto">
@@ -205,36 +204,40 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
                 )}
               </tbody>
             </div>
-            <div className="flex-col gap-5 border-b border-t broder-blue-gray-500">
-              <Typography variant="small" color="blue-gray" className=" font-medium flex justify-between mt-5">
-                <p class="text-base leading-4 text-blue-gray-800 dark:text-gray-400">Subtotal:</p>
+            <div className="flex-col gap-5 border-b broder-blue-gray-500">
+              <Typography variant="small" color="blue-gray" className=" font-medium flex justify-between mt-5 mx-5">
+                <p class="text-base leading-4 text-blue-gray-400 dark:text-gray-400 ">Subtotal</p>
                 <p class="text-base leading-4 text-blue-gray-900 dark:text-gray-400">{totalAmount?.toFixed(2)}$</p>
               </Typography>
 
               <Typography
                 as="span"
                 variant="small"
-                className="text-xs font-medium text-blue-gray-500 flex items-center justify-between mt-3"
+                className="text-xs font-medium text-blue-gray-400 flex items-center justify-between mt-3 mx-5"
               >
-                <p class="text-base leading-4 text-blue-gray-800 dark:text-gray-400">Shipping:</p>
-                <p class="text-base leading-4 text-blue-gray-900 dark:text-gray-400">Free</p>
+                <p class="text-base leading-4 text-blue-gray-400 dark:text-gray-400">Shipping</p>
+                <p class="text-base leading-4 text-blue-gray-400 dark:text-gray-400">Free</p>
               </Typography>
-              <Typography variant="small" color="blue-gray" className=" font-medium flex justify-between mt-3 mb-5">
-                <p class="text-base leading-4 text-blue-gray-800 dark:text-gray-400">Discount:</p>
-                <p class="text-base leading-4 text-blue-gray-900 dark:text-gray-400">10%</p>
+              <Typography
+                variant="small"
+                color="blue-gray"
+                className=" font-medium flex justify-between mt-3 mb-5 mx-5"
+              >
+                <p class="text-base leading-4 text-blue-gray-400 dark:text-gray-400">Discount</p>
+                <p class="text-base leading-4 text-blue-gray-400 dark:text-gray-400">10%</p>
               </Typography>
             </div>
 
-            <div class="flex items-center justify-between w-full mt-5">
-              <Typography variant="h5" color="blue-gray" className="mb-1">
-                Total
+            <div class="flex items-center justify-between w-full mt-3">
+              <Typography variant="h5" color="blue-gray" className="mb-1 mx-3">
+                Grand total
               </Typography>
               <Typography variant="h5" color="blue-gray" className="mb-1">
                 {(totalAmount - totalAmount * 0.1).toFixed(2)}$
               </Typography>
             </div>
 
-            <div className="mt-16 flex justify-center items-center">
+            <div className="mt-5 flex justify-center items-center">
               {/* <Button onClick={handlePrev} disabled={isFirstStep}>
                     Prev
                   </Button> */}
