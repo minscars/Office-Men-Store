@@ -1,30 +1,148 @@
 import React from 'react';
 import { Typography, Card, CardHeader, CardBody, CardFooter, Input, Checkbox, Button } from '@material-tailwind/react';
 import { ArrowLongLeftIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
-
+import { FaCircleCheck } from 'react-icons/fa6';
+import { useSelector, useDispatch } from 'react-redux';
+import thankyou from '../../components/image/thankyou.png';
 function Thankorder({ formData, onSubmit, handlePrev, isFirstStep }) {
+  const cartItems = useSelector((state) => state.cart.cartItems);
+  const totalAmount = useSelector((state) => state.cart.totalAmount);
   return (
-    <div className="">
-      <Card className=" mt-5 mb-3 mx-0 h-100 overflow-hidden  border border-blue-gray-100 shadow-sm mr-5 ">
-        <div class="bg-gray-100 h-screen">
-          <div class="bg-white p-6  md:mx-auto">
-            <svg viewBox="0 0 24 24" class="text-green-600 w-16 h-16 mx-auto my-6">
-              <path
-                fill="currentColor"
-                d="M12,0A12,12,0,1,0,24,12,12.014,12.014,0,0,0,12,0Zm6.927,8.2-6.845,9.289a1.011,1.011,0,0,1-1.43.188L5.764,13.769a1,1,0,1,1,1.25-1.562l4.076,3.261,6.227-8.451A1,1,0,1,1,18.927,8.2Z"
-              ></path>
-            </svg>
-            <div class="text-center">
-              <p class=" text-base text-gray-600 font-semibold text-center">Thank you </p>
-              <h3 class="md:text-2xl text-gray-900 my-2 font-semibold">Your order is confirmed</h3>
-              <p> Have a great day! </p>
-              <div class="py-10 text-center">
-                <a href="#" class="px-12 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3">
-                  GO BACK
-                </a>
-              </div>
-            </div>
+    <div className=" grid grid-cols-1 xl:grid-cols-3 ">
+      <Card className=" gird mt-5 mb-3 mx-0 h-100 overflow-hidden xl:col-span-3 border border-blue-gray-100 shadow-sm">
+        <div></div>
+        <img src={thankyou} alt="" />
+        <div className="grid-cols-1 xl:col-span-1 items-center">
+          <div className="mx-10 mt-5 ml-5 items-start justify-center flex ">
+            <FaCircleCheck color="green" size={60} className="items-center" />
           </div>
+          <div className="items-start justify-center flex">
+            <Typography variant="h4" color="blue-gray" className="mt-3 mb-1 justify-center">
+              Thank for your other!
+            </Typography>
+          </div>
+
+          <Card className=" grid-cols-1 px-10 mt-5 mb-3 mx-40 h-100 overflow-hidden xl:col-span-1 border border-blue-gray-100 shadow-none ">
+            <Typography variant="small" color="blue-gray" className="font-bold items-start">
+              your order
+            </Typography>
+
+            <div className="w-full flex items-start justify-center">
+              <tbody className=" mx-10 mb-5 w-full ">
+                {cartItems?.map(
+                  ({ imgUrl, quantity, productsName, members, price, id, size, category, totalPrice }, key) => {
+                    const className = `py-3  border-b broder-blue-gray-500 p-7 ${
+                      key === cartItems.length - 1 ? '' : ''
+                    }`;
+                    return (
+                      <tr key={id} className="hover:bg-gray-100 transition-colors group">
+                        <td className={className}>
+                          <div className="flex items-center gap-4">
+                            <img
+                              src={imgUrl}
+                              alt=""
+                              className="w-[100px] aspect-[3/2] rounded-lg object-cover object-top border border-gray-200"
+                            />
+                            <div>
+                              <Typography variant="small" color="blue-gray" className="font-bold items-start">
+                                {productsName}
+                              </Typography>
+                              <div class="mt-1 font-light text-sm not-italic	 text-gray-400">Size: {size}</div>
+                              <div>
+                                <Typography variant="small" color="blue-gray" className="font-normal">
+                                  x{quantity}
+                                </Typography>
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        {/* customername*/}
+                        <td className={className}>
+                          <div className="flex items-center gap-4"></div>
+                        </td>
+
+                        {/*method*/}
+                        <td className={className}>
+                          <div className="flex items-center gap-4"></div>
+                        </td>
+
+                        <td className={className}>
+                          <div className="flex items-center gap-4">
+                            <div>
+                              <Typography variant="h6" color="blue-gray" className="font-bold ml-auto">
+                                {quantity * price} $
+                              </Typography>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  },
+                )}
+              </tbody>
+            </div>
+          </Card>
+
+          <Card className=" grid-cols-1 px-10 mt-5 mb-3 mx-40 h-100 overflow-hidden xl:col-span-1 border border-blue-gray-100 shadow-none ">
+            <Typography variant="small" color="blue-gray" className="font-bold items-start">
+              your order
+            </Typography>
+
+            <div className="w-full flex items-start justify-center">
+              <tbody className=" mx-10 mb-5 w-full ">
+                {cartItems?.map(
+                  ({ imgUrl, quantity, productsName, members, price, id, size, category, totalPrice }, key) => {
+                    const className = `py-3  border-b broder-blue-gray-500 p-7 ${
+                      key === cartItems.length - 1 ? '' : ''
+                    }`;
+                    return (
+                      <tr key={id} className="hover:bg-gray-100 transition-colors group">
+                        <td className={className}>
+                          <div className="flex items-center gap-4">
+                            <img
+                              src={imgUrl}
+                              alt=""
+                              className="w-[100px] aspect-[3/2] rounded-lg object-cover object-top border border-gray-200"
+                            />
+                            <div>
+                              <Typography variant="small" color="blue-gray" className="font-bold items-start">
+                                {productsName}
+                              </Typography>
+                              <div class="mt-1 font-light text-sm not-italic	 text-gray-400">Size: {size}</div>
+                              <div>
+                                <Typography variant="small" color="blue-gray" className="font-normal">
+                                  x{quantity}
+                                </Typography>
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        {/* customername*/}
+                        <td className={className}>
+                          <div className="flex items-center gap-4"></div>
+                        </td>
+
+                        {/*method*/}
+                        <td className={className}>
+                          <div className="flex items-center gap-4"></div>
+                        </td>
+
+                        <td className={className}>
+                          <div className="flex items-center gap-4">
+                            <div>
+                              <Typography variant="h6" color="blue-gray" className="font-bold ml-auto">
+                                {quantity * price} $
+                              </Typography>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  },
+                )}
+              </tbody>
+            </div>
+          </Card>
         </div>
       </Card>
     </div>

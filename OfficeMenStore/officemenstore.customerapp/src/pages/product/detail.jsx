@@ -19,29 +19,26 @@ import { HomeIcon, ChatBubbleLeftEllipsisIcon, Cog6ToothIcon, PencilIcon } from 
 import { Link } from 'react-router-dom';
 import { ProfileInfoCard, MessageCard } from '@/widgets/cards';
 import { platformSettingsData, conversationsData, projectsData } from '@/data';
-import { ProductDetailsTab} from './productdetailstab.jsx';
-import { ReviewsTab} from './reviews.jsx';
+import { ProductDetailsTab } from './productdetailstab.jsx';
+import { ReviewsTab } from './reviews.jsx';
 import { useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { cartActions } from '../../redux/slicse/cartSlice';
 import { toast } from 'react-toastify';
 import productApi from '@/api/productApi';
 
-
-
 export function ProductDetails() {
-
   const dispatch = useDispatch();
   const { id } = useParams();
   const product = projectsData.find((product) => product.id === id);
   const { img, title, tag, description, price } = product;
+
   const [selectedSize, setSelectedSizes] = useState(null);
   const [Quantity, setQuantity] = useState(1);
   const [rating, setRating] = useState(null);
   const reviewUser = useRef('');
   const reviewMsg = useRef('');
   const [tab, setTab] = useState('desc');
-
 
   // const { id } = useParams();
   // const [product, setProduct] = useState(null);
@@ -58,7 +55,7 @@ export function ProductDetails() {
 
   //   getProductDetails();
   // }, [id]);
-  console.log('sanpham',product);
+  console.log('sanpham', product);
 
   const addTocart = (product) => {
     if (!selectedSize) {
@@ -275,7 +272,7 @@ export function ProductDetails() {
               }`}
               onClick={() => handleTabChange('details')}
             >
-              Despcription
+              <strong>Despcription</strong>
             </button>
             <button
               className={`py-2 px-4 ml-5 focus:outline-none ${
@@ -283,7 +280,7 @@ export function ProductDetails() {
               }`}
               onClick={() => handleTabChange('reviews')}
             >
-              Reviews
+              <strong>Reviews</strong>
             </button>
           </div>
 
