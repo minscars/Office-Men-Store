@@ -4,108 +4,28 @@ import { ArrowLongLeftIcon, CheckCircleIcon } from '@heroicons/react/24/outline'
 
 function Thankorder({ formData, onSubmit, handlePrev, isFirstStep }) {
   return (
-    <div className="xl:col-span-3">
-      <Card className=" mt-5 mb-3 mx-0 h-100 overflow-hidden xl:col-span-2 border border-blue-gray-100 shadow-sm mr-5 ">
-        <CardBody className=" pt-0 pb-2 mt-5 mr-5 ml-5">
-          <div className="w-full flex flex-col ">
-            <form className="mt-2 mb-2 mx-auto max-w-screen-lg xl:w-full" onSubmit={formik.handleSubmit}>
-              <div>
-                <Typography variant="h4" color="blue-gray" className="mb-1">
-                  Name & Address
-                </Typography>
+    <div className="">
+      <Card className=" mt-5 mb-3 mx-0 h-100 overflow-hidden  border border-blue-gray-100 shadow-sm mr-5 ">
+        <div class="bg-gray-100 h-screen">
+          <div class="bg-white p-6  md:mx-auto">
+            <svg viewBox="0 0 24 24" class="text-green-600 w-16 h-16 mx-auto my-6">
+              <path
+                fill="currentColor"
+                d="M12,0A12,12,0,1,0,24,12,12.014,12.014,0,0,0,12,0Zm6.927,8.2-6.845,9.289a1.011,1.011,0,0,1-1.43.188L5.764,13.769a1,1,0,1,1,1.25-1.562l4.076,3.261,6.227-8.451A1,1,0,1,1,18.927,8.2Z"
+              ></path>
+            </svg>
+            <div class="text-center">
+              <p class=" text-base text-gray-600 font-semibold text-center">Thank you </p>
+              <h3 class="md:text-2xl text-gray-900 my-2 font-semibold">Your order is confirmed</h3>
+              <p> Have a great day! </p>
+              <div class="py-10 text-center">
+                <a href="#" class="px-12 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3">
+                  GO BACK
+                </a>
               </div>
-              {/* name */}
-              <div className="mb-4">
-                <Typography variant="small" color="blue-gray" className="font-medium">
-                  Full name *
-                </Typography>
-                <Input
-                  size="lg"
-                  placeholder="Enter your name"
-                  name="name"
-                  value={formik.values.name}
-                  onChange={formik.handleChange}
-                  error={formik.touched.name && formik.errors.name}
-                />
-                {formik.touched.name && formik.errors.name && (
-                  <p className="text-red-500 text-sm">{formik.errors.name}</p>
-                )}
-              </div>
-              {/*  */}
-
-              {/* Email */}
-              <div className="mb-4 flex gap-5">
-                <div className="w-full">
-                  <Typography variant="small" color="blue-gray" className="font-medium">
-                    Your email
-                  </Typography>
-                  <Input
-                    size="lg"
-                    placeholder="Enter your email"
-                    name="email"
-                    value={formik.values.email}
-                    onChange={formik.handleChange}
-                    error={formik.touched.email && formik.errors.email}
-                  />
-                  {formik.touched.email && formik.errors.email && (
-                    <p className="text-red-500 text-sm">{formik.errors.email}</p>
-                  )}
-                </div>
-
-                <div className="w-full ml-auto">
-                  <Typography variant="small" color="blue-gray" className="font-medium">
-                    Your email
-                  </Typography>
-                  <Input
-                    size="lg"
-                    placeholder="Enter your email"
-                    name="email"
-                    value={formik.values.email}
-                    onChange={formik.handleChange}
-                    error={formik.touched.email && formik.errors.email}
-                  />
-                  {formik.touched.email && formik.errors.email && (
-                    <p className="text-red-500 text-sm">{formik.errors.email}</p>
-                  )}
-                </div>
-              </div>
-              {/*  */}
-
-              <div className="mb-4">
-                <Typography variant="small" color="blue-gray" className="font-medium">
-                  Address
-                </Typography>
-                <Input
-                  size="lg"
-                  placeholder="Enter your address"
-                  name="address"
-                  value={formik.values.address}
-                  onChange={formik.handleChange}
-                  error={formik.touched.address && formik.errors.address}
-                />
-                {formik.touched.address && formik.errors.address && (
-                  <p className="text-red-500 text-sm">{formik.errors.address}</p>
-                )}
-              </div>
-              <div className="mb-4">
-                <Typography variant="small" color="blue-gray" className="font-medium">
-                  Phone number
-                </Typography>
-                <Input
-                  size="lg"
-                  placeholder="Enter your phone number"
-                  name="phone"
-                  value={formik.values.phone}
-                  onChange={formik.handleChange}
-                  error={formik.touched.phone && formik.errors.phone}
-                />
-                {formik.touched.phone && formik.errors.phone && (
-                  <p className="text-red-500 text-sm">{formik.errors.phone}</p>
-                )}
-              </div>
-            </form>
+            </div>
           </div>
-        </CardBody>
+        </div>
       </Card>
     </div>
   );
