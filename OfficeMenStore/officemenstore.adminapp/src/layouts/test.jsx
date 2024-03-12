@@ -37,7 +37,9 @@ export function Test() {
           )}
         </Routes>
         {/* tạo ra các đường dẫn bằng map nếu layout trùng với dasboard và pages nó trùng 2 đối tượng là  */}
-        <div className="text-blue-gray-600">{/* <Footer /> */}</div>
+        <div className="text-blue-gray-600">
+          <Footer />
+        </div>
       </div>
     </div>
   );

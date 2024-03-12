@@ -13,7 +13,6 @@ export const ProductData = [
     category: 'Somi',
     imageUrl: '/img/quan-au-01.jpg',
     price: 20,
-    status: true,
     createdAt: '10/01/22',
   },
   {
@@ -21,7 +20,6 @@ export const ProductData = [
     category: 'Giaytay',
     imageUrl: '/img/quan-au-02.jpg',
     price: 20,
-    status: true,
     createdAt: '10/01/22',
   },
   {
@@ -29,7 +27,6 @@ export const ProductData = [
     category: 'Quantay',
     imageUrl: '/img/quan-au-03.jpg',
     price: 20,
-    status: false,
     createdAt: '10/01/22',
   },
   {
@@ -37,7 +34,6 @@ export const ProductData = [
     category: 'Quantay',
     imageUrl: '/img/quan-au-04.jpg',
     price: 20,
-    status: true,
     createdAt: '10/01/22',
   },
   {
@@ -45,7 +41,6 @@ export const ProductData = [
     category: 'Giaytay',
     imageUrl: '/img/quan-au-05.jpg',
     price: 20,
-    status: false,
     createdAt: '10/01/22',
   },
 ];

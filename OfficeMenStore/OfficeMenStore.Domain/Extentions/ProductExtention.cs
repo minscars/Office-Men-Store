@@ -20,6 +20,7 @@ namespace OfficeMenStore.Domain.Extentions
                     Image = "1.png",
                     CategoryId = 1,
                     Price = 10,
+                    Rating = 4,
                 },
                 new Product()
                 {
@@ -28,6 +29,7 @@ namespace OfficeMenStore.Domain.Extentions
                     Image = "2.png",
                     CategoryId = 1,
                     Price = 10,
+                    Rating = 3,
                 },
                 new Product()
                 {
@@ -36,6 +38,8 @@ namespace OfficeMenStore.Domain.Extentions
                     Image = "3.png",
                     CategoryId = 1,
                     Price = 10,
+                    Rating = 5,
+
                 },
                 new Product()
                 {
@@ -44,6 +48,7 @@ namespace OfficeMenStore.Domain.Extentions
                     Image = "4.png",
                     CategoryId = 1,
                     Price = 10,
+                    Rating = 3.5
                 },
                 new Product()
                 {
@@ -52,93 +57,8 @@ namespace OfficeMenStore.Domain.Extentions
                     Image = "5.png",
                     CategoryId = 1,
                     Price = 10,
-                },
-                new Product()
-                {
-                    Id = 6,
-                    Name = "Miracle Air quần dài",
-                    Image = "6.png",
-                    CategoryId = 2,
-                    Price = 14,
-                },
-                new Product()
-                {
-                    Id = 7,
-                    Name = "Miracle Air quần dài",
-                    Image = "7.png",
-                    CategoryId = 2,
-                    Price = 14,
-                },
-                new Product()
-                {
-                    Id = 8,
-                    Name = "Miracle Air quần dài",
-                    Image = "8.png",
-                    CategoryId = 2,
-                    Price = 14,
-                },
-                new Product()
-                {
-                    Id = 9,
-                    Name = "Miracle Air quần dài",
-                    Image = "9.png",
-                    CategoryId = 2,
-                    Price = 14,
-                },
-                new Product()
-                {
-                    Id = 10,
-                    Name = "Miracle Air quần dài",
-                    Image = "10.png",
-                    CategoryId = 2,
-                    Price = 14,
-                },
-                new Product()
-                {
-                    Id = 11,
-                    Name = "Thắt lưng da Ý",
-                    Image = "11.png",
-                    CategoryId = 3,
-                    Price = 6,
-                },
-                new Product()
-                {
-                    Id = 12,
-                    Name = "Thắt lưng da Ý",
-                    Image = "12.png",
-                    CategoryId = 3,
-                    Price = 7,
-                },
-                new Product()
-                {
-                    Id = 13,
-                    Name = "Thắt lưng da Ý",
-                    Image = "13.png",
-                    CategoryId = 3,
-                    Price = 4,
-                },
-                new Product()
-                {
-                    Id = 14,
-                    Name = "Thắt lưng da Ý",
-                    Image = "14.png",
-                    CategoryId = 3,
-                    Price = 7,
-                },
-                new Product()
-                {
-                    Id = 15,
-                    Name = "Thắt lưng da Ý",
-                    Image = "15.png",
-                    CategoryId = 3,
-                    Price = 3,
-                }
-
-
-
-
-
-                );
+                    Rating = 3.5
+                });
         }
     }
 }

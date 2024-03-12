@@ -37,11 +37,32 @@ builder.Services.AddIdentity<User, UserRole>()
         .AddEntityFrameworkStores<OfficeMenStoreDbContext>()
         .AddDefaultTokenProviders();
 
+//Setting password
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequiredLength = 0;
+    options.Password.RequiredUniqueChars = 0;
+});
+
 //Add automapper
 builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 
 //DI
+builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddTransient<IUserRoleService, UserRoleService>();
+builder.Services.AddTransient<UserManager<User>, UserManager<User>>();
+builder.Services.AddTransient<RoleManager<UserRole>, RoleManager<UserRole>>();
+builder.Services.AddTransient<SignInManager<User>, SignInManager<User>>();
+
 builder.Services.AddTransient<IProductService, ProductService>();
+builder.Services.AddTransient<ICategoryService, CategoryService>();
+builder.Services.AddTransient<ICartItemService, CartItemService>();
+builder.Services.AddTransient<IOrderService, OrderService>();
+builder.Services.AddTransient<IFileService, FileService>();
 builder.Services.AddMvc()
                 .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 

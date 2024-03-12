@@ -19,7 +19,7 @@ namespace LibraryManagement.Data.Enums
             Approve = 2,
             [Display(Name = "Delivering")]
             Borrowing = 3,
-            [Display(Name = "Success")]
+            [Display(Name = "Delivered")]
             Returned = 4,
             [Display(Name = "Rejected")]
             Rejected = 5,

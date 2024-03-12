@@ -11,7 +11,13 @@ import {
   ListItem,
   ListItemPrefix,
   Typography,
+  Accordion,
+  AccordionHeader,
+  AccordionBody,
 } from '@material-tailwind/react';
+import { PresentationChartBarIcon } from '@heroicons/react/24/solid';
+import { ChevronDownIcon } from '@heroicons/react/24/outline';
+import Radio from '@mui/material/Radio';
 
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -22,7 +28,11 @@ function Payment({ formData, onSubmit, handlePrev }) {
   const cartItems = useSelector((state) => state.cart.cartItems);
   const totalAmount = useSelector((state) => state.cart.totalAmount);
   console.log(cartItems);
-  
+
+  const [open, setOpen] = React.useState(0);
+  const handleOpen = (value) => {
+    setOpen(open === value ? 0 : value);
+  };
   // from ddien thong tin
   const formik = useFormik({
     initialValues: {
@@ -80,6 +90,7 @@ function Payment({ formData, onSubmit, handlePrev }) {
                       }}
                     />
                   </ListItemPrefix>
+
                   <Typography color="blue-gray" className="font-medium">
                     React.js
                   </Typography>
@@ -107,74 +118,97 @@ function Payment({ formData, onSubmit, handlePrev }) {
 
           <CardBody className="pt-0 pb-2 mt-5 mr-5 ml-5 ">
             <div className="w-full flex flex-col ">
-              <form className="mt-2 mb-2 mx-auto max-w-screen-lg xl:w-full" onSubmit={formik.handleSubmit}>
-                <div className="mb-4">
-                  <Typography variant="small" color="blue-gray" className="font-medium">
-                    Card Number
-                  </Typography>
-                  <Input
-                    size="lg"
-                    placeholder="Enter card number"
-                    name="cardNumber"
-                    value={formik.values.cardNumber}
-                    onChange={formik.handleChange}
-                    error={formik.touched.cardNumber && formik.errors.cardNumber}
+              <Accordion
+                open={open === 1}
+                icon={
+                  <ChevronDownIcon
+                    strokeWidth={2.5}
+                    className={`mx-auto h-4 w-4 transition-transform ${open === 1 ? 'rotate-180' : ''}`}
                   />
-                  {formik.touched.cardNumber && formik.errors.cardNumber && (
-                    <p className="text-red-500 text-sm">{formik.errors.cardNumber}</p>
-                  )}
-                </div>
-                <div className="flex gap-6">
-                  <div className="w-full mb-4">
-                    <Typography variant="small" color="blue-gray" className="font-medium">
-                      Expiration Date
+                }
+              >
+                <ListItem className="p-0" selected={open === 1}>
+                  <AccordionHeader onClick={() => handleOpen(1)} className="border-b-0 p-3">
+                    <ListItemPrefix>
+                      <PresentationChartBarIcon className="h-5 w-5" />
+                    </ListItemPrefix>
+                    <Radio overlay defaultChecked />
+                    <Typography color="blue-gray" className="mr-auto font-normal">
+                      Dashboard
                     </Typography>
-                    <Input
-                      size="lg"
-                      placeholder="MM/YY"
-                      name="expirationDate"
-                      value={formik.values.expirationDate}
-                      onChange={formik.handleChange}
-                      error={formik.touched.expirationDate && formik.errors.expirationDate}
-                    />
-                    {formik.touched.expirationDate && formik.errors.expirationDate && (
-                      <p className="text-red-500 text-sm">{formik.errors.expirationDate}</p>
-                    )}
-                  </div>
-                  <div className="w-full mb-4">
-                    <Typography variant="small" color="blue-gray" className="font-medium">
-                      CVV
-                    </Typography>
-                    <Input
-                      size="lg"
-                      placeholder="Enter CVV"
-                      name="cvv"
-                      value={formik.values.cvv}
-                      onChange={formik.handleChange}
-                      error={formik.touched.cvv && formik.errors.cvv}
-                    />
-                    {formik.touched.cvv && formik.errors.cvv && (
-                      <p className="text-red-500 text-sm">{formik.errors.cvv}</p>
-                    )}
-                  </div>
-                </div>
-                <div className="mb-4">
-                  <Typography variant="small" color="blue-gray" className="font-medium">
-                    Name On Card
-                  </Typography>
-                  <Input
-                    size="lg"
-                    placeholder="Enter card number"
-                    name="cardNumber"
-                    value={formik.values.cardNumber}
-                    onChange={formik.handleChange}
-                    error={formik.touched.cardNumber && formik.errors.cardNumber}
-                  />
-                  {formik.touched.cardNumber && formik.errors.cardNumber && (
-                    <p className="text-red-500 text-sm">{formik.errors.cardNumber}</p>
-                  )}
-                </div>
-              </form>
+                  </AccordionHeader>
+                </ListItem>
+                <AccordionBody className="py-1">
+                  <form className="mt-2 mb-2 mx-auto max-w-screen-lg xl:w-full" onSubmit={formik.handleSubmit}>
+                    <div className="mb-4">
+                      <Typography variant="small" color="blue-gray" className="font-medium">
+                        Card Number
+                      </Typography>
+                      <Input
+                        size="lg"
+                        placeholder="Enter card number"
+                        name="cardNumber"
+                        value={formik.values.cardNumber}
+                        onChange={formik.handleChange}
+                        error={formik.touched.cardNumber && formik.errors.cardNumber}
+                      />
+                      {formik.touched.cardNumber && formik.errors.cardNumber && (
+                        <p className="text-red-500 text-sm">{formik.errors.cardNumber}</p>
+                      )}
+                    </div>
+                    <div className="flex gap-6">
+                      <div className="w-full mb-4">
+                        <Typography variant="small" color="blue-gray" className="font-medium">
+                          Expiration Date
+                        </Typography>
+                        <Input
+                          size="lg"
+                          placeholder="MM/YY"
+                          name="expirationDate"
+                          value={formik.values.expirationDate}
+                          onChange={formik.handleChange}
+                          error={formik.touched.expirationDate && formik.errors.expirationDate}
+                        />
+                        {formik.touched.expirationDate && formik.errors.expirationDate && (
+                          <p className="text-red-500 text-sm">{formik.errors.expirationDate}</p>
+                        )}
+                      </div>
+                      <div className="w-full mb-4">
+                        <Typography variant="small" color="blue-gray" className="font-medium">
+                          CVV
+                        </Typography>
+                        <Input
+                          size="lg"
+                          placeholder="Enter CVV"
+                          name="cvv"
+                          value={formik.values.cvv}
+                          onChange={formik.handleChange}
+                          error={formik.touched.cvv && formik.errors.cvv}
+                        />
+                        {formik.touched.cvv && formik.errors.cvv && (
+                          <p className="text-red-500 text-sm">{formik.errors.cvv}</p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="mb-4">
+                      <Typography variant="small" color="blue-gray" className="font-medium">
+                        Name On Card
+                      </Typography>
+                      <Input
+                        size="lg"
+                        placeholder="Enter card number"
+                        name="cardNumber"
+                        value={formik.values.cardNumber}
+                        onChange={formik.handleChange}
+                        error={formik.touched.cardNumber && formik.errors.cardNumber}
+                      />
+                      {formik.touched.cardNumber && formik.errors.cardNumber && (
+                        <p className="text-red-500 text-sm">{formik.errors.cardNumber}</p>
+                      )}
+                    </div>
+                  </form>
+                </AccordionBody>
+              </Accordion>
             </div>
           </CardBody>
         </Card>
