@@ -1,113 +1,180 @@
-import React, { useState } from 'react';
-import { Typography, Card, CardHeader, CardBody, CardFooter, Input, Checkbox, Button } from '@material-tailwind/react';
+import React from 'react';
+import {
+  CardHeader,
+  CardBody,
+  CardFooter,
+  Input,
+  Button,
+  Checkbox,
+  Card,
+  List,
+  ListItem,
+  ListItemPrefix,
+  Typography,
+} from '@material-tailwind/react';
+
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { toast } from 'react-toastify';
 import { useSelector, useDispatch } from 'react-redux';
 
-function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
+function Payment({ formData, onSubmit, handlePrev }) {
   const cartItems = useSelector((state) => state.cart.cartItems);
   const totalAmount = useSelector((state) => state.cart.totalAmount);
-  const dispatch = useDispatch();
+  console.log(cartItems);
   const formik = useFormik({
     initialValues: {
-      name: formData.name || '',
-      address: formData.address || '',
-      phone: formData.phone || '',
-      email: formData.email || '',
+      cardNumber: formData.cardNumber || '',
+      expirationDate: formData.expirationDate || '',
+      cvv: formData.cvv || '',
     },
     validationSchema: Yup.object({
-      name: Yup.string().required('Required').min(4, 'Must be 4 characters or more'),
-      address: Yup.string().required('Required'),
-      phone: Yup.string().required('Required'),
-      email: Yup.string().required('Required').email('Invalid email address'),
+      cardNumber: Yup.string().required('Required'),
+      expirationDate: Yup.string().required('Required'),
+      cvv: Yup.string().required('Required'),
     }),
     onSubmit: (values) => {
-      onSubmit(values); // Pass the form values to the parent component
+      onSubmit(values); // Cập nhật thông tin vào state formData của component Checkout
     },
   });
 
+  document.addEventListener('DOMContentLoaded', function () {
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+
+    checkboxes.forEach(function (checkbox) {
+      checkbox.addEventListener('change', function () {
+        if (this.checked) {
+          checkboxes.forEach(function (otherCheckbox) {
+            if (otherCheckbox !== checkbox) {
+              otherCheckbox.checked = false;
+            }
+          });
+        }
+      });
+    });
+  });
+
   return (
-    <div className=" mx-0 grid mb-4 gap-3 grid-cols-1 xl:grid-cols-5 ">
-      {/* thẻ thanh toán */}
+    <div className="mx-0 grid mb-4 gap-3 grid-cols-1 xl:grid-cols-5 ">
       <div className="xl:col-span-3">
-        <Card className=" mt-5 mb-3 mx-0 h-100 overflow-hidden xl:col-span-2 border border-blue-gray-100 shadow-sm mr-5 ">
-          <CardBody className=" pt-0 pb-2 mt-5 mr-5 ml-5">
+        <Card className=" mt-5 mb-3 mx-0 h-100 overflow-hidden xl:col-span-3 border border-blue-gray-100 shadow-sm mr-5">
+          <div className="mt-5 ml-5 ">
+            <Typography variant="h4" color="blue-gray" className="mb-1 ml-5">
+              Payment
+            </Typography>
+          </div>
+          {/* loai thanh toan */}
+          <div className="ml-10 mr-10 border-b broder-blue-gray-500 grap-10">
+            <List className="flex-row">
+              <ListItem className="p-0">
+                <label htmlFor="horizontal-list-react" className="flex w-full cursor-pointer items-center  py-2">
+                  <ListItemPrefix className="mr-3">
+                    <Checkbox
+                      id="horizontal-list-react"
+                      ripple={false}
+                      className="hover:before:opacity-0"
+                      containerProps={{
+                        className: 'p-0',
+                      }}
+                    />
+                  </ListItemPrefix>
+                  <Typography color="blue-gray" className="font-medium">
+                    React.js
+                  </Typography>
+                </label>
+              </ListItem>
+              <ListItem className="p-0">
+                <label htmlFor="horizontal-list-vue" className="flex w-full cursor-pointer items-center px-3 py-2">
+                  <ListItemPrefix className="mr-3">
+                    <Checkbox
+                      id="horizontal-list-vue"
+                      ripple={false}
+                      className="hover:before:opacity-0"
+                      containerProps={{
+                        className: 'p-0',
+                      }}
+                    />
+                  </ListItemPrefix>
+                  <Typography color="blue-gray" className="font-medium">
+                    Vue.js
+                  </Typography>
+                </label>
+              </ListItem>
+            </List>
+          </div>
+
+          <CardBody className="pt-0 pb-2 mt-5 mr-5 ml-5 ">
             <div className="w-full flex flex-col ">
               <form className="mt-2 mb-2 mx-auto max-w-screen-lg xl:w-full" onSubmit={formik.handleSubmit}>
-                <div>
-                  <Typography variant="h4" color="blue-gray" className="mb-1">
-                    Name & Address
-                  </Typography>
-                </div>
                 <div className="mb-4">
                   <Typography variant="small" color="blue-gray" className="font-medium">
-                    Your name
+                    Card Number
                   </Typography>
                   <Input
                     size="lg"
-                    placeholder="Enter your name"
-                    name="name"
-                    value={formik.values.name}
+                    placeholder="Enter card number"
+                    name="cardNumber"
+                    value={formik.values.cardNumber}
                     onChange={formik.handleChange}
-                    error={formik.touched.name && formik.errors.name}
+                    error={formik.touched.cardNumber && formik.errors.cardNumber}
                   />
-                  {formik.touched.name && formik.errors.name && (
-                    <p className="text-red-500 text-sm">{formik.errors.name}</p>
+                  {formik.touched.cardNumber && formik.errors.cardNumber && (
+                    <p className="text-red-500 text-sm">{formik.errors.cardNumber}</p>
                   )}
+                </div>
+                <div className="flex gap-6">
+                  <div className="w-full mb-4">
+                    <Typography variant="small" color="blue-gray" className="font-medium">
+                      Expiration Date
+                    </Typography>
+                    <Input
+                      size="lg"
+                      placeholder="MM/YY"
+                      name="expirationDate"
+                      value={formik.values.expirationDate}
+                      onChange={formik.handleChange}
+                      error={formik.touched.expirationDate && formik.errors.expirationDate}
+                    />
+                    {formik.touched.expirationDate && formik.errors.expirationDate && (
+                      <p className="text-red-500 text-sm">{formik.errors.expirationDate}</p>
+                    )}
+                  </div>
+                  <div className="w-full mb-4">
+                    <Typography variant="small" color="blue-gray" className="font-medium">
+                      CVV
+                    </Typography>
+                    <Input
+                      size="lg"
+                      placeholder="Enter CVV"
+                      name="cvv"
+                      value={formik.values.cvv}
+                      onChange={formik.handleChange}
+                      error={formik.touched.cvv && formik.errors.cvv}
+                    />
+                    {formik.touched.cvv && formik.errors.cvv && (
+                      <p className="text-red-500 text-sm">{formik.errors.cvv}</p>
+                    )}
+                  </div>
                 </div>
                 <div className="mb-4">
                   <Typography variant="small" color="blue-gray" className="font-medium">
-                    Address
+                    Name On Card
                   </Typography>
                   <Input
                     size="lg"
-                    placeholder="Enter your address"
-                    name="address"
-                    value={formik.values.address}
+                    placeholder="Enter card number"
+                    name="cardNumber"
+                    value={formik.values.cardNumber}
                     onChange={formik.handleChange}
-                    error={formik.touched.address && formik.errors.address}
+                    error={formik.touched.cardNumber && formik.errors.cardNumber}
                   />
-                  {formik.touched.address && formik.errors.address && (
-                    <p className="text-red-500 text-sm">{formik.errors.address}</p>
+                  {formik.touched.cardNumber && formik.errors.cardNumber && (
+                    <p className="text-red-500 text-sm">{formik.errors.cardNumber}</p>
                   )}
                 </div>
-                <div className="mb-4">
-                  <Typography variant="small" color="blue-gray" className="font-medium">
-                    Phone number
-                  </Typography>
-                  <Input
-                    size="lg"
-                    placeholder="Enter your phone number"
-                    name="phone"
-                    value={formik.values.phone}
-                    onChange={formik.handleChange}
-                    error={formik.touched.phone && formik.errors.phone}
-                  />
-                  {formik.touched.phone && formik.errors.phone && (
-                    <p className="text-red-500 text-sm">{formik.errors.phone}</p>
-                  )}
-                </div>
-                <div className="mb-4">
-                  <Typography variant="small" color="blue-gray" className="font-medium">
-                    Your email
-                  </Typography>
-                  <Input
-                    size="lg"
-                    placeholder="Enter your email"
-                    name="email"
-                    value={formik.values.email}
-                    onChange={formik.handleChange}
-                    error={formik.touched.email && formik.errors.email}
-                  />
-                  {formik.touched.email && formik.errors.email && (
-                    <p className="text-red-500 text-sm">{formik.errors.email}</p>
-                  )}
-                </div>
+
                 <div className="mt-16 flex justify-between">
-                  <Button onClick={handlePrev} disabled={isFirstStep}>
-                    Prev
-                  </Button>
+                  <Button onClick={handlePrev}>Prev</Button>
                   <Button onClick={formik.handleSubmit} disabled={!formik.isValid}>
                     Next
                   </Button>
@@ -117,7 +184,6 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
           </CardBody>
         </Card>
       </div>
-
       <div className="xl:col-span-2">
         {/* the chi tiet don hang*/}
         <Card className=" xl:col-span-1 mt-5 border border-blue-gray-100 shadow-sm">
@@ -131,7 +197,7 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
               <strong>{cartItems.length}</strong> Items
             </Typography>
           </CardHeader>
-          <CardBody className="pt-0 ml-5 mr-5">
+          <CardBody className="pt-0 ">
             {/* items */}
             <div className="mt-2 mb-5 ">
               <tbody className="mb-5">
@@ -217,4 +283,4 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
   );
 }
 
-export default AddressForm;
+export default Payment;

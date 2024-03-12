@@ -27,25 +27,39 @@ export function AddProducts() {
     initialValues: {
       email: '',
       name: '',
+      phone: '',
+      password: '',
+      confirmedPassword: '',
       disciption: '',
       quantily: '',
       price: '',
-      option: '',
+      size: '',
     },
     validationSchema: Yup.object({
-      name: Yup.string().required('please add the product name').min(4, 'Must be 4 characters or more'),
+      name: Yup.string().required('Required').min(4, 'Must be 4 characters or more'),
+      email: Yup.string()
+        .required('Required')
+        .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, 'Please enter a valid email address'),
+      password: Yup.string()
+        .required('Required')
+        .matches(
+          /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d][A-Za-z\d!@#$%^&*()_+]{7,19}$/,
+          'Password must be 7-19 characters and contain at least one letter, one number and a special character',
+        ),
+      confirmedPassword: Yup.string()
+        .required('Required')
+        .oneOf([Yup.ref('password'), null], 'Password must match'),
+      phone: Yup.string()
+        .required('Required')
+        .matches(/^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/, 'Must be a valid phone number'),
 
       quantily: Yup.string()
-        .required('please add the product quantity')
-        .matches(/^[0-9]+$/, 'The quantity of the product must be a number'),
+        .required('Required')
+        .matches(/^[0-9]+$/, 'Must be a number'),
 
-      option: Yup.string()
-        .required('please add the product option')
-        .matches(/^[A-Za-z]+$/, 'The quantity of the product must be text'),
-
-      disciption: Yup.string().required('please add the product description'), // Validation for address field
+      disciption: Yup.string().required('Required'), // Validation for address field
       price: Yup.string()
-        .required('please add the product price')
+        .required('Required')
         .matches(/^[0-9]+$/, 'Must be a number'),
       // Validation for address field
       size: Yup.string().required('Required'), // Validation for address field
@@ -105,7 +119,7 @@ export function AddProducts() {
                 {/* name */}
                 <div className="mb-1 flex flex-col gap-6 ">
                   <Typography variant="h6" color="blue-gray" className="-mb-4  mt-5">
-                    Product name <strong className="text-red-500">*</strong>
+                    Product name
                   </Typography>
                   <Input
                     size="lg"
@@ -125,8 +139,20 @@ export function AddProducts() {
                 {/* Disciption */}
                 <div className="mb-1 flex flex-col gap-6 mt-5">
                   <Typography variant="h6" color="blue-gray" className="-mb-4 font-medium">
-                    Disciption <strong className="text-red-500">*</strong>
+                    Disciption
                   </Typography>
+
+                  {/* <Textarea
+                    size="lg"
+                    // placeholder="name@mail.com"
+                    name="email"
+                    value={formik.values.email}
+                    onChange={formik.handleChange}
+                    className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
+                    labelProps={{
+                      className: 'before:content-none after:content-none',
+                    }}
+                  /> */}
                   <div class="">
                     <form>
                       <div class="mb-4 w-full bg-gray-50 rounded-lg border border-blue-gray-200 dark:bg-gray-700 dark:border-gray-600">
@@ -341,11 +367,10 @@ export function AddProducts() {
                     <p className="font-[0.75rem] w-full text-red-500 -mt-4"> {formik.errors.disciption} </p>
                   )}
                 </div>
-
                 {/* Category*/}
                 <div className="mb-1 flex flex-col gap-6 mt-5">
                   <Typography variant="h6 " color="blue-gray" className="-mb-4 font-medium">
-                    Category <strong className="text-red-500">*</strong>
+                    Category
                   </Typography>
                   {/* <Input
                     size="lg"
@@ -378,7 +403,7 @@ export function AddProducts() {
                 <div className="mb-1 flex gap-6 mt-5 ">
                   <div className="w-full mb-1 flex flex-col gap-6">
                     <Typography variant="h6" color="blue-gray" className="-mb-4 font-medium">
-                      Quantily <strong className="text-red-500">*</strong>
+                      Quantily
                     </Typography>
                     <Input
                       size="lg"
@@ -398,7 +423,7 @@ export function AddProducts() {
 
                   <div className="w-full mb-1 flex flex-col gap-6  ">
                     <Typography variant="h6" color="blue-gray" className="-mb-4 font-medium">
-                      Option <strong className="text-red-500">*</strong>
+                      Option
                     </Typography>
                     <Input
                       size="lg"
@@ -420,7 +445,7 @@ export function AddProducts() {
                 {/* Price */}
                 <div className="mb-1 flex flex-col gap-6 mt-5">
                   <Typography variant="h6" color="blue-gray" className="-mb-4 font-medium">
-                    Price <strong className="text-red-500">*</strong>
+                    Price
                   </Typography>
                   <Input
                     size="lg"
@@ -447,7 +472,7 @@ export function AddProducts() {
           <div className=" flex-1 xl:col-span-1 mb-5">
             {/* add image */}
             <Typography variant="h6" color="blue-gray" className="mb-1 ml-5 mt-5">
-              Add image <strong className="text-red-500">*</strong>
+              Add image
             </Typography>
             <section class="container w-full mx-auto items-center">
               <div class="max-w-sm mx-auto bg-white rounded-lg overflow-hidden items-center">

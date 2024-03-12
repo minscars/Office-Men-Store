@@ -6,7 +6,6 @@ import { XMarkIcon } from '@heroicons/react/24/outline';
 import { Avatar, Button, IconButton, Typography, ListItemSuffix, Chip } from '@material-tailwind/react';
 import { useMaterialTailwindController, setOpenSidenav } from '@/context';
 import Logo from '@/components/image/logo-store.png';
-
 export function Sidenav({ brandImg, brandName, routes }) {
   const [controller, dispatch] = useMaterialTailwindController();
   const { sidenavColor, sidenavType, openSidenav } = controller;
@@ -17,18 +16,6 @@ export function Sidenav({ brandImg, brandName, routes }) {
     white: 'bg-white shadow-sm',
     transparent: 'bg-transparent',
   };
-
-  const LINKS = [
-    {
-      title: 'Shop',
-    },
-    {
-      title: 'Contact',
-    },
-    {
-      title: 'Resource',
-    },
-  ];
 
   return (
     <aside

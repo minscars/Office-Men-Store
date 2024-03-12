@@ -23,6 +23,7 @@ import Details from './pages/product/detail';
 import MyOrderDetail from './pages/accounts/orderhistorydetail';
 import { Checkout, Cart } from '@/pages/cart';
 import { Accounts } from '@/pages/accounts';
+import { Oders, OdersDetails, AllProducts, AddProducts, CustomerTable, UpdateProduct } from '@/pages/admin';
 const icon = {
   className: 'w-5 h-5 text-inherit',
 };
@@ -41,6 +42,12 @@ export const routes = [
         element: <Cart />,
       },
       { icon: <UserCircleIcon {...icon} />, name: 'Account', path: '/account', element: <Accounts /> },
+      {
+        icon: <InformationCircleIcon {...icon} />,
+        name: 'notifications',
+        path: '/notifications',
+        element: <Notifications />,
+      },
       // { icon: <TableCellsIcon {...icon} />, name: 'tables', path: '/tables', element: <Tables /> },
 
       //Product
@@ -53,7 +60,7 @@ export const routes = [
     ],
   },
   {
-    // title: 'auth pages',
+    title: 'auth pages',
     layout: 'auth',
     pages: [
       {

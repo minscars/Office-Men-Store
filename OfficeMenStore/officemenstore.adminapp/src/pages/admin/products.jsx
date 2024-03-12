@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-
 import {
   Card,
   CardHeader,
@@ -14,20 +13,21 @@ import {
   IconButton,
   Tooltip,
 } from '@material-tailwind/react';
-import { PencilIcon, TrashIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { EllipsisVerticalIcon, EyeIcon, PencilIcon, TrashIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { ProductData } from '@/data';
 import { Link, useNavigate } from 'react-router-dom';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import Modal from '../../widgets/Modal.jsx';
 import { toast } from 'react-toastify';
 
-import DeleteModal from './delete/delete';
-
 export function AllProducts() {
-  const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
-
+  const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const [selectedProduct, setSelectedProduct] = useState([]); // Initialize with an empty array
 
+  //
   const [searchTerm, setSearchTerm] = useState('');
   const [productsData, setProductData] = useState([]); // Initialize with an empty array
   const [selectedCategory, setSelectedCategory] = useState('');
@@ -39,7 +39,6 @@ export function AllProducts() {
     }
   }, [searchTerm, ProductData]);
 
-  // hàm lọc sản phẩm
   const handleFilter = (e) => {
     const selectedCategory = e;
 
@@ -72,7 +71,6 @@ export function AllProducts() {
     }
   };
 
-  // ham tim kiem san pham
   const handleSearch = (e) => {
     const searchTerm = e.target.value || '';
     console.log(searchTerm);
@@ -90,16 +88,31 @@ export function AllProducts() {
     }
   };
 
+  const navigatemyoderdetail = () => {
+    navigate('ordersdetail');
+  };
+
   const navigateeditproduct = () => {
     navigate('updateproduct');
   };
 
   // Hàm mở hộp thoại xác nhận xóa sản phẩm
-
-  function onDelete() {
+  const openDeleteConfirmation = (product) => {
+    setSelectedProduct(product);
     setOpen(true);
-    // setUserId(userId);
-  }
+  };
+
+  const deleteProduct = () => {
+    if (selectedProduct) {
+      // Loại bỏ sản phẩm khỏi danh sách sản phẩm
+      const updatedProductList = ProductData.filter((product) => product.id !== selectedProduct.id);
+      // Cập nhật danh sách sản phẩm sau khi xóa
+      props.onDeleteProduct(selectedProduct.id); // Đóng hộp thoại xác nhận xóa sản phẩm
+      setOpen(false);
+      // Hiển thị thông báo xóa sản phẩm thành công
+      toast.success('Sản phẩm đã được xóa thành công!');
+    } else toast.error('Xoa san pham that bai!');
+  };
 
   return (
     <div className="mt-12 mb-8 flex flex-col gap-12">
@@ -140,7 +153,7 @@ export function AllProducts() {
           <table className="mt-5 w-full  min-w-max  table-auto text-left ">
             <thead>
               <tr>
-                {['Product name', 'Category', 'price', 'Status', 'Created'].map((el) => (
+                {['Product name', 'Category', 'price', 'Created'].map((el) => (
                   <th
                     key={el}
                     className="border-y border-blue-gray-100 py-3 px-10 text-left bg-blue-gray-50/50 p-4 ml-4"
@@ -153,7 +166,7 @@ export function AllProducts() {
               </tr>
             </thead>
             <tbody>
-              {productsData.map(({ id, name, category, imageUrl, price, status, createdAt }, key) => {
+              {productsData.map(({ id, name, category, imageUrl, price, createdAt }, key) => {
                 const className = `p-4 py-3 px-10 ${
                   key === productsData.length - 1 ? '' : 'p-4 border-b border-blue-gray-50 '
                 } `;
@@ -198,17 +211,6 @@ export function AllProducts() {
                     </td>
 
                     <td className={className}>
-                      <div className="w-max">
-                        <Chip
-                          variant="ghost"
-                          size="sm"
-                          value={status ? 'con hang' : 'het hang'}
-                          color={status ? 'green' : 'blue-gray'}
-                        />
-                      </div>
-                    </td>
-
-                    <td className={className}>
                       <span class="inline-block w-20 group-hover:hidden">{createdAt}</span>
                       <div class="hidden group-hover:flex group-hover:w-20 group-hover:items-center group-hover:text-gray-500 group-hover:gap-x-2">
                         <button class="select-none p-2 ">
@@ -218,10 +220,19 @@ export function AllProducts() {
                             </IconButton>
                           </Tooltip>
                         </button>
+
+                        {/* <button
+                          data-ripple-light="true"
+                          data-dialog-target="dialog"
+                          class="select-none rounded-lg bg-gradient-to-tr from-gray-900 to-gray-800 py-3 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                        >
+                          Open Dialog
+                        </button> */}
+
                         <button class="p-2 ">
                           <Tooltip content="Delete Product">
                             <IconButton variant="text">
-                              <TrashIcon className="h-5 w-5  hover:text-red-500" onClick={onDelete} />
+                              <TrashIcon className="h-5 w-5  hover:text-red-500" onClick={() => setOpen(true)} />
                             </IconButton>
                           </Tooltip>
                         </button>
@@ -231,21 +242,10 @@ export function AllProducts() {
                 );
               })}
             </tbody>
-
-            {
-              <DeleteModal
-                open={open}
-                // userId={userId}
-                // onDeleteSubmit={onDeleteSubmit}
-                onClose={() => setOpen(false)}
-                className="text-black"
-              />
-            }
           </table>
         </CardBody>
       </Card>
-
-      {/* <Modal open={open} onClose={() => setOpen(false)}>
+      <Modal open={open} onClose={() => setOpen(false)}>
         <div className="text-center w-60">
           <TrashIcon className="mx-auto text-red-500 w-20 h-20" />
           <div className="mx-auto my-4 w-48">
@@ -263,7 +263,7 @@ export function AllProducts() {
             </Button>
           </div>
         </div>
-      </Modal> */}
+      </Modal>
     </div>
   );
 }

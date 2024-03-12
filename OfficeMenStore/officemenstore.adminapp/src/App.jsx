@@ -4,10 +4,10 @@ import { Dashboard, Auth, Test } from '@/layouts';
 function App() {
   return (
     <Routes>
-      <Route path="/admin/*" element={<Dashboard />} />
+      <Route path="/user/*" element={<Dashboard />} />
       <Route path="/auth/*" element={<Auth />} />
       <Route path="/test/*" element={<Test />} />
-      <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
+      <Route path="*" element={<Navigate to="/user/home" replace />} />
     </Routes>
   );
 }
