@@ -37,6 +37,7 @@ export default function App() {
             </div>
           </div>
         </SwiperSlide>
+
         <SwiperSlide>
           <div className="ml-[100px] flex items-center justify-center">
             <div>
