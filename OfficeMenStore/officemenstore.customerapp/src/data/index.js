@@ -9,3 +9,4 @@ export * from '@/data/authors-table-data';
 export * from '@/data/services-data';
 export * from '@/data/orders-table-data';
 export * from '@/data/product-data';
+export * from '@/data/carousel-data';

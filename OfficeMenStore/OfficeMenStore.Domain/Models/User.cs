@@ -6,5 +6,6 @@ namespace OfficeMenStore.Domain.Models
     {
         public string? Name { get; set; }
         public string? Avatar { get; set; }
+        public virtual Cart Cart { get; set; }
     }
 }

@@ -44,14 +44,14 @@ export const routes = [
       },
       // { icon: <TableCellsIcon {...icon} />, name: 'tables', path: '/tables', element: <Tables /> },
       //admin
-      { icon: <Squares2X2Icon {...icon} />, name: 'Dashboard', path: '/dashboard', element: <Dashboard /> },
-      { icon: <CubeIcon {...icon} />, name: 'allproduct', path: '/allproduct', element: <AllProducts /> },
-      { path: '/allproduct/addproducts', element: <AddProducts /> },
-      { path: '/allproduct/updateproduct', element: <UpdateProduct /> },
-      { icon: <UsersIcon {...icon} />, name: 'allcustomers', path: '/allcustomers', element: <CustomerTable /> },
+      // { icon: <Squares2X2Icon {...icon} />, name: 'Dashboard', path: '/dashboard', element: <Dashboard /> },
+      // { icon: <CubeIcon {...icon} />, name: 'allproduct', path: '/allproduct', element: <AllProducts /> },
+      // { path: '/allproduct/addproducts', element: <AddProducts /> },
+      // { path: '/allproduct/updateproduct', element: <UpdateProduct /> },
+      // { icon: <UsersIcon {...icon} />, name: 'allcustomers', path: '/allcustomers', element: <CustomerTable /> },
 
-      { icon: <NewspaperIcon {...icon} />, name: 'Orders', path: '/allorders', element: <Oders /> },
-      { path: '/allorders/ordersdetail', element: <OdersDetails /> },
+      // { icon: <NewspaperIcon {...icon} />, name: 'Orders', path: '/allorders', element: <Oders /> },
+      // { path: '/allorders/ordersdetail', element: <OdersDetails /> },
 
       //Product
       { path: '/product/details/:id', element: <Details /> },
