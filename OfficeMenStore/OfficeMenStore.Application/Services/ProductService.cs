@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using OfficeMenStore.Application.Interfaces;
-using OfficeMenStore.Application.Models;
+using OfficeMenStore.Application.Models.Product;
+using OfficeMenStore.Application.Models.Size;
 using OfficeMenStore.Application.Utilities.Constants;
 using OfficeMenStore.Domain.EF;
 using OfficeMenStore.Domain.Models;
@@ -49,8 +50,25 @@ namespace OfficeMenStore.Application.Services
         public async Task<ApiResult<GetProductResponseModel>> GetProductByIdAsync(int id)
         {
             var checkExit = await _context.Products
-                .Where (p => p.Id == id && p.IsDeleted == false)
-                .Select(p => _mapper.Map<GetProductResponseModel>(p))
+                .Include(p => p.Category)
+                .Where(p => p.Id == id && p.IsDeleted == false)
+                .Select(p => new GetProductResponseModel()
+                {
+                    Id = p.Id,
+                    CategoryName = p.Category.Name,
+                    Name = p.Name,
+                    Image = p.Image,
+                    Price = p.Price,
+                    IsDeleted = false,
+                    SizeProducts = p.SizeDetails.Select(s => new GetAllSizeByProductResponse()
+                    {
+                        Id = s.SizeProductId,
+                        Name = s.SizeProduct.Name,
+                        Amount = s.Quantity
+                        
+                    }).ToList(),
+                    CreatedTime = p.CreatedTime,
+                })
                 .FirstOrDefaultAsync();
             if(checkExit == null)
             {

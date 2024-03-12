@@ -16,7 +16,9 @@ namespace OfficeMenStore.Domain.EF
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
         public DbSet<FeedBack> FeedBacks { get; set; }
-
+        public DbSet<CartItem> CartItems { get; set; }
+        public DbSet<SizeProduct> SizeProducts { get; set; }
+        public DbSet<SizeDetail> SizeDetails { get; set; }
         public OfficeMenStoreDbContext(DbContextOptions<OfficeMenStoreDbContext> options) : base(options)
         {
 
@@ -25,12 +27,17 @@ namespace OfficeMenStore.Domain.EF
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfiguration(new ProductConfig())
-                        .ApplyConfiguration(new CategoryConfig())
-                        .ApplyConfiguration(new CartConfig())
-                        .ApplyConfiguration(new OrderConfig())
-                        .ApplyConfiguration(new FeedBackConfig())
-                        .ApplyConfiguration(new OrderDetailConfig())
-                        .ApplyConfiguration(new UserConfig());
+                .ApplyConfiguration(new CategoryConfig())
+                .ApplyConfiguration(new CartConfig())
+                .ApplyConfiguration(new OrderConfig())
+                .ApplyConfiguration(new FeedBackConfig())
+                .ApplyConfiguration(new OrderDetailConfig())
+                .ApplyConfiguration(new UserConfig())
+                .ApplyConfiguration(new SizeConfig())
+                .ApplyConfiguration(new SizeDetailConfig())
+                .ApplyConfiguration(new CartItemConfig());
+
+
             modelBuilder.FillDataProduct();
             modelBuilder.FillDataCategory();
             modelBuilder.FillDataCart();
@@ -38,6 +45,9 @@ namespace OfficeMenStore.Domain.EF
             modelBuilder.FillDataOrderDetail();
             modelBuilder.FillDataUser();
             modelBuilder.FillDataFeedBack();
+            modelBuilder.FillDataSize();
+            modelBuilder.FillDataSizeDetail();
+            modelBuilder.FillDataCartItem();
 
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
