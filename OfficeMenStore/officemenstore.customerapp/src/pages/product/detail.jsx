@@ -29,10 +29,9 @@ import productApi from '@/api/productApi';
 
 export function ProductDetails() {
   const dispatch = useDispatch();
-  const { id } = useParams();
-  const product = projectsData.find((product) => product.id === id);
-  const { img, title, tag, description, price } = product;
 
+  //const product = projectsData.find((product) => product.id === id);
+  //const { img, title, tag, description, price } = product;
   const [selectedSize, setSelectedSizes] = useState(null);
   const [Quantity, setQuantity] = useState(1);
   const [rating, setRating] = useState(null);
@@ -40,22 +39,16 @@ export function ProductDetails() {
   const reviewMsg = useRef('');
   const [tab, setTab] = useState('desc');
 
-  // const { id } = useParams();
-  // const [product, setProduct] = useState(null);
+  const { id } = useParams();
+  const [product, setProduct] = useState([]);
 
-  // useEffect(() => {
-  //   const getProductDetails = async () => {
-  //     try {
-  //       const data = await productApi.GetProductById(id);
-  //       setProduct(data);
-  //     } catch (error) {
-  //       console.error('Error fetching product details:', error);
-  //     }
-  //   };
-
-  //   getProductDetails();
-  // }, [id]);
-  console.log('sanpham', product);
+  useEffect(() => {
+    const productDetail = async () => {
+      const data = await productApi.GetProductById(id);
+      setProduct(data);
+    };
+    productDetail();
+  }, []);
 
   const addTocart = (product) => {
     if (!selectedSize) {
@@ -67,10 +60,10 @@ export function ProductDetails() {
       dispatch(
         cartActions.addItem({
           id: id,
-          productsName: title,
-          category: tag,
-          price: price,
-          imgUrl: img,
+          productsName: product.name,
+          category: product.category,
+          price: product.price,
+          imgUrl: product.image,
           quantity: Quantity,
           size: selectedSize,
         }),
@@ -80,8 +73,7 @@ export function ProductDetails() {
       toast.error('Product not found');
     }
   };
-  console.log(product);
-  // hàm tăng giảm số lượng
+
   const handleDec = (id) => {
     // Dispatch action giảm số lượng sản phẩm
     dispatch(cartActions.decreaseQuantity(id));
@@ -115,7 +107,11 @@ export function ProductDetails() {
           <div className="gird-cols-1 mb-12 grid gap-12 px-4 lg:grid-cols-2 xl:grid-cols-2">
             <div>
               <div className="flex flex-col gap-12">
-                <img className=" mt-5 h-96 w-full rounded-lg object-cover object-center" src={img} alt="nature image" />
+                <img
+                  className=" mt-5 h-96 w-full rounded-lg object-cover object-center"
+                  src={product.image}
+                  alt="nature image"
+                />
               </div>
             </div>
             <div>
@@ -123,8 +119,8 @@ export function ProductDetails() {
                 <div>
                   {/* tên giá giới thiệu */}
                   <div class="mb-3 mt-5">
-                    <span class="text-lg font-medium text-rose-500">{tag}</span>
-                    <h2 class="max-w-xl mt-2 mb-6 text-2xl font-bold md:text-4xl">{title}</h2>
+                    <span class="text-lg font-medium text-rose-500">{product.category}</span>
+                    <h2 class="max-w-xl mt-2 mb-6 text-2xl font-bold md:text-4xl">{product.name}</h2>
                     <div class="flex items-center mb-6">
                       <ul class="flex mr-2">
                         <li>
@@ -186,9 +182,9 @@ export function ProductDetails() {
                       </ul>
                       <p class="text-xs dark:text-gray-400 ">(2 customer reviews)</p>
                     </div>
-                    <p class="max-w-md mb-8 text-gray-700">{description}</p>
+                    <p class="max-w-md mb-8 text-gray-700"></p>
                     <p class="inline-block mb-3 text-4xl font-bold text-gray-700 gap-3">
-                      <span className="text-black ">{price} $</span>
+                      <span className="text-black ">{product.price} $</span>
                       <span class="text-base font-normal text-gray-500 line-through ml-5">$1500</span>
                     </p>
                   </div>
@@ -200,15 +196,17 @@ export function ProductDetails() {
                     <div className="flex items-center">
                       <h2 className="w-16 text-[15px] font-bold text-gray-500">Size</h2>
                       <div className="flex flex-wrap -mx-2 -mb-2">
-                        {['S', 'M', 'L', 'XL'].map((size) => (
+                        {product.sizeProducts?.map((row) => (
                           <button
-                            key={size}
-                            onClick={() => toggleSize(size)}
+                            key={row.id}
+                            onClick={() => toggleSize(row.name)}
                             className={`py-1 mb-2 mr-1 border w-11 focus:outline-none ${
-                              selectedSize === size ? 'bg-black text-white' : 'hover:border-sky-400 hover:text-sky-600'
+                              selectedSize === row.name
+                                ? 'bg-black text-white'
+                                : 'hover:border-sky-400 hover:text-sky-600'
                             }`}
                           >
-                            {size}
+                            {row.name}
                           </button>
                         ))}
                       </div>
@@ -272,7 +270,7 @@ export function ProductDetails() {
               }`}
               onClick={() => handleTabChange('details')}
             >
-              <strong>Despcription</strong>
+              Despcription
             </button>
             <button
               className={`py-2 px-4 ml-5 focus:outline-none ${
@@ -280,7 +278,7 @@ export function ProductDetails() {
               }`}
               onClick={() => handleTabChange('reviews')}
             >
-              <strong>Reviews</strong>
+              Reviews
             </button>
           </div>
 

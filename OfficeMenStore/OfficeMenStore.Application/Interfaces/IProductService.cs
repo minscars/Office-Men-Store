@@ -1,10 +1,10 @@
 ﻿using OfficeMenStore.Application.Utilities.Constants;
-using OfficeMenStore.Application.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OfficeMenStore.Application.Models.Product;
 
 namespace OfficeMenStore.Application.Interfaces
 {

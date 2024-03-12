@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
-using OfficeMenStore.Application.Models;
+using OfficeMenStore.Application.Models.Category;
+using OfficeMenStore.Application.Models.Product;
 using OfficeMenStore.Domain.Models;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,9 @@ namespace OfficeMenStore.Application.Mapping
         {
             CreateMap<Product, GetProductListResponseModel>().ReverseMap();
             CreateMap<Product, GetProductResponseModel>().ReverseMap();
+
+            CreateMap<Category, GetAllCategoryResponse>().ReverseMap();
+
         }
 
     }

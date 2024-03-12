@@ -16,21 +16,34 @@ import {
   Option,
   img,
 } from '@material-tailwind/react';
-
+import categoryApi from '@/api/categoryApi';
 import { HomeIcon, ChatBubbleLeftEllipsisIcon, Cog6ToothIcon, PencilIcon } from '@heroicons/react/24/solid';
 import { Link } from 'react-router-dom';
 import { ProfileInfoCard, MessageCard } from '@/widgets/cards';
 import { platformSettingsData, conversationsData, projectsData, servicesData } from '@/data';
 import StarIcon from '@mui/icons-material/Star';
 import { Box } from '@mui/material';
+import { useEffect, useState } from 'react';
+// import { useNavigate } from 'react-router-dom';
+// import { useDispatch } from 'react-redux';
+// import { cartActions } from '../../redux/slicse/cartSlice';
 
 export function Product() {
+  const [cateList, setCateList] = useState([]);
+  useEffect(() => {
+    const getAllCate = async () => {
+      const data = await categoryApi.GetAll();
+      setCateList(data);
+    };
+    getAllCate();
+  }, []);
+
   return (
     <>
       <Card className="mx-3 mt-10 mb-6 lg:mx-4 border border-blue-gray-100">
         <CardBody className="p-4">
           <div className="mb-10 flex items-center justify-between flex-wrap gap-6"></div>
-          <div className="mb-12 grid h-20 gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-4">
+          {/* <div className="mb-12 grid h-20 gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-4">
             {servicesData.map(({ img, title }) => (
               <Card className=" flex text-cent bg-gray-200 hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100">
                 <span className="flex items-center">
@@ -40,7 +53,7 @@ export function Product() {
                 </span>
               </Card>
             ))}
-          </div>
+          </div> */}
           {/* the product */}
           <div className="px-4 pb-4">
             <div className="flex items-center">
@@ -53,11 +66,9 @@ export function Product() {
               {/* Sắp xếp */}
               <div className="w-50 ml-auto">
                 <Select label="Short by">
-                  <Option>Low to High</Option>
-                  <Option>Material Tailwind React</Option>
-                  <Option>Material Tailwind Vue</Option>
-                  <Option>Material Tailwind Angular</Option>
-                  <Option>Material Tailwind Svelte</Option>
+                  {cateList?.map((item) => (
+                    <Option key={item.id}>{item.name}</Option>
+                  ))}
                 </Select>
               </div>
             </div>
