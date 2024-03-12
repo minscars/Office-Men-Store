@@ -584,7 +584,7 @@ export function UpdateProduct() {
                   </div>
                 ) : (
                   <div>
-                    <img src="./photo.png" alt="upload image" className=" rounded-lg flex items-center ml-20" />
+                    <img src={formik.values.img} alt="upload image" className=" rounded-lg flex items-center ml-20" />
                   </div>
                 )}
               </div>
