@@ -42,12 +42,12 @@ export const routes = [
         element: <Cart />,
       },
       { icon: <UserCircleIcon {...icon} />, name: 'Account', path: '/account', element: <Accounts /> },
-      {
-        icon: <InformationCircleIcon {...icon} />,
-        name: 'notifications',
-        path: '/notifications',
-        element: <Notifications />,
-      },
+      // {
+      //   icon: <InformationCircleIcon {...icon} />,
+      //   name: 'notifications',
+      //   path: '/notifications',
+      //   element: <Notifications />,
+      // },
       // { icon: <TableCellsIcon {...icon} />, name: 'tables', path: '/tables', element: <Tables /> },
 
       //Product

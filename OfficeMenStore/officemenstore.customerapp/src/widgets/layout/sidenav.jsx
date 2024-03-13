@@ -1,16 +1,14 @@
 // thanh nav ngang
-import { useSelector } from 'react-redux';
+
 import PropTypes from 'prop-types';
 import { Link, NavLink } from 'react-router-dom';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import { Avatar, Button, IconButton, Typography, ListItemSuffix, Chip } from '@material-tailwind/react';
+import { Avatar, Button, IconButton, Typography } from '@material-tailwind/react';
 import { useMaterialTailwindController, setOpenSidenav } from '@/context';
 import Logo from '@/components/image/logo-store.png';
 export function Sidenav({ brandImg, brandName, routes }) {
   const [controller, dispatch] = useMaterialTailwindController();
   const { sidenavColor, sidenavType, openSidenav } = controller;
-
-  const cartItems = useSelector((state) => state.cart.cartItems);
   const sidenavTypes = {
     dark: 'bg-gradient-to-br from-gray-800 to-gray-900',
     white: 'bg-white shadow-sm',
@@ -73,34 +71,11 @@ export function Sidenav({ brandImg, brandName, routes }) {
                         <Typography color="inherit" className="font-medium capitalize">
                           {name}
                         </Typography>
-                        {name === 'Cart' && (
-                          <ListItemSuffix>
-                            {' '}
-                            {/* Add ListItemSuffix here */}
-                            <Chip
-                              value={cartItems?.length}
-                              size="sm"
-                              variant={isActive ? 'gradient' : 'text'}
-                              color={isActive ? sidenavColor : sidenavType === 'dark' ? 'white' : 'blue-gray'}
-                              className="blue-gray uppercase opacity-75"
-                            />
-                          </ListItemSuffix>
-                        )}
                       </Button>
                     )}
                   </NavLink>
                 </li>
               ))}
-          </ul>
-        ))}
-      </div>
-      <div className="absolute bottom-10 left-0 right-0"></div>
-      <div className="mx-10 grid grid-cols-3  mt-65">
-        {LINKS.map(({ title }) => (
-          <ul key={title}>
-            <Typography variant="h6" color="blue-gray" className="font-medium opacity-60 mb-auto">
-              {title}
-            </Typography>
           </ul>
         ))}
       </div>
