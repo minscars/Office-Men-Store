@@ -317,11 +317,11 @@ function Payment({ formData, onSubmit, handlePrev }) {
               </Typography>
             </div>
 
-            <div className="mt-5 flex justify-center items-center">
+            <div className=" mx-5 mt-5 flex justify-center items-center">
               {/* <Button onClick={handlePrev} disabled={isFirstStep}>
                     Prev
                   </Button> */}
-              <Button onClick={formik.handleSubmit} disabled={!formik.isValid}>
+              <Button onClick={formik.handleSubmit} disabled={!formik.isValid} className="mx-5">
                 Coutinute to payment
               </Button>
             </div>
