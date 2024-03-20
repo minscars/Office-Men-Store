@@ -3,12 +3,16 @@
 import PropTypes from 'prop-types';
 import { Link, NavLink } from 'react-router-dom';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import { Avatar, Button, IconButton, Typography } from '@material-tailwind/react';
+import { Avatar, Button, IconButton, Typography, Chip, ListItemSuffix } from '@material-tailwind/react';
 import { useMaterialTailwindController, setOpenSidenav } from '@/context';
 import Logo from '@/components/image/logo-store.png';
+import { useSelector } from 'react-redux';
+
 export function Sidenav({ brandImg, brandName, routes }) {
+  const cartItems = useSelector((state) => state.cart.cartItems);
   const [controller, dispatch] = useMaterialTailwindController();
   const { sidenavColor, sidenavType, openSidenav } = controller;
+
   const sidenavTypes = {
     dark: 'bg-gradient-to-br from-gray-800 to-gray-900',
     white: 'bg-white shadow-sm',
@@ -39,7 +43,6 @@ export function Sidenav({ brandImg, brandName, routes }) {
         {/*  */}
       </div>
       {/*đăng nhập đăng xuất */}
-
       <div className="m-4">
         {routes.map(({ layout, title, pages }, key) => (
           <ul key={key} className="mb-4 flex flex-col gap-1">
@@ -71,6 +74,17 @@ export function Sidenav({ brandImg, brandName, routes }) {
                         <Typography color="inherit" className="font-medium capitalize">
                           {name}
                         </Typography>
+                        {name === 'Cart' && (
+                          <ListItemSuffix>
+                            <Chip
+                              value={cartItems?.length}
+                              size="sm"
+                              variant="ghost"
+                              color="blue-gray"
+                              className="rounded-full"
+                            />
+                          </ListItemSuffix>
+                        )}
                       </Button>
                     )}
                   </NavLink>
@@ -93,7 +107,5 @@ Sidenav.propTypes = {
   brandName: PropTypes.string,
   routes: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
-
 Sidenav.displayName = '/src/widgets/layout/sidnave.jsx';
-
 export default Sidenav;

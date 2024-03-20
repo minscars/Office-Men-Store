@@ -14,18 +14,18 @@ export function Navbar({ brandName, routes, action }) {
 
   const navList = (
     <ul className="mb-4 mt-2 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
-    {routes.map(({ name, path, icon }) => (
-      <Typography key={name} as="li" variant="small" color="blue-gray" className="capitalize">
-        <Link to={path} className="flex items-center gap-1 p-1 font-normal">
-          {icon &&
-            React.createElement(icon, {
-              className: 'w-[18px] h-[18px] opacity-50 mr-1',
-            })}
-          {name}
-        </Link>
-      </Typography>
-    ))}
-  </ul>
+      {routes.map(({ name, path, icon }) => (
+        <Typography key={name} as="li" variant="small" color="blue-gray" className="capitalize">
+          <Link to={path} className="flex items-center gap-1 p-1 font-normal">
+            {icon &&
+              React.createElement(icon, {
+                className: 'w-[18px] h-[18px] opacity-50 mr-1',
+              })}
+            {name}
+          </Link>
+        </Typography>
+      ))}
+    </ul>
   );
 
   return (
@@ -52,6 +52,34 @@ export function Navbar({ brandName, routes, action }) {
             <Bars3Icon strokeWidth={2} className="h-6 w-6" />
           )}
         </IconButton>
+        <div>
+          <footer className="w-full bg-white px-8 py-1 ">
+            <div className="flex flex-row flex-wrap items-center justify-center gap-y-6 gap-x-12 bg-white text-center md:justify-between">
+              <ul className="flex flex-wrap items-center gap-y-2 gap-x-8">
+                <li>
+                  <Typography
+                    as="a"
+                    href="#"
+                    color="blue-gray"
+                    className="font-normal transition-colors hover:text-blue-500 focus:text-blue-500"
+                  >
+                    About Us
+                  </Typography>
+                </li>
+                <li>
+                  <Typography
+                    as="a"
+                    href="#"
+                    color="blue-gray"
+                    className="font-normal transition-colors hover:text-blue-500 focus:text-blue-500"
+                  >
+                    Contact Us
+                  </Typography>
+                </li>
+              </ul>
+            </div>
+          </footer>
+        </div>
       </div>
       <Collapse open={openNav}>
         <div className="container mx-auto">
