@@ -17,9 +17,7 @@ import {
   img,
 } from '@material-tailwind/react';
 import categoryApi from '@/api/categoryApi';
-import { HomeIcon, ChatBubbleLeftEllipsisIcon, Cog6ToothIcon, PencilIcon } from '@heroicons/react/24/solid';
 import { Link } from 'react-router-dom';
-import { ProfileInfoCard, MessageCard } from '@/widgets/cards';
 import { platformSettingsData, conversationsData, projectsData, servicesData } from '@/data';
 import StarIcon from '@mui/icons-material/Star';
 import { Box } from '@mui/material';
@@ -27,10 +25,17 @@ import { useEffect, useState } from 'react';
 // import { useNavigate } from 'react-router-dom';
 // import { useDispatch } from 'react-redux';
 // import { cartActions } from '../../redux/slicse/cartSlice';
+import productApi from '@/api/productApi';
 
 export function Product() {
+  const [productList, setProducts] = useState([]);
   const [cateList, setCateList] = useState([]);
   useEffect(() => {
+    const getall = async () => {
+      const data = await productApi.GetAll();
+      setProducts(data);
+    };
+    getall();
     const getAllCate = async () => {
       const data = await categoryApi.GetAll();
       setCateList(data);
@@ -74,21 +79,18 @@ export function Product() {
             </div>
 
             <div className="mt-6 grid grid-cols-1 gap-12 md:grid-cols-2 xl:grid-cols-4">
-              {projectsData.map(({ img, title, price, description, tag, route, members, id }) => (
-                <Card key={title} color="transparent" shadow={false}>
-                  <CardHeader floated={false} color="gray" className="mx-0 mt-0 mb-4 h-64 xl:h-40">
-                    <img src={img} alt={title} className="h-full w-full object-cover" />
-                  </CardHeader>
+              {productList?.map((row) => (
+                <Card key={row.id} color="transparent" shadow={false}>
+                  <img src={row.image} alt="" className="rounded-[10px] border-2 h-[250px] w-auto object-cover" />
+
                   <CardBody className="py-0 px-1">
-                    <Typography variant="small" className="font-normal text-blue-gray-500">
-                      {tag}
-                    </Typography>
+                    <Typography variant="small" className="font-normal text-blue-gray-500"></Typography>
                     <Typography variant="h5" color="blue-gray" className="mt-1 mb-2">
-                      {title}
+                      {row.name}
                     </Typography>
                     <div className="flex items-center gap-4">
                       <Typography variant="h5" color="blue-gray" className="mt-1 mb-2">
-                        {price}$
+                        {row.price}$
                       </Typography>
 
                       <Typography
@@ -96,7 +98,7 @@ export function Product() {
                         color="blue-gray"
                         className="mt-1 mb-2 left-0 text-blue-gray-500 line-through"
                       >
-                        {price * 2}$
+                        {row.price * 2}$
                       </Typography>
                     </div>
 
@@ -110,9 +112,8 @@ export function Product() {
                       <img src="" alt="" />
                     </span>
                   </CardBody>
-
                   <CardFooter className="pt-1 px-0">
-                    <Link to={`/user/product/details/${id}`}>
+                    <Link to={`/user/product/details/${row.id}`}>
                       <Button
                         ripple={false}
                         fullWidth={true}

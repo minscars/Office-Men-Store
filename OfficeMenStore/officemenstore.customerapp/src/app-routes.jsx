@@ -23,7 +23,6 @@ import Details from './pages/product/detail';
 import MyOrderDetail from './pages/accounts/orderhistorydetail';
 import { Checkout, Cart, Success } from '@/pages/cart';
 import { Accounts } from '@/pages/accounts';
-import { Oders, OdersDetails, AllProducts, AddProducts, CustomerTable, UpdateProduct } from '@/pages/admin';
 const icon = {
   className: 'w-5 h-5 text-inherit',
 };

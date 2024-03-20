@@ -16,13 +16,9 @@ import {
   Option,
 } from '@material-tailwind/react';
 import Carousel from '@/components/carousel/index';
-import { HomeIcon, ChatBubbleLeftEllipsisIcon, Cog6ToothIcon, PencilIcon } from '@heroicons/react/24/solid';
-import { Link } from 'react-router-dom';
-import { ProfileInfoCard, MessageCard } from '@/widgets/cards';
-import { platformSettingsData, conversationsData, projectsData, servicesData } from '@/data';
-import { StatisticsCard } from '@/widgets/cards';
 import productApi from '@/api/productApi';
 import categoryApi from '@/api/categoryApi';
+import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 export function Home() {
   const [productList, setProducts] = useState([]);
@@ -81,7 +77,7 @@ export function Home() {
             <div className="mt-4 grid grid-cols-1 gap-12 md:grid-cols-2 xl:grid-cols-4">
               {productList?.map((row) => (
                 <Card key={row.id} color="transparent" shadow={false}>
-                  <img src={row.image} alt="" className="rounded-[10px] border-2 h-[220px] w-auto object-cover" />
+                  <img src={row.image} alt="" className="rounded-[10px] border-2 h-[250px] w-auto object-cover" />
 
                   <CardBody className="py-0 px-1">
                     <Typography variant="small" className="font-normal text-blue-gray-500"></Typography>
@@ -113,13 +109,16 @@ export function Home() {
                     </span>
                   </CardBody>
                   <CardFooter className="pt-1 px-0">
-                    <Button
-                      ripple={false}
-                      fullWidth={true}
-                      className="bg-blue-gray-900/10 text-blue-gray-900 shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100"
-                    >
-                      Add to Cart
-                    </Button>
+                    <Link to={`/user/product/details/${row.id}`}>
+                      <Button
+                        ripple={false}
+                        fullWidth={true}
+                        // onClick={() => addTocart(id)}
+                        className="bg-blue-gray-900/10 text-blue-gray-900 shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100"
+                      >
+                        Add to Cart
+                      </Button>
+                    </Link>
                   </CardFooter>
                 </Card>
               ))}
