@@ -100,18 +100,68 @@ const cartSlice = createSlice({
         state.totalQuantity,
       );
     },
+    //============ increaseQuantity ===========
+
+    increaseQuantity(state, action) {
+      const { id, size } = action.payload;
+      const existingItem = state.cartItems.find((item) => item.id === id && item.size === size);
+
+      if (existingItem) {
+        existingItem.quantity++;
+        existingItem.totalPrice = Number(existingItem.totalPrice) + Number(existingItem.price);
+        state.totalQuantity++;
+        state.totalAmount += Number(existingItem.price);
+        setItemFunc(state.cartItems, state.totalAmount, state.totalQuantity);
+      }
+    },
+
+    //============ ===========
+    decreaseQuantity(state, action) {
+      const { id, size } = action.payload;
+      const existingItem = state.cartItems.find((item) => item.id === id && item.size === size);
+
+      if (existingItem && existingItem.quantity > 1) {
+        existingItem.quantity--;
+        existingItem.totalPrice = Number(existingItem.totalPrice) - Number(existingItem.price);
+        state.totalQuantity--;
+        state.totalAmount -= Number(existingItem.price);
+        setItemFunc(state.cartItems, state.totalAmount, state.totalQuantity);
+      }
+    },
 
     //============ delete item ===========
 
-    deleteItem(state, action) {
-      const id = action.payload;
-      const existingItem = state.cartItems.find((item) => item.id === id);
+    // deleteItem(state, action) {
+    //   const id = action.payload;
+    //   const existingItem = state.cartItems.find((item) => item.id === id);
 
-      if (existingItem) {
-        state.cartItems = state.cartItems.filter((item) => item.id !== id);
-        state.totalQuantity = state.totalQuantity - existingItem.quantity;
+    //   if (existingItem) {
+    //     state.cartItems = state.cartItems.filter((item) => item.id !== id);
+    //     state.totalQuantity = state.totalQuantity - existingItem.quantity;
+    //   }
+
+    //   state.totalAmount = state.cartItems.reduce(
+    //     (total, item) => total + Number(item.price) * Number(item.quantity),
+    //     0,
+    //   );
+    //   setItemFunc(
+    //     state.cartItems.map((item) => item),
+    //     state.totalAmount,
+    //     state.totalQuantity,
+    //   );
+    // },
+    deleteItem(state, action) {
+      const { id, size } = action.payload;
+
+      // Tìm sản phẩm trong giỏ hàng dựa trên id và size
+      const existingItems = state.cartItems.filter((item) => item.id === id && item.size === size);
+
+      if (existingItems) {
+        state.cartItems = state.cartItems.filter((item) => item.id !== id && item.size !== size);
+        state.totalQuantity = state.totalQuantity - existingItems.quantity;
       }
 
+      // Tính lại tổng số tiền
       state.totalAmount = state.cartItems.reduce(
         (total, item) => total + Number(item.price) * Number(item.quantity),
         0,

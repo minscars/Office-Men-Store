@@ -19,16 +19,23 @@ import {
 import { EllipsisVerticalIcon, ArrowUpIcon } from '@heroicons/react/24/outline';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
 import { StatisticsCard } from '@/widgets/cards';
 import { StatisticsChart } from '@/widgets/charts';
 import { statisticsCardsData, statisticsChartsData, projectsTableData, ordersOverviewData } from '@/data';
 import { CheckCircleIcon, ClockIcon } from '@heroicons/react/24/solid';
-
+import { useNavigate } from 'react-router-dom';
 import { cartActions } from '../../redux/slicse/cartSlice';
+import { jwtDecode } from 'jwt-decode';
+import { toast } from 'react-toastify';
 
 export function Cart() {
   const cartItems = useSelector((state) => state.cart.cartItems);
   const totalAmount = useSelector((state) => state.cart.totalAmount);
+  const [isEmpty, setIsEmpty] = useState(cartItems.length === 0); // check gio hang co rong hay không
+
+  const [user, setUser] = useState(true); // set để check đăng nhập
+  const navigate = useNavigate();
   console.log('cart', cartItems);
 
   const handleDec = (id, size) => {
@@ -44,10 +51,29 @@ export function Cart() {
   };
 
   const dispatch = useDispatch();
-  const deleteProduct = (id) => {
-    dispatch(cartActions.deleteItem(id));
+
+  const deleteProduct = (id, size) => {
+    dispatch(cartActions.deleteItem({ id, size }));
+    console.log(cartItems);
+    setIsEmpty(cartItems.length);
   };
-  console.log(deleteProduct);
+
+  const checkLoggedIn = () => {
+    // // const token = window.localStorage.getItem('token');
+    if (user) {
+      navigate('/user/cart/checkout');
+      // const user = jwtDecode(token);
+      // if (user) {
+      //   navigate('/checkout');
+      // }
+    } else {
+      toast.error('Please signin!');
+      navigate('/auth/sign-in');
+      // User is not logged in, show alert or handle as needed
+      // For example, you can display an alert
+      // Alert.show('Please log in to proceed!');
+    }
+  };
 
   return (
     <div className="mt-12">
@@ -122,7 +148,7 @@ export function Cart() {
                               {/* <span className="text-red-500 text-xs capitalize text-[15px]">{cart?.category}</span> */}
                               <div
                                 className="font-semibold hover:text-red-500 text-gray-500 text-xs cursor-pointer"
-                                onClick={() => deleteProduct(id)}
+                                onClick={() => deleteProduct(id, size)}
                               >
                                 Remove
                               </div>
@@ -254,18 +280,17 @@ export function Cart() {
               </div>
             </CardBody>
             <CardFooter className="pt-1 px-0">
-              <Link to={'checkout/'}>
-                <div className="flex items-center ml-[130px]">
-                  <Button
-                    ripple={false}
-                    fullWidth={false}
-                    // onClick={() => addTocart(id)}
-                    class=" py-3 px-10 text-center bg-black text-white shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100"
-                  >
-                    Checkout
-                  </Button>
-                </div>
-              </Link>
+              <div className="flex items-center ml-[130px]">
+                <Button
+                  ripple={false}
+                  fullWidth={false}
+                  onClick={checkLoggedIn}
+                  disabled={isEmpty}
+                  class=" py-3 px-10 text-center bg-black text-white shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100"
+                >
+                  Checkout
+                </Button>
+              </div>
             </CardFooter>
           </Card>
         </div>
