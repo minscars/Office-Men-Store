@@ -21,7 +21,7 @@ import Home from './pages/home';
 import Product from './pages/product';
 import Details from './pages/product/detail';
 import MyOrderDetail from './pages/accounts/orderhistorydetail';
-import { Checkout, Cart } from '@/pages/cart';
+import { Checkout, Cart, Success } from '@/pages/cart';
 import { Accounts } from '@/pages/accounts';
 const icon = {
   className: 'w-5 h-5 text-inherit',
@@ -54,6 +54,7 @@ export const routes = [
 
       //Cart
       { path: '/cart/checkout/', name: 'Checkout', element: <Checkout /> },
+      { path: '/cart/success/', name: 'Success', element: <Success /> },
       //Accout
       { path: '/account/orderdetails', name: 'myorder', element: <MyOrderDetail /> },
     ],

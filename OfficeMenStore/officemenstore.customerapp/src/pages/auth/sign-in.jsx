@@ -106,11 +106,13 @@ export function SignIn() {
             />
           </div>
 
+
           <Button type="submit" className="mt-6" fullWidth>
             Sign In
           </Button>
 
           <div className="flex items-center justify-between gap-2 mt-6">
+
             <Typography variant="small" className="font-medium text-gray-900">
               <a href="#">Forgot Password?</a>
             </Typography>
