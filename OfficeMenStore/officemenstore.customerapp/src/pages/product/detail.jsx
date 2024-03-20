@@ -26,6 +26,7 @@ import { useDispatch } from 'react-redux';
 import { cartActions } from '../../redux/slicse/cartSlice';
 import { toast } from 'react-toastify';
 import productApi from '@/api/productApi';
+import { PlayDisabled } from '@mui/icons-material';
 
 export function ProductDetails() {
   const dispatch = useDispatch();
@@ -108,7 +109,7 @@ export function ProductDetails() {
             <div>
               <div className="flex flex-col gap-12">
                 <img
-                  className=" mt-5 h-96 w-full rounded-lg object-cover object-center"
+                  className=" mt-5 h-[480px] w-full rounded-lg object-cover object-center"
                   src={product.image}
                   alt="nature image"
                 />
@@ -199,12 +200,13 @@ export function ProductDetails() {
                         {product.sizeProducts?.map((row) => (
                           <button
                             key={row.id}
+                            {...(row.amount === 0 ? 'disabled = {true}' : 'disabled = {false}')}
                             onClick={() => toggleSize(row.name)}
                             className={`py-1 mb-2 mr-1 border w-11 focus:outline-none ${
                               selectedSize === row.name
                                 ? 'bg-black text-white'
                                 : 'hover:border-sky-400 hover:text-sky-600'
-                            }`}
+                            } `}
                           >
                             {row.name}
                           </button>
