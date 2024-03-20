@@ -19,14 +19,6 @@ import * as Yup from 'yup';
 import { toast } from 'react-toastify';
 import { useSelector, useDispatch } from 'react-redux';
 
-import Radio from '@mui/joy/Radio';
-import RadioGroup from '@mui/joy/RadioGroup';
-import Sheet from '@mui/joy/Sheet';
-import { MdOutlinePayment } from 'react-icons/md';
-import paypal from './images/Onine.png';
-// import Stripe from 'stripe';
-// import { loadStripe } from '@stripe/stripe-js';
-import { propTypesError } from '@material-tailwind/react/types/components/input';
 import { useNavigate } from 'react-router-dom';
 // import getStripe from '../../lib/getStripe';
 import Success from './success';
