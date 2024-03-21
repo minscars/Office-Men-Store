@@ -6,9 +6,7 @@ const productApi = {
 
   GetProductById: (id) => {
     return API.get(`/Products/${id}`);
-  }
+  },
 };
-
-
 
 export default productApi;
