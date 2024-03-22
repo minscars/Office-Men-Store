@@ -75,6 +75,17 @@ export function Cart() {
     }
   };
 
+  const checkLoggedIn = () => {
+    const token = window.localStorage.getItem('token');
+    const user = jwtDecode(token);
+    if (user) {
+      navigate('/user/cart/checkout');
+    } else {
+      toast.error('Please signin!');
+      navigate('/auth/sign-in');
+    }
+  };
+
   return (
     <div className="mt-12">
       <div className="mb-4 grid grid-cols-1 gap-6 xl:grid-cols-3">

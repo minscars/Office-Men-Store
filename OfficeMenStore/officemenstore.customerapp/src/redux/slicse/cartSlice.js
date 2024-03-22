@@ -153,11 +153,9 @@ const cartSlice = createSlice({
     deleteItem(state, action) {
       const { id, size } = action.payload;
 
-      // Tìm sản phẩm trong giỏ hàng dựa trên id và size
-      const existingItems = state.cartItems.filter((item) => item.id === id && item.size === size);
 
-      if (existingItems) {
-        state.cartItems = state.cartItems.filter((item) => item.id !== id && item.size !== size);
+      if (existingItems.length > 0) {
+        state.cartItems = state.cartItems.filter((item) => !(item.id == id && item.size == size));
         state.totalQuantity = state.totalQuantity - existingItems.quantity;
       }
 
