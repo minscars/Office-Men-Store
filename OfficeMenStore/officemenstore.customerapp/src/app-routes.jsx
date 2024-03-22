@@ -57,6 +57,7 @@ export const routes = [
       { path: '/cart/success/', name: 'Success', element: <Success /> },
       //Accout
       { path: '/account/orderdetails', name: 'myorder', element: <MyOrderDetail /> },
+      { path: '/cart/sign-in', name: 'myorder', element: <SignIn /> },
     ],
   },
   {

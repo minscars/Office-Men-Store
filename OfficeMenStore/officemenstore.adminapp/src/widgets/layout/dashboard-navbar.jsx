@@ -21,15 +21,15 @@ import {
   CreditCardIcon,
   Bars3Icon,
 } from '@heroicons/react/24/solid';
-import { useMaterialTailwindController, setOpenConfigurator, setOpenSidenav } from '@/context';
+import { useMaterialTailwindController, setOpenSidenav } from '@/context';
 
 export function DashboardNavbar() {
   const [controller, dispatch] = useMaterialTailwindController();
   const { fixedNavbar, openSidenav } = controller;
   // chinh lai duong dan tren thanh navbar
   const location = useLocation();
-  const pathnames = location.pathname.split("/").filter((x) => x);
-  let breadcrumbPath = "";
+  const pathnames = location.pathname.split('/').filter((x) => x);
+  let breadcrumbPath = '';
   const namepage = pathnames[pathnames.length - 1]; // Lấy phần tử cuối cùng trong mảng pathnames
 
   return (
@@ -41,29 +41,32 @@ export function DashboardNavbar() {
     >
       <div className="flex flex-col-reverse justify-between gap-6 md:flex-row md:items-center">
         <div className="capitalize">
-  
-    <Breadcrumbs className={`bg-transparent p-0 transition-all ${fixedNavbar ? 'mt-1' : ''}`}>
-    {/* <Link to="/">Home</Link> */}
-    {pathnames.map((name, index) => {
-      breadcrumbPath += `/${name}`;
-      const isLast = index === pathnames.length - 1;
+          <Breadcrumbs className={`bg-transparent p-0 transition-all ${fixedNavbar ? 'mt-1' : ''}`}>
+            {/* <Link to="/">Home</Link> */}
+            {pathnames.map((name, index) => {
+              breadcrumbPath += `/${name}`;
+              const isLast = index === pathnames.length - 1;
 
-      return isLast ? (
-        <Typography key={breadcrumbPath} variant="small" color="blue-gray" className="font-normal">
-          {name}
-        </Typography>
-      ) : (
-        <span key={breadcrumbPath}>
-          {" "}
-          <Link to={breadcrumbPath}>
-            <Typography variant="small" color="blue-gray" className="font-normal opacity-50 transition-all hover:text-blue-500 hover:opacity-100">
-              {name}
-            </Typography>
-          </Link>
-        </span>
-      );
-    })}
-  </Breadcrumbs>
+              return isLast ? (
+                <Typography key={breadcrumbPath} variant="small" color="blue-gray" className="font-normal">
+                  {name}
+                </Typography>
+              ) : (
+                <span key={breadcrumbPath}>
+                  {' '}
+                  <Link to={breadcrumbPath}>
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal opacity-50 transition-all hover:text-blue-500 hover:opacity-100"
+                    >
+                      {name}
+                    </Typography>
+                  </Link>
+                </span>
+              );
+            })}
+          </Breadcrumbs>
           <Typography variant="h6" color="blue-gray">
             {namepage}
           </Typography>
@@ -72,6 +75,7 @@ export function DashboardNavbar() {
           <div className="mr-auto md:mr-4 md:w-56">
             <Input label="Search" />
           </div>
+
           <IconButton
             variant="text"
             color="blue-gray"
@@ -80,6 +84,7 @@ export function DashboardNavbar() {
           >
             <Bars3Icon strokeWidth={3} className="h-6 w-6 text-blue-gray-500" />
           </IconButton>
+
           <Link to="/auth/sign-in">
             <Button variant="text" color="blue-gray" className="hidden items-center gap-1 px-4 xl:flex normal-case">
               <UserCircleIcon className="h-5 w-5 text-blue-gray-500" />
@@ -155,9 +160,10 @@ export function DashboardNavbar() {
               </MenuItem>
             </MenuList>
           </Menu>
-          <IconButton variant="text" color="blue-gray" onClick={() => setOpenConfigurator(dispatch, true)}>
+
+          {/* <IconButton variant="text" color="blue-gray" onClick={() => setOpenConfigurator(dispatch, true)}>
             <Cog6ToothIcon className="h-5 w-5 text-blue-gray-500" />
-          </IconButton>
+          </IconButton> */}
         </div>
       </div>
     </Navbar>
