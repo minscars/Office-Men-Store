@@ -59,23 +59,6 @@ export function Cart() {
   };
 
   const checkLoggedIn = () => {
-    // // const token = window.localStorage.getItem('token');
-    if (user) {
-      navigate('/user/cart/checkout');
-      // const user = jwtDecode(token);
-      // if (user) {
-      //   navigate('/checkout');
-      // }
-    } else {
-      toast.error('Please signin!');
-      navigate('/auth/sign-in');
-      // User is not logged in, show alert or handle as needed
-      // For example, you can display an alert
-      // Alert.show('Please log in to proceed!');
-    }
-  };
-
-  const checkLoggedIn = () => {
     const token = window.localStorage.getItem('token');
     const user = jwtDecode(token);
     if (user) {
