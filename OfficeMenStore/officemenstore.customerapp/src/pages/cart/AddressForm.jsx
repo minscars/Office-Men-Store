@@ -22,7 +22,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import Radio from '@mui/joy/Radio';
 import RadioGroup from '@mui/joy/RadioGroup';
 import Sheet from '@mui/joy/Sheet';
-import { MdOutlinePayment } from 'react-icons/md';
 import paypal from './images/Onine.png';
 
 import { propTypesError } from '@material-tailwind/react/types/components/input';
