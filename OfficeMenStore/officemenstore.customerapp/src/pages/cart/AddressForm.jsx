@@ -20,13 +20,8 @@ import { toast } from 'react-toastify';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { useNavigate } from 'react-router-dom';
-// import getStripe from '../../lib/getStripe';
 import Success from './success';
 const { Option } = Select;
-
-// const stripePromise = loadStripe(
-//   'pk_test_51Ovc3HK59UUfgaiCt9snihZ1Z2rznv9aUA7qQc4nUGa8E7lW1aT0z9bVlmN8QCv6Hkgnynzf0xvB3tXomCGLn90B00PcqCphnx',
-// );
 
 function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
   const cartItems = useSelector((state) => state.cart.cartItems);
@@ -343,90 +338,90 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
       }),
     };
 
-    var options = {
-      key: 'rzp_test_nW41YserAsUiCq',
-      key_secret: 'HhmQn4VZyicKSaBNMStFRhhD',
-      amount: (totalAmount * 0.1).toFixed(4),
-      currency: 'USD',
-      order_receipt: 'order_rcptid_',
-      name: 'Thanh toán online',
-      description: 'for testing purpose',
-      handler: function (response) {
-        console.log(response);
-        toast.success('Payment Successful');
+  //   var options = {
+  //     key: 'rzp_test_nW41YserAsUiCq',
+  //     key_secret: 'HhmQn4VZyicKSaBNMStFRhhD',
+  //     amount: (totalAmount * 0.1).toFixed(4),
+  //     currency: 'USD',
+  //     order_receipt: 'order_rcptid_',
+  //     name: 'Thanh toán online',
+  //     description: 'for testing purpose',
+  //     handler: function (response) {
+  //       console.log(response);
+  //       toast.success('Payment Successful');
 
-        // const paymentId = response.razorpay_payment_id;
-        // const orderInfo = {
-        //     cartItems,
-        //     addressInfo,
-        //     date: new Date().toLocaleString(
-        //         "en-US",
-        //         {
-        //             month: "short",
-        //             day: "2-digit",
-        //             year: "numeric",
-        //         }
-        //     ),
-        //     email: currentUser?.email,
-        //     userid: currentUser?.uid,
-        //     paymentId,
-        //     totalAmount,
-        //     Status:"Đã thanh toán"
-        // }
+  //       // const paymentId = response.razorpay_payment_id;
+  //       // const orderInfo = {
+  //       //     cartItems,
+  //       //     addressInfo,
+  //       //     date: new Date().toLocaleString(
+  //       //         "en-US",
+  //       //         {
+  //       //             month: "short",
+  //       //             day: "2-digit",
+  //       //             year: "numeric",
+  //       //         }
+  //       //     ),
+  //       //     email: currentUser?.email,
+  //       //     userid: currentUser?.uid,
+  //       //     paymentId,
+  //       //     totalAmount,
+  //       //     Status:"Đã thanh toán"
+  //       // }
 
-        // try {
-        //     const orderRef = collection(db, 'order')
-        //     addDoc(orderRef, orderInfo);
+  //       // try {
+  //       //     const orderRef = collection(db, 'order')
+  //       //     addDoc(orderRef, orderInfo);
 
-        //     const updateProductQuantities = async () => {
-        //       for (const item of cartItems) {
-        //         console.log("item", item.quantity)
-        //         // Replace 'products' with the actual collection name in your Firebase
-        //         const productRef = doc(db, 'products', item.id);
+  //       //     const updateProductQuantities = async () => {
+  //       //       for (const item of cartItems) {
+  //       //         console.log("item", item.quantity)
+  //       //         // Replace 'products' with the actual collection name in your Firebase
+  //       //         const productRef = doc(db, 'products', item.id);
 
-        //         try {
-        //           // Get the product document
-        //           const productSnapshot = await getDoc(productRef);
+  //       //         try {
+  //       //           // Get the product document
+  //       //           const productSnapshot = await getDoc(productRef);
 
-        //           if (productSnapshot.exists()) {
-        //             const productData = productSnapshot.data();
-        //             console.log("productData", productData)
+  //       //           if (productSnapshot.exists()) {
+  //       //             const productData = productSnapshot.data();
+  //       //             console.log("productData", productData)
 
-        //             if (productData.quantity >= item.quantity) {
-        //               // Calculate the new available quantity after purchase
-        //               const newQuantity = productData.quantity - item.quantity;
+  //       //             if (productData.quantity >= item.quantity) {
+  //       //               // Calculate the new available quantity after purchase
+  //       //               const newQuantity = productData.quantity - item.quantity;
 
-        //               // Update the product's availableQuantity in Firebase
-        //               await updateDoc(productRef, { quantity: newQuantity });
-        //             } else {
-        //               // Handle the case where the quantity goes negative (out of stock)
-        //               // You may want to display an error message or take appropriate action
-        //               toast.error('Product is out of stock');
-        //             }
-        //           }
-        //         } catch (error) {
-        //           console.error("Error updating product quantity:", error);
-        //         }
-        //       }
-        //     };
-        //     updateProductQuantities();
+  //       //               // Update the product's availableQuantity in Firebase
+  //       //               await updateDoc(productRef, { quantity: newQuantity });
+  //       //             } else {
+  //       //               // Handle the case where the quantity goes negative (out of stock)
+  //       //               // You may want to display an error message or take appropriate action
+  //       //               toast.error('Product is out of stock');
+  //       //             }
+  //       //           }
+  //       //         } catch (error) {
+  //       //           console.error("Error updating product quantity:", error);
+  //       //         }
+  //       //       }
+  //       //     };
+  //       //     updateProductQuantities();
 
-        // } catch (error) {
-        //     console.log(error)
-        // }
+  //       // } catch (error) {
+  //       //     console.log(error)
+  //       // }
 
-        // Loop through the cart items and update the quantity for each product
-      },
-      theme: {
-        color: '#3399cc',
-      },
-    };
+  //       // Loop through the cart items and update the quantity for each product
+  //     },
+  //     theme: {
+  //       color: '#3399cc',
+  //     },
+  //   };
 
-    var pay = new window.Razorpay(options);
-    pay.open();
-    console.log(pay);
-    navigate('/success');
-  };
+  //   var pay = new window.Razorpay(options);
+  //   pay.open();
+  //   console.log(pay);
+  //   navigate('/success');
+  // };
 
   const [valuepayment, setvaluepayment] = useState();
   const dispatch = useDispatch();

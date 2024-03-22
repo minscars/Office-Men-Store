@@ -29,6 +29,10 @@ import { cartActions } from '../../redux/slicse/cartSlice';
 export function Cart() {
   const cartItems = useSelector((state) => state.cart.cartItems);
   const totalAmount = useSelector((state) => state.cart.totalAmount);
+  const [isEmpty, setIsEmpty] = useState(cartItems.length === 0); // check gio hang co rong hay không
+
+  // const [user, setUser] = useState(true); // set để check đăng nhập
+  const navigate = useNavigate();
   console.log('cart', cartItems);
 
   const handleDec = (id, size) => {
@@ -48,6 +52,17 @@ export function Cart() {
     dispatch(cartActions.deleteItem(id));
   };
   console.log(deleteProduct);
+
+  const checkLoggedIn = () => {
+    const token = window.localStorage.getItem('token');
+    const user = jwtDecode(token);
+    if (user) {
+      navigate('/user/cart/checkout');
+    } else {
+      toast.error('Please signin!');
+      navigate('/auth/sign-in');
+    }
+  };
 
   return (
     <div className="mt-12">
