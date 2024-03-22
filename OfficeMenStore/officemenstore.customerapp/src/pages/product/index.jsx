@@ -43,6 +43,16 @@ export function Product() {
     getAllCate();
   }, []);
 
+  async function handleUpdateStatus(e) {
+    if (e.target.value != 0) {
+      const data = await productApi.GetProductByCate(e.target.value);
+      setProducts(data);
+    } else {
+      const data = await productApi.GetAll();
+      setProducts(data);
+    }
+  }
+
   return (
     <>
       <Card className="mx-3 mt-10 mb-6 lg:mx-4 border border-blue-gray-100">
@@ -70,11 +80,17 @@ export function Product() {
               </Typography> */}
               {/* Sắp xếp */}
               <div className="w-50 ml-auto">
-                <Select label="Short by">
+                <select
+                  onChange={(e) => handleUpdateStatus(e)}
+                  class="ml-4 flex h-12 w-full items-center justify-center rounded-xl border bg-white/0 p-3 text-sm outline-none"
+                >
+                  <option value={0}>All category</option>
                   {cateList?.map((item) => (
-                    <Option key={item.id}>{item.name}</Option>
+                    <option key={item.id} value={item.id}>
+                      {item.name}
+                    </option>
                   ))}
-                </Select>
+                </select>
               </div>
             </div>
 

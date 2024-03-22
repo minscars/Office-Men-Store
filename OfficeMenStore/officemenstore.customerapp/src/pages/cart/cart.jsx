@@ -59,19 +59,16 @@ export function Cart() {
   };
 
   const checkLoggedIn = () => {
-    // // const token = window.localStorage.getItem('token');
-    if (user) {
-      navigate('/user/cart/checkout');
-      // const user = jwtDecode(token);
-      // if (user) {
-      //   navigate('/checkout');
-      // }
-    } else {
+    const token = window.localStorage.getItem('token');
+    if (token == null) {
       toast.error('Please signin!');
       navigate('/auth/sign-in');
-      // User is not logged in, show alert or handle as needed
-      // For example, you can display an alert
-      // Alert.show('Please log in to proceed!');
+    }
+    const user = jwtDecode(token);
+    if (user) {
+      navigate('/user/cart/checkout');
+    } else {
+      toast.error('Something went wrong!');
     }
   };
 
@@ -143,7 +140,7 @@ export function Cart() {
                                 variant="small"
                                 className="flex items-center gap-1 font-normal text-blue-gray-600"
                               >
-                                quantity: <strong>{quantity}</strong>
+                                Quantity: <strong>{quantity}</strong>
                               </Typography>
                               {/* <span className="text-red-500 text-xs capitalize text-[15px]">{cart?.category}</span> */}
                               <div

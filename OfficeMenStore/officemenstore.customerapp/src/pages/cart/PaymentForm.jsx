@@ -243,7 +243,7 @@ function Payment({ formData, onSubmit, handlePrev }) {
                             <img
                               src={imgUrl}
                               alt=""
-                              className="w-[100px] aspect-[3/2] rounded-lg object-cover object-top border border-gray-200"
+                              className="w-full h-[150px] aspect-[3/2] rounded-lg object-cover object-top border border-gray-200"
                             />
                             <div>
                               <Typography variant="small" color="blue-gray" className="font-bold items-start">
