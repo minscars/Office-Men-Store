@@ -24,25 +24,26 @@ namespace OfficeMenStore.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<ApiResult<List<GetProductListResponseModel>>> GetAllAsync()
+        public async Task<PaginatedList<List<GetProductListResponseModel>>> GetAllAsync(int page, int limit)
         {
-            var productList = await _context.Products
+            var productList = _context.Products
+                .Include(p => p.Category)
                 .Where(p => p.IsDeleted == false)
-                .Select(p => _mapper.Map<GetProductListResponseModel>(p))
-                .ToListAsync();
-            if(productList.Count < 1)
+                .AsQueryable();
+
+            var total = await _context.Products.Where(p => p.IsDeleted == false).ToListAsync();
+            productList = productList.Skip((page) * limit).Take(limit);
+            var result = await productList.Select(p => _mapper.Map<GetProductListResponseModel>(p)).ToListAsync();
+            
+            if (result.Count < 1)
             {
-                return new ApiResult<List<GetProductListResponseModel>>(null)
-                {
-                    Message = "Something went wrong!",
-                    StatusCode = 400
-                };
+                return new PaginatedList<List<GetProductListResponseModel>>(null);
             }
 
-            return new ApiResult<List<GetProductListResponseModel>>(productList)
+            return new PaginatedList<List<GetProductListResponseModel>>(result)
             {
-                Message = "",
-                StatusCode = 200
+                TotalRecord = total.Count(),
+                PageNumber = page,
             };
 
         }
@@ -86,63 +87,50 @@ namespace OfficeMenStore.Application.Services
             };
         }
 
-        public async Task<ApiResult<List<GetProductListResponseModel>>> GetProductByCategoryIdAsync(int categoryId)
+        public async Task<PaginatedList<List<GetProductListResponseModel>>> GetProductByCategoryIdAsync(int page, int limit, int cateId)
         {
-            var productList = await _context.Products
+            var productList = _context.Products
                 .Include(p => p.Category)
-                .Where(p => p.IsDeleted == false && p.CategoryId ==categoryId)
-                .Select(p => _mapper.Map<GetProductListResponseModel>(p))
-                .ToListAsync();
-            if (productList.Count < 1)
+                .Where(p => p.IsDeleted == false && p.CategoryId == cateId)
+                .AsQueryable();
+
+            productList = productList.Skip((page) * limit).Take(limit);
+            var result = await productList.Select(p => _mapper.Map<GetProductListResponseModel>(p)).ToListAsync();
+            var total = await _context.Products.Where(b => b.CategoryId == cateId && b.IsDeleted == false).ToListAsync();
+            if (result.Count < 1)
             {
-                return new ApiResult<List<GetProductListResponseModel>>(null)
-                {
-                    Message = "Not found!",
-                    StatusCode = 404
-                };
+                return new PaginatedList<List<GetProductListResponseModel>>(null);
             }
 
-            return new ApiResult<List<GetProductListResponseModel>>(productList)
+            return new PaginatedList<List<GetProductListResponseModel>>(result)
             {
-                Message = "",
-                StatusCode = 200
+                TotalRecord = total.Count(),
+                PageNumber = page,
             };
         }
 
-        public async Task<ApiResult<List<GetProductListResponseModel>>> SearchProductByKeyAsync(string key)
+        public async Task<PaginatedList<List<GetProductListResponseModel>>> SearchProductByKeyAsync(int page, int limit, string key)
         {
-            var productList = await _context.Products
-            .Include(p => p.Category)
-            .Where(p => p.Name.Trim().ToLower().Contains(key.ToLower()) &&  p.IsDeleted == false )
-            .Select(p => _mapper.Map<GetProductListResponseModel>(p))
-            .ToListAsync();
-            if (productList.Count < 1)
+            var productList = _context.Products
+                .Include(p => p.Category)
+                .Where(p => p.Name.Trim().ToLower().Contains(key.ToLower()) && p.IsDeleted == false)
+                .AsQueryable();
+            productList = productList.Skip((page) * limit).Take(limit);
+            var result = await productList.Select(p => _mapper.Map<GetProductListResponseModel>(p)).ToListAsync();
+            var total = await _context.Products.Where(p => p.Name.Trim().ToLower().Contains(key.ToLower()) && p.IsDeleted == false).ToListAsync();
+
+
+            if (result.Count < 1)
             {
-                return new ApiResult<List<GetProductListResponseModel>>(null)
-                {
-                    Message = "Not found!",
-                    StatusCode = 404
-                };
+                return new PaginatedList<List<GetProductListResponseModel>>(null);
             }
 
-            return new ApiResult<List<GetProductListResponseModel>>(productList)
+            return new PaginatedList<List<GetProductListResponseModel>>(result)
             {
-                Message = "",
-                StatusCode = 200
+                TotalRecord= total.Count(),
+                PageNumber = page,
             };
         }
-
-        //public async Task<ApiResult<bool>> CreateProductAsync(CreateProductRequest request)
-        //{
-        //    if (request == null)
-        //    {
-        //        return new ApiResult<bool>(false)
-        //        {
-        //            Message = "Something went wrong!",
-        //            StatusCode = 400
-        //        };
-        //    }
-        //}
 
     }
 }

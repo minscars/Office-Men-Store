@@ -56,18 +56,17 @@ export function Oders() {
   const TABLE_HEAD = ['Order ID', 'Crate', 'Customer', 'Total price', 'Status', 'Action'];
 
   return (
-    <div className="mt-10 mb-8 flex flex-col gap-12">
-      <Card className="mt-10 mb-10 h-full w-full">
+    <div className="flex flex-col gap-12">
+      <Card className="h-full w-full">
         <CardHeader floated={false} shadow={false} className="rounded-none">
-          <div className="mb-8 flex items-center justify-between gap-8">
+          <div className="flex items-center justify-between gap-8">
             <div>
               <Typography variant="h5" color="blue-gray">
-                All Order
+                Order Management
               </Typography>
             </div>
-            <div></div>
           </div>
-          <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+          <div className="mt-2 flex flex-col items-center justify-between gap-4 md:flex-row">
             <div className="w-full md:w-72">
               <Input label="Search" icon={<MagnifyingGlassIcon className="h-5 w-5" />} />
             </div>

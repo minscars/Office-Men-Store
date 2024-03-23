@@ -11,5 +11,6 @@ namespace OfficeMenStore.Application.Interfaces
     public interface IOrderService
     {
         Task<ApiResult<int>> CreateOrderAsync(CreateOderRequest dto);
+
     }
 }
