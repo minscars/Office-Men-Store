@@ -19,7 +19,7 @@ import {
 import { EllipsisVerticalIcon, ArrowUpIcon } from '@heroicons/react/24/outline';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { StatisticsCard } from '@/widgets/cards';
 import { StatisticsChart } from '@/widgets/charts';
 import { statisticsCardsData, statisticsChartsData, projectsTableData, ordersOverviewData } from '@/data';
@@ -29,9 +29,14 @@ import { cartActions } from '../../redux/slicse/cartSlice';
 import { jwtDecode } from 'jwt-decode';
 import { toast } from 'react-toastify';
 
+import ReactDOM from 'react-dom';
+import { loadStripe } from '@stripe/stripe-js';
+import Stripe from 'stripe';
+
 export function Cart() {
   const cartItems = useSelector((state) => state.cart.cartItems);
   const totalAmount = useSelector((state) => state.cart.totalAmount);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); //kiem tra dang nhap
   const [isEmpty, setIsEmpty] = useState(cartItems.length === 0); // check gio hang co rong hay không
 
   const [user, setUser] = useState(true); // set để check đăng nhập
@@ -58,20 +63,75 @@ export function Cart() {
     setIsEmpty(cartItems.length);
   };
 
-  const checkLoggedIn = () => {
-    const token = window.localStorage.getItem('token');
-    if (token == null) {
-      toast.error('Please signin!');
-      navigate('/auth/sign-in');
-    }
-    const user = jwtDecode(token);
-    if (user) {
+  // const checkLoggedIn = async (event) => {
+  //   // Kiểm tra trạng thái đăng nhập ở đây (ví dụ: từ state hoặc local storage)
+  //   const userToken = window.localStorage.getItem('token');
+
+  //   if (userToken) {
+  //     setIsLoggedIn(true);
+  //     // navigate('/user/cart/checkout/payment');
+
+  //     event.preventDefault();
+  //     const { stripe, elements } = this.props;
+
+  //     if (elements == null) {
+  //       return;
+  //     }
+
+  //     // Trigger form validation and wallet collection
+  //     const { error: submitError } = await elements.submit();
+  //     if (submitError) {
+  //       // Show error to your customer
+  //       return;
+  //     }
+
+  //     // Create the PaymentIntent and obtain clientSecret
+  //     const res = await fetch('/create-intent', {
+  //       method: 'POST',
+  //     });
+
+  //     const { client_secret: clientSecret } = await res.json();
+
+  //     const { error } = await stripe.confirmPayment({
+  //       //`Elements` instance that was used to create the Payment Element
+  //       elements,
+  //       clientSecret,
+  //       confirmParams: {
+  //         return_url: 'https://example.com/order/123/complete',
+  //       },
+  //     });
+
+  //     if (error) {
+  //       // This point will only be reached if there is an immediate error when
+  //       // confirming the payment. Show error to your customer (for example, payment
+  //       // details incomplete)
+  //     } else {
+  //       // Your customer will be redirected to your `return_url`. For some payment
+  //       // methods like iDEAL, your customer will be redirected to an intermediate
+  //       // site first to authorize the payment, then redirected to the `return_url`.
+  //     }
+  //   } else {
+  //     setIsLoggedIn(false);
+  //     // Chuyển hướng đến trang đăng nhập nếu chưa đăng nhập
+  //     navigate('/auth/sign-in');
+  //   }
+  //   // Chỉ chạy một lần khi component được render lần đầu tiên
+  // };
+
+  const checkLoggedIn = async (event) => {
+    // Kiểm tra trạng thái đăng nhập ở đây (ví dụ: từ state hoặc local storage)
+    const userToken = window.localStorage.getItem('token');
+
+    if (userToken) {
+      setIsLoggedIn(true);
       navigate('/user/cart/checkout');
     } else {
-      toast.error('Something went wrong!');
+      setIsLoggedIn(false);
+      // Chuyển hướng đến trang đăng nhập nếu chưa đăng nhập
+
+      navigate('/auth/sign-in');
     }
   };
-
   return (
     <div className="mt-12">
       <div className="mb-4 grid grid-cols-1 gap-6 xl:grid-cols-3">

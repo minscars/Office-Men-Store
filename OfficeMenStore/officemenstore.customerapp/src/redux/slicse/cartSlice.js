@@ -38,7 +38,7 @@ const cartSlice = createSlice({
           imgUrl: newItem.imgUrl,
           price: newItem.price,
           category: newItem.category,
-          quantity: 1,
+          quantity: newItem.quantity,
           totalPrice: newItem.price,
           size: newItem.size,
         });
@@ -150,25 +150,36 @@ const cartSlice = createSlice({
     //     state.totalQuantity,
     //   );
     // },
+
     deleteItem(state, action) {
       const { id, size } = action.payload;
 
+      // Find the item to delete
+      const existingItemIndex = state.cartItems.findIndex((item) => item.id === id && item.size === size);
 
-      if (existingItems.length > 0) {
-        state.cartItems = state.cartItems.filter((item) => !(item.id == id && item.size == size));
-        state.totalQuantity = state.totalQuantity - existingItems.quantity;
+      if (existingItemIndex !== -1) {
+        // Item exists, remove it from the cart
+        const existingItem = state.cartItems[existingItemIndex];
+        state.cartItems.splice(existingItemIndex, 1);
+
+        // Update total quantity
+        state.totalQuantity -= existingItem.quantity;
       }
 
-      // Tính lại tổng số tiền
+      // Recalculate total amount
       state.totalAmount = state.cartItems.reduce(
         (total, item) => total + Number(item.price) * Number(item.quantity),
         0,
       );
-      setItemFunc(
-        state.cartItems.map((item) => item),
-        state.totalAmount,
-        state.totalQuantity,
-      );
+    },
+
+    clearCart(state) {
+      state.cartItems = [];
+      state.totalQuantity = 0;
+      state.totalAmount = 0;
+      localStorage.removeItem('cartItems');
+      localStorage.removeItem('totalAmount');
+      localStorage.removeItem('totalQuantity');
     },
   },
 });

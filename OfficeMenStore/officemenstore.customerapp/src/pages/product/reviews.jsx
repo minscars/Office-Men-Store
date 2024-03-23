@@ -97,7 +97,7 @@ export function ReviewsTab() {
       message,
       rating,
     };
-    console.log('rating',newReview)
+    console.log('rating', newReview);
 
     setReviews([...reviews, newReview]);
     toast.success('Review added successfully!');
@@ -164,91 +164,95 @@ export function ReviewsTab() {
               ))}
             </div>
             {/* tong rv */}
-            <div className="xl:w-1/3 mr-0 -mt-8">
-              <div className="p-1 bg-white border border-gray-200 rounded-md dark:bg-gray-900 ml-0">
-                <h2 className="mb-6 text-3xl font-black text-center dark:text-gray-400">Customer Reviews</h2>
-                <div className="mb-4 text-center">
-                  <span className="inline-block text-5xl font-bold text-blue-500 dark:text-gray-300">4.5</span>
-                  <span className="inline-block text-xl font-medium text-gray-700 dark:text-gray-400">/5</span>
+            <div className="xl:w-3/6">
+              <Card className="mr-0 -mt-8 shadow-none">
+                <div className="p-1 bg-white border border-gray-200 rounded-md dark:bg-gray-900 ml-0">
+                  <h2 className="mb-6 text-3xl font-black text-center dark:text-gray-400">Customer Reviews</h2>
+                  <div className="mb-4 text-center">
+                    <span className="inline-block text-5xl font-bold text-blue-500 dark:text-gray-300">4.5</span>
+                    <span className="inline-block text-xl font-medium text-gray-700 dark:text-gray-400">/5</span>
+                  </div>
+                  <ul className="flex items-center justify-center mb-6">
+                    {[1, 2, 3, 4, 5].map((index) => (
+                      <li key={index}>
+                        <a href="#">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            fill="currentColor"
+                            className="w-4 mr-1 text-blue-500 dark:text-blue-400 bi bi-star-fill"
+                            viewBox="0 0 16 16"
+                          >
+                            <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
+                          </svg>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                    Based on {reviews.length} reviews
+                  </p>
                 </div>
-                <ul className="flex items-center justify-center mb-6">
-                  {[1, 2, 3, 4, 5].map((index) => (
-                    <li key={index}>
-                      <a href="#">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          fill="currentColor"
-                          className="w-4 mr-1 text-blue-500 dark:text-blue-400 bi bi-star-fill"
-                          viewBox="0 0 16 16"
-                        >
-                          <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
-                        </svg>
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Based on {reviews.length} reviews
-                </p>
-              </div>
+              </Card>
+
+              {/* thêm bình luận  */}
+              <Card className=" mt-10 p-6 bg-white border border-gray-200 rounded-md dark:bg-gray-900 shadow-none">
+                <h2 className="mb-6 text-3xl font-black text-center dark:text-gray-400">Add a Review</h2>
+                <form>
+                  <div className="mb-4">
+                    <label
+                      htmlFor="review-user"
+                      className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-300"
+                    >
+                      Your Name
+                    </label>
+                    <input
+                      type="text"
+                      id="review-user"
+                      ref={reviewUser}
+                      required
+                      className="w-full px-4 py-2 text-sm border rounded-md focus:outline-none focus:border-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                    />
+                  </div>
+                  <div className="mb-4">
+                    <label
+                      htmlFor="review-msg"
+                      className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-300"
+                    >
+                      Your Review
+                    </label>
+                    <textarea
+                      id="review-msg"
+                      ref={reviewMsg}
+                      required
+                      rows="4"
+                      className="w-full px-4 py-2 text-sm border rounded-md focus:outline-none focus:border-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                    ></textarea>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <label htmlFor="rating" className="mr-2 text-sm font-medium text-gray-600 dark:text-gray-300">
+                        Rating
+                      </label>
+                      <Rating
+                        id="rating"
+                        value={rating}
+                        onChange={(value) => setRating(value)}
+                        className="text-blue-500 dark:text-blue-400"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleSubmitReview}
+                      className="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
+                    >
+                      Submit
+                    </button>
+                  </div>
+                </form>
+              </Card>
             </div>
-          </div>
-        </div>
-        <div>
-          {/* thêm bình luận  */}
-          <div className=" mt-10 p-6 bg-white border border-gray-200 rounded-md dark:bg-gray-900">
-            <h2 className="mb-6 text-3xl font-black text-center dark:text-gray-400">Add a Review</h2>
-            <form>
-              <div className="mb-4">
-                <label
-                  htmlFor="review-user"
-                  className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-300"
-                >
-                  Your Name
-                </label>
-                <input
-                  type="text"
-                  id="review-user"
-                  ref={reviewUser}
-                  required
-                  className="w-full px-4 py-2 text-sm border rounded-md focus:outline-none focus:border-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
-                />
-              </div>
-              <div className="mb-4">
-                <label htmlFor="review-msg" className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-300">
-                  Your Review
-                </label>
-                <textarea
-                  id="review-msg"
-                  ref={reviewMsg}
-                  required
-                  rows="4"
-                  className="w-full px-4 py-2 text-sm border rounded-md focus:outline-none focus:border-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
-                ></textarea>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <label htmlFor="rating" className="mr-2 text-sm font-medium text-gray-600 dark:text-gray-300">
-                    Rating
-                  </label>
-                  <Rating
-                    id="rating"
-                    value={rating}
-                    onChange={(value) => setRating(value)}
-                    className="text-blue-500 dark:text-blue-400"
-                  />
-                </div>
-                <button
-                  type="button"
-                  onClick={handleSubmitReview}
-                  className="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
-                >
-                  Submit
-                </button>
-              </div>
-            </form>
           </div>
         </div>
       </div>

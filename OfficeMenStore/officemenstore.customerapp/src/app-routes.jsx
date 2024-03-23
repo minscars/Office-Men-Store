@@ -21,10 +21,22 @@ import Home from './pages/home';
 import Product from './pages/product';
 import Details from './pages/product/detail';
 import MyOrderDetail from './pages/accounts/orderhistorydetail';
-import { Checkout, Cart, Success } from '@/pages/cart';
+import { Checkout, Cart, Success, Payment } from '@/pages/cart';
 import { Accounts } from '@/pages/accounts';
 const icon = {
   className: 'w-5 h-5 text-inherit',
+};
+
+
+
+const options = {
+  mode: 'payment',
+  amount: 1099,
+  currency: 'usd',
+  // Fully customizable with appearance API.
+  appearance: {
+    /*...*/
+  },
 };
 
 export const routes = [
@@ -54,6 +66,11 @@ export const routes = [
 
       //Cart
       { path: '/cart/checkout/', name: 'Checkout', element: <Checkout /> },
+      {
+        path: '/cart/checkout/payment',
+        name: 'payment',
+        element: <Payment />,
+      },
       { path: '/cart/success/', name: 'Success', element: <Success /> },
       //Accout
       { path: '/account/orderdetails', name: 'myorder', element: <MyOrderDetail /> },
