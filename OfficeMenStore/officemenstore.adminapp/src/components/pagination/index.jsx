@@ -5,8 +5,8 @@ const Pagination = (props) => {
   return (
     <nav aria-label="Page navigation comments" className="mt-4 mb-4">
       <ReactPaginate
-        previousLabel="<"
-        nextLabel=">"
+        previousLabel=""
+        nextLabel=""
         breakLabel="..."
         breakClassName="page-item"
         breakLinkClassName="page-link"

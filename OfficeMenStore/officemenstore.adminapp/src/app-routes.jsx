@@ -12,13 +12,20 @@ import {
   NewspaperIcon,
   UsersIcon,
   TagIcon,
+  ChartBarIcon,
 } from '@heroicons/react/24/solid';
-import { Dashboard, Tables, Notifications } from '@/pages/user';
-import { SignIn, SignUp } from '@/pages/auth';
 import MyOrderDetail from './pages/accounts/orderhistorydetail';
 import { Checkout, Cart } from '@/pages/cart';
-import { Accounts } from '@/pages/accounts';
-import { Oders, OdersDetails, Products, Categories, AddProducts, CustomerTable, UpdateProduct } from '@/pages/admin';
+import {
+  Oders,
+  OdersDetails,
+  Products,
+  Categories,
+  AddProducts,
+  CustomerTable,
+  UpdateProduct,
+  Statistic,
+} from '@/pages/admin';
 const icon = {
   className: 'w-5 h-5 text-inherit',
 };
@@ -45,6 +52,7 @@ export const routes = [
       { path: '/product/addproducts', element: <AddProducts /> },
       { path: '/product/updateproduct', element: <UpdateProduct /> },
       { icon: <TagIcon {...icon} />, name: 'category management', path: '/category', element: <Categories /> },
+
       {
         icon: <UsersIcon {...icon} />,
         name: 'customers management',
@@ -53,6 +61,7 @@ export const routes = [
       },
 
       { icon: <NewspaperIcon {...icon} />, name: 'Orders management', path: '/allorders', element: <Oders /> },
+      { icon: <ChartBarIcon {...icon} />, name: 'Statistic', path: '/statistic', element: <Statistic /> },
       { path: '/allorders/ordersdetail', element: <OdersDetails /> },
 
       //Cart
@@ -61,24 +70,24 @@ export const routes = [
       { path: '/account/orderdetails', name: 'myorder', element: <MyOrderDetail /> },
     ],
   },
-  {
-    title: 'auth pages',
-    layout: 'auth',
-    pages: [
-      {
-        icon: <ServerStackIcon {...icon} />,
-        name: 'sign in',
-        path: '/sign-in',
-        element: <SignIn />,
-      },
-      {
-        icon: <RectangleStackIcon {...icon} />,
-        name: 'sign up',
-        path: '/sign-up',
-        element: <SignUp />,
-      },
-    ],
-  },
+  // {
+  //   title: 'auth pages',
+  //   layout: 'auth',
+  //   pages: [
+  //     {
+  //       icon: <ServerStackIcon {...icon} />,
+  //       name: 'sign in',
+  //       path: '/sign-in',
+  //       element: <SignIn />,
+  //     },
+  //     {
+  //       icon: <RectangleStackIcon {...icon} />,
+  //       name: 'sign up',
+  //       path: '/sign-up',
+  //       element: <SignUp />,
+  //     },
+  //   ],
+  // },
 ];
 
 export default routes;

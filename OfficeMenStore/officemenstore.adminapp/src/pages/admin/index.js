@@ -6,3 +6,4 @@ export * from '@/pages/admin/customers';
 export * from '@/pages/admin/addproducts';
 export * from '@/pages/admin/updateproduct';
 export * from '@/pages/category';
+export * from '@/pages/statistic';

@@ -31,17 +31,19 @@ export function SignIn() {
   }
   return (
     <div className="h-[690px] m-8 flex gap-4 justify-center bg-[url('/img/bg-admin.jpg')] rounded-xl">
-      <div className="h-[500px] lg:w-2/5 mt-24 bg-white rounded-xl">
+      <div className="h-[520px] lg:w-2/5 mt-24 bg-white rounded-xl">
         <div className="text-center">
-          <img src="/img/favicon.png" alt="" className="mt-6 ml-4 h-auto w-[50px] right-0 left-0" />
-          <Typography variant="h2" className="font-bold mb-4 mt-6">
+          <div className="flex justify-center">
+            <img src="/img/admin-logo.png" alt="" className="mt-6 ml-4 h-auto w-[150px] right-0 left-0" />
+          </div>
+          <Typography variant="h2" className="font-bold mb-2 mt-4">
             Hello Admin!
           </Typography>
           <Typography variant="paragraph" color="blue-gray" className="text-lg font-normal">
             Enter your email and password to Sign In.
           </Typography>
         </div>
-        <form onSubmit={(e) => login(e)} className="mt-8 mb-2 mx-auto w-80 max-w-screen-lg lg:w-1/2">
+        <form onSubmit={(e) => login(e)} className="mt-6  mb-2 mx-auto w-80 max-w-screen-lg lg:w-1/2">
           <div className="mb-1 flex flex-col gap-6">
             <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
               Your email
@@ -69,9 +71,11 @@ export function SignIn() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <Button type="submit" className="mt-6" fullWidth>
-            Sign In
-          </Button>
+          <div className="flex justify-center">
+            <Button type="submit" className="mt-6">
+              Sign In
+            </Button>
+          </div>
         </form>
       </div>
       {/* <div className="w-2/5 h-full hidden lg:block">

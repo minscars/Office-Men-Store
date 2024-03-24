@@ -15,7 +15,6 @@ namespace OfficeMenStore.Domain.Configurations
         {
             builder.Property(x => x.Id).IsRequired();
             builder.Property(x => x.Price).IsRequired();
-            builder.Property(x => x.Amount_Import).HasDefaultValue(100);
             builder.Property(x => x.CreatedTime).HasDefaultValue(DateTime.Now);
             builder.Property(x => x.UpdatedTime).HasDefaultValue(DateTime.Now);
             builder.Property(x => x.IsDeleted).HasDefaultValue(false);
