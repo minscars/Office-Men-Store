@@ -10,10 +10,10 @@ namespace OfficeMenStore.Application.Interfaces
 {
     public interface IProductService
     {
-        public Task<ApiResult<List<GetProductListResponseModel>>> GetAllAsync();
+        public Task<PaginatedList<List<GetProductListResponseModel>>> GetAllAsync(int page, int limit);
         public Task<ApiResult<GetProductResponseModel>> GetProductByIdAsync(int id);
-        public Task<ApiResult<List<GetProductListResponseModel>>> GetProductByCategoryIdAsync(int categoryId);
-        public Task<ApiResult<List<GetProductListResponseModel>>> SearchProductByKeyAsync(string key);
+        public Task<PaginatedList<List<GetProductListResponseModel>>> GetProductByCategoryIdAsync(int page, int limit, int cateId);
+        public Task<PaginatedList<List<GetProductListResponseModel>>> SearchProductByKeyAsync(int page, int limit, string key);
         //public Task<ApiResult<bool>> CreateProductAsync(CreateProductRequest request);
     }
 }

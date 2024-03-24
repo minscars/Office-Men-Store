@@ -1,4 +1,5 @@
-﻿using OfficeMenStore.Application.Models.Order;
+﻿using OfficeMenStore.Application.Models.Common;
+using OfficeMenStore.Application.Models.Order;
 using OfficeMenStore.Application.Utilities.Constants;
 using System;
 using System.Collections.Generic;
@@ -11,5 +12,6 @@ namespace OfficeMenStore.Application.Interfaces
     public interface IOrderService
     {
         Task<ApiResult<int>> CreateOrderAsync(CreateOderRequest dto);
+        Task<PaginatedList<List<GetAllOrderResponse>>> GetAllOrderAsync(PaginatedRequest requestDto);
     }
 }

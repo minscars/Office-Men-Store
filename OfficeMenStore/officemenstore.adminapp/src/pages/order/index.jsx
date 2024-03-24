@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
   Card,
@@ -26,6 +26,9 @@ import {
 import { ordersTableData } from '@/data';
 import { Link, useNavigate } from 'react-router-dom';
 import '../admin/order.css';
+import orderApi from '@/api/orderApi';
+import Pagination from '@/components/pagination/index.jsx';
+import moment from 'moment';
 
 export function Oders() {
   const navigate = useNavigate();
@@ -55,19 +58,43 @@ export function Oders() {
 
   const TABLE_HEAD = ['Order ID', 'Crate', 'Customer', 'Total price', 'Status', 'Action'];
 
+  const [offset, setOffset] = useState(0);
+  const [perPage] = useState(6);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [pageCount, setPageCount] = useState(0);
+  const [isloaded, setIsLoaded] = useState(false);
+  const [orderList, setOrderList] = useState([]);
+  useEffect(() => {
+    getAllOrdersFromReact();
+  }, [perPage, offset]);
+
+  const getAllOrdersFromReact = async () => {
+    const formData = new FormData();
+    formData.append('Page', offset);
+    formData.append('Limit', perPage);
+    setIsLoaded(false);
+    console.log(formData);
+    const response = await orderApi.GetAll(formData);
+    setPageCount(Math.ceil(response.totalRecord / perPage));
+    setOrderList(response.data);
+    setIsLoaded(true);
+  };
+  const handlePageClick = (e) => {
+    setCurrentPage(e.selected);
+    setOffset(e.selected);
+  };
   return (
-    <div className="mt-10 mb-8 flex flex-col gap-12">
-      <Card className="mt-10 mb-10 h-full w-full">
+    <div className="gap-12">
+      <Card className="h-full w-full">
         <CardHeader floated={false} shadow={false} className="rounded-none">
-          <div className="mb-8 flex items-center justify-between gap-8">
+          <div className="flex items-center justify-between gap-8">
             <div>
               <Typography variant="h5" color="blue-gray">
-                All Order
+                Order Management
               </Typography>
             </div>
-            <div></div>
           </div>
-          <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+          <div className="mt-2 flex flex-col items-center justify-between gap-4 md:flex-row">
             <div className="w-full md:w-72">
               <Input label="Search" icon={<MagnifyingGlassIcon className="h-5 w-5" />} />
             </div>
@@ -82,8 +109,8 @@ export function Oders() {
             </div>
           </div>
         </CardHeader>
-        <CardBody className="overflow-scroll px-0">
-          <table className="mt-4 w-full min-w-max table-auto text-left">
+        <CardBody className="h-[550px] overflow-scroll px-0">
+          <table className=" w-full min-w-max table-auto text-left">
             <thead>
               <tr className="hover:bg-gray-100 transition-colors">
                 {TABLE_HEAD.map((head) => (
@@ -100,16 +127,15 @@ export function Oders() {
               </tr>
             </thead>
             <tbody>
-              {ordersTableData.map(({ id, img, customer, date, online, total }, index) => {
-                const isLast = index === ordersTableData.length - 1;
-                const classes = isLast ? 'p-4' : 'p-4 border-b border-blue-gray-50 ';
+              {orderList.map((item) => {
+                const classes = 'p-4 border-b border-blue-gray-50 ';
 
                 return (
-                  <tr key={customer} className="hover:bg-gray-100 transition-colors">
+                  <tr key={item.id} className="hover:bg-gray-100 transition-colors">
                     <td className={classes}>
                       <div className="flex flex-col">
                         <Typography variant="small" color="blue-gray" className="font-normal">
-                          {id}
+                          {item.id}
                         </Typography>
                       </div>
                     </td>
@@ -117,17 +143,17 @@ export function Oders() {
                     <td className={classes}>
                       <div className="flex flex-col">
                         <Typography variant="small" color="blue-gray" className="font-normal">
-                          {date}
+                          {item.createdTime != null ? moment(item.createdTime).format('DD/MM/YYYY HH:mm A') : '......'}
                         </Typography>
                       </div>
                     </td>
 
                     <td className={classes}>
                       <div className="flex items-center gap-3">
-                        <Avatar src={img} alt={customer} size="sm" />
+                        <Avatar src={item.customerAvatar} alt={item.customerName} size="sm" />
                         <div className="flex flex-col">
                           <Typography variant="small" color="blue-gray" className="font-normal">
-                            {customer}
+                            {item.customerName}
                           </Typography>
                         </div>
                       </div>
@@ -136,7 +162,7 @@ export function Oders() {
                     <td className={classes}>
                       <div className="flex flex-col">
                         <Typography variant="small" color="blue-gray" className="font-normal">
-                          {total}
+                          {item.total}
                         </Typography>
                       </div>
                     </td>
@@ -174,20 +200,8 @@ export function Oders() {
             </tbody>
           </table>
         </CardBody>
-        <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-          <Typography variant="small" color="blue-gray" className="font-normal">
-            Page 1 of 10
-          </Typography>
-          <div className="flex gap-2">
-            <Button variant="outlined" size="sm">
-              Previous
-            </Button>
-            <Button variant="outlined" size="sm">
-              Next
-            </Button>
-          </div>
-        </CardFooter>
       </Card>
+      <Pagination handlePageClick={handlePageClick} currentPage={currentPage} pageCount={pageCount} />
     </div>
   );
 }

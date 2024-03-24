@@ -22,15 +22,11 @@ namespace OfficeMenStore.Api.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> GetAllAsync()
+        public async Task<IActionResult> GetAllAsync(int page, int limit)
         {
-            var result = await _productService.GetAllAsync();
-            if (result.StatusCode == 200)
-            {
+            var result = await _productService.GetAllAsync(page,limit);
                 result.Data.ForEach(s => s.Image = setImageName(s.Image));
-                return Ok(result.Data);
-            }
-            return BadRequest(result.Message);
+                return Ok(result);
         }
 
         [HttpGet("{Id}")]
@@ -46,30 +42,22 @@ namespace OfficeMenStore.Api.Controllers
             return BadRequest(result.Message);
         }
 
-        [HttpGet("Category/{categoryId}")]
+        [HttpGet("Category")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetByCategoryIdAsync([FromRoute] int categoryId)
+        public async Task<IActionResult> GetByCategoryIdAsync(int page, int limit, int cateId)
         {
-            var result = await _productService.GetProductByCategoryIdAsync(categoryId);
-            if (result.StatusCode == 200)
-            {
-                result.Data.ForEach(s => s.Image = setImageName(s.Image));
-                return Ok(result.Data);
-            }
-            return BadRequest(result.Message);
+            var result = await _productService.GetProductByCategoryIdAsync(page, limit,cateId);
+            result.Data.ForEach(s => s.Image = setImageName(s.Image));
+            return Ok(result);
         }
 
-        [HttpGet("Search/{key}")]
+        [HttpGet("Search")]
         [AllowAnonymous]
-        public async Task<IActionResult> SearchProductByKeyAsync([FromRoute] string key)
+        public async Task<IActionResult> SearchProductByKeyAsync(int page, int limit, string key)
         {
-            var result = await _productService.SearchProductByKeyAsync(key);
-            if (result.StatusCode == 200)
-            {
-                result.Data.ForEach(s => s.Image = setImageName(s.Image));
-                return Ok(result.Data);
-            }
-            return BadRequest(result.Message);
+            var result = await _productService.SearchProductByKeyAsync(page,limit,key);
+            result.Data.ForEach(s => s.Image = setImageName(s.Image));
+            return Ok(result);
         }
     }
 }
