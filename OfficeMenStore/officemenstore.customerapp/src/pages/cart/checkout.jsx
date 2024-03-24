@@ -66,8 +66,8 @@ export function Checkout() {
     <div className="mt-12 gap-10 mr-5">
       <div className="relative -mt-5 h-40 w-full overflow-hidden rounded-xl bg-[url('/img/background-image.png')] bg-cove bg-center mr-5">
         {/* the steper */}
-        <div className="w-full pt-4 px-20">
-          {/* septeper */}
+        {/* <div className="w-full pt-4 px-20">
+         
           <Stepper
             activeStep={activeStep}
             isLastStep={(value) => setIsLastStep(value)}
@@ -103,9 +103,9 @@ export function Checkout() {
             {/* Thêm một Step mới cho trang Document
         <Step onClick={() => setActiveStep(3)}>
           <DocumentIcon className="h-5 w-5" />
-        </Step> */}
+        </Step> 
           </Stepper>
-        </div>
+        </div> */}
         {/*  */}
         <div className=" mr-5 absolute inset-0 h-full w-full bg-gray-900/75" />
       </div>

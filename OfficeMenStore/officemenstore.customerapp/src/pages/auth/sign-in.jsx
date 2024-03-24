@@ -40,7 +40,7 @@ export function SignIn() {
       }
     }
   };
-
+  // ham dang nhap
   async function login(e) {
     e.preventDefault();
     const request = { username, password };
@@ -66,6 +66,7 @@ export function SignIn() {
         Alert.showErrorAlert('Oops, something went wrong! Please contact administrator.');
       });
   }
+
   return (
     <section className="m-8 flex gap-4">
       <div className="w-full lg:w-3/5 mt-24">

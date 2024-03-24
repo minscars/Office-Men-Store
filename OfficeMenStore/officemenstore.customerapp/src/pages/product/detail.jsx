@@ -75,14 +75,15 @@ export function ProductDetails() {
     }
   };
 
-  const handleDec = (id) => {
-    // Dispatch action giảm số lượng sản phẩm
-    dispatch(cartActions.decreaseQuantity(id));
+  const handleDec = () => {
+    if (Quantity > 1) {
+      setQuantity((prevQuantity) => prevQuantity - 1);
+      console.log(Quantity);
+    }
   };
-
-  const handleInc = (id) => {
-    // Dispatch action tăng số lượng sản phẩm
-    dispatch(cartActions.increaseQuantity(id));
+  const handleInc = () => {
+    setQuantity((prevQuantity) => prevQuantity + 1);
+    console.log(Quantity);
   };
   //hàm chọn size
   const toggleSize = (size) => {
@@ -221,10 +222,11 @@ export function ProductDetails() {
                         <button
                           onclick="decreaseQuantity()"
                           class="w-20 h-full text-gray-600 bg-gray-300 rounded-l outline-none cursor-pointer dark:hover:bg-gray-700 dark:text-gray-400 hover:text-gray-700 dark:bg-gray-900 hover:bg-gray-400"
-                          onClick={() => handleDec(id)}
+                          onClick={() => handleDec(id, selectedSize)}
                         >
                           <span class="m-auto text-2xl font-thin">-</span>
                         </button>
+
                         <input
                           id="quantityInput"
                           type="number"
@@ -235,7 +237,7 @@ export function ProductDetails() {
                         />
                         <button
                           class="w-20 h-full text-gray-600 bg-gray-300 rounded-r outline-none cursor-pointer dark:hover:bg-gray-700 dark:text-gray-400 dark:bg-gray-900 hover:text-gray-700 hover:bg-gray-400"
-                          onClick={() => handleInc(id)}
+                          onClick={() => handleInc(id, selectedSize)}
                         >
                           <span class="m-auto text-2xl font-thin">+</span>
                         </button>
