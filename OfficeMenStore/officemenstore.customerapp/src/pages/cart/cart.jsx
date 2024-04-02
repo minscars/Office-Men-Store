@@ -36,6 +36,8 @@ import Stripe from 'stripe';
 export function Cart() {
   const cartItems = useSelector((state) => state.cart.cartItems);
   const totalAmount = useSelector((state) => state.cart.totalAmount);
+  const totalQuantity = cartItems.reduce((total, item) => total + item.quantity, 0);
+
   const [isLoggedIn, setIsLoggedIn] = useState(false); //kiem tra dang nhap
   const [isEmpty, setIsEmpty] = useState(cartItems.length === 0); // check gio hang co rong hay không
 
@@ -94,7 +96,7 @@ export function Cart() {
                 </Typography>
                 <Typography variant="small" className="flex items-center gap-1 font-normal text-blue-gray-600">
                   <CheckCircleIcon strokeWidth={3} className="h-4 w-4 text-blue-gray-200" />
-                  <strong>{cartItems?.length}</strong> items
+                  <strong>{totalQuantity}</strong> items
                 </Typography>
               </div>
               <Menu placement="left-start">
@@ -293,7 +295,7 @@ export function Cart() {
                   Check out
                 </Button>
                 <Link to={`/user/product`}>
-                  <Button className="border-blue-gray-100 mt-4 py-3 px-10 border border-2 text-center bg-white text-black shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100">
+                  <Button className="border-blue-gray-100 mt-4 py-3 px-10 border text-center bg-white text-black shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100">
                     Go on Buying
                   </Button>
                 </Link>
