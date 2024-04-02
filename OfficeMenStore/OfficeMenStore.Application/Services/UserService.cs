@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using OfficeMenStore.Application.Interfaces;
+using OfficeMenStore.Application.Models.Address;
 using OfficeMenStore.Application.Models.User;
 using OfficeMenStore.Application.Utilities.Constants;
 using OfficeMenStore.Domain.EF;
@@ -80,28 +81,36 @@ namespace OfficeMenStore.Application.Services
             return jwt;
         }
 
-        public async Task<ApiResult<User>> GetUserByIdAsync(Guid id)
+        public async Task<ApiResult<GetUserInformationResponse>> GetUserByIdAsync(Guid id)
         {
             var user = await _context.Users
                 .Where(u => u.Id == id)
-                .Select(u => new User()
+                .Select(u => new GetUserInformationResponse()
                 {
-                    Id = u.Id,
+                    UserId = u.Id,
                     Name = u.Name,
                     Avatar = u.Avatar,
                     Email = u.Email,
                     PhoneNumber = u.PhoneNumber,
+                    CartId = u.Cart.Id,
+                    Addresses = u.Addresses.Select(a => new GetAddressResponse()
+                    {
+                        Id = a.Id,
+                        AddressDetail = a.AddressDetail,
+                        IsDeleted = a.IsDeleted,
+                        UserId = a.UserId
+                    }).ToList(),
                 }).FirstOrDefaultAsync();
             if (user == null)
             {
-                return new ApiResult<User>(null)
+                return new ApiResult<GetUserInformationResponse>(null)
                 {
                     Message = "Something went wrong",
                     StatusCode = 400
                 };
             }
 
-            return new ApiResult<User>(user)
+            return new ApiResult<GetUserInformationResponse>(user)
             {
                 Message = "",
                 StatusCode = 200

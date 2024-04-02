@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BsBagCheckFill } from 'react-icons/bs';
+
 import { useNavigate } from 'react-router-dom';
 import { Button, Card } from '@material-tailwind/react';
 import { runFireworks } from '../../lib/utils';

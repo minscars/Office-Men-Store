@@ -9,7 +9,6 @@ import { jwtDecode } from 'jwt-decode';
 export function SignIn() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [userlogin, setUsser] = useState();
 
   const handleAddCart = (item) => {
     const data = {

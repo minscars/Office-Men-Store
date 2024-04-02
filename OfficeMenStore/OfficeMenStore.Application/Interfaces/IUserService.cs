@@ -12,6 +12,6 @@ namespace OfficeMenStore.Application.Interfaces
     public interface IUserService
     {
         Task<ApiResult<string>> LoginAsync(LoginRequest request);
-        Task<ApiResult<User>> GetUserByIdAsync(Guid id);
+        Task<ApiResult<GetUserInformationResponse>> GetUserByIdAsync(Guid id);
     }
 }

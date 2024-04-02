@@ -63,61 +63,6 @@ export function Cart() {
     setIsEmpty(cartItems.length);
   };
 
-  // const checkLoggedIn = async (event) => {
-  //   // Kiểm tra trạng thái đăng nhập ở đây (ví dụ: từ state hoặc local storage)
-  //   const userToken = window.localStorage.getItem('token');
-
-  //   if (userToken) {
-  //     setIsLoggedIn(true);
-  //     // navigate('/user/cart/checkout/payment');
-
-  //     event.preventDefault();
-  //     const { stripe, elements } = this.props;
-
-  //     if (elements == null) {
-  //       return;
-  //     }
-
-  //     // Trigger form validation and wallet collection
-  //     const { error: submitError } = await elements.submit();
-  //     if (submitError) {
-  //       // Show error to your customer
-  //       return;
-  //     }
-
-  //     // Create the PaymentIntent and obtain clientSecret
-  //     const res = await fetch('/create-intent', {
-  //       method: 'POST',
-  //     });
-
-  //     const { client_secret: clientSecret } = await res.json();
-
-  //     const { error } = await stripe.confirmPayment({
-  //       //`Elements` instance that was used to create the Payment Element
-  //       elements,
-  //       clientSecret,
-  //       confirmParams: {
-  //         return_url: 'https://example.com/order/123/complete',
-  //       },
-  //     });
-
-  //     if (error) {
-  //       // This point will only be reached if there is an immediate error when
-  //       // confirming the payment. Show error to your customer (for example, payment
-  //       // details incomplete)
-  //     } else {
-  //       // Your customer will be redirected to your `return_url`. For some payment
-  //       // methods like iDEAL, your customer will be redirected to an intermediate
-  //       // site first to authorize the payment, then redirected to the `return_url`.
-  //     }
-  //   } else {
-  //     setIsLoggedIn(false);
-  //     // Chuyển hướng đến trang đăng nhập nếu chưa đăng nhập
-  //     navigate('/auth/sign-in');
-  //   }
-  //   // Chỉ chạy một lần khi component được render lần đầu tiên
-  // };
-
   const checkLoggedIn = async (event) => {
     // Kiểm tra trạng thái đăng nhập ở đây (ví dụ: từ state hoặc local storage)
     const userToken = window.localStorage.getItem('token');
@@ -337,16 +282,21 @@ export function Cart() {
               </div>
             </CardBody>
             <CardFooter className="pt-1 px-0">
-              <div className="flex items-center ml-[130px]">
+              <div className="flex flex-col items-center justify-center">
                 <Button
                   ripple={false}
                   fullWidth={false}
                   onClick={checkLoggedIn}
                   disabled={isEmpty}
-                  class=" py-3 px-10 text-center bg-black text-white shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100"
+                  className=" py-3 px-10 text-center bg-black text-white shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100"
                 >
-                  Checkout
+                  Check out
                 </Button>
+                <Link to={`/user/product`}>
+                  <Button className="border-blue-gray-100 mt-4 py-3 px-10 border border-2 text-center bg-white text-black shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100">
+                    Go on Buying
+                  </Button>
+                </Link>
               </div>
             </CardFooter>
           </Card>

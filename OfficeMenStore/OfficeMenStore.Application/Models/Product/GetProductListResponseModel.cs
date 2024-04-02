@@ -1,4 +1,6 @@
-﻿namespace OfficeMenStore.Application.Models.Product
+﻿using OfficeMenStore.Application.Models.Size;
+
+namespace OfficeMenStore.Application.Models.Product
 {
     public class GetProductListResponseModel
     {
@@ -13,5 +15,6 @@
         public DateTime? CreatedTime { get; set; }
         public DateTime? UpdatedTime { get; set; }
         public bool? IsDeleted { get; set; }
+        public List<GetAllSizeByProductResponse> SizeProducts { get; set; }
     }
 }

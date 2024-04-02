@@ -99,18 +99,14 @@ export function ProductDetails() {
 
   return (
     <>
-      <div className="relative mt-8 h-72 w-full overflow-hidden rounded-xl bg-[url('/img/background-image.png')] bg-cover	bg-center">
-        <div className="absolute inset-0 h-full w-full bg-gray-900/75" />
-      </div>
-
-      <Card className="mx-3 -mt-16 mb-6 lg:mx-4 border border-blue-gray-100">
+      <Card className="mx-3 mt-8 mb-6 lg:mx-4 border border-blue-gray-100">
         <CardBody className="p-4">
           {/* thẻ Platform Settings */}
           <div className="gird-cols-1 mb-12 grid gap-12 px-4 lg:grid-cols-2 xl:grid-cols-2">
             <div>
               <div className="flex flex-col gap-12">
                 <img
-                  className=" mt-5 h-[480px] w-full rounded-lg object-cover object-center"
+                  className=" mt-5 h-[400px] w-full rounded-lg object-cover object-center"
                   src={product.image}
                   alt="nature image"
                 />
@@ -186,7 +182,7 @@ export function ProductDetails() {
                     </div>
                     <p class="max-w-md mb-8 text-gray-700"></p>
                     <p class="inline-block mb-3 text-4xl font-bold text-gray-700 gap-3">
-                      <span className="text-black ">{product.price} $</span>
+                      <span className="text-black ">{product.price}.000 VNĐ</span>
                       <span class="text-base font-normal text-gray-500 line-through ml-5">$1500</span>
                     </p>
                   </div>

@@ -33,7 +33,23 @@ namespace OfficeMenStore.Application.Services
 
             var total = await _context.Products.Where(p => p.IsDeleted == false).ToListAsync();
             productList = productList.Skip((page) * limit).Take(limit);
-            var result = await productList.Select(p => _mapper.Map<GetProductListResponseModel>(p)).ToListAsync();
+            var result = await productList.Select(p => new GetProductListResponseModel()
+            {
+                Id = p.Id,
+                CategoryName = p.Category.Name,
+                Name = p.Name,
+                Image = p.Image,
+                Price = p.Price,
+                IsDeleted = false,
+                SizeProducts = p.SizeDetails.Select(s => new GetAllSizeByProductResponse()
+                {
+                    Id = s.SizeProductId,
+                    Name = s.SizeProduct.Name,
+                    Amount = s.Quantity
+
+                }).ToList(),
+                CreatedTime = p.CreatedTime,
+            }).ToListAsync();
             
             if (result.Count < 1)
             {

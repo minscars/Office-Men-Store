@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-
 import {
   Typography,
   Card,
@@ -19,27 +17,30 @@ import * as Yup from 'yup';
 import { toast } from 'react-toastify';
 import { useSelector, useDispatch } from 'react-redux';
 import { cartActions } from '../../redux/slicse/cartSlice';
-
 import Radio from '@mui/joy/Radio';
 import RadioGroup from '@mui/joy/RadioGroup';
 import Sheet from '@mui/joy/Sheet';
 import paypal from './images/Onine.png';
+import userApi from '@/api/userApi';
+import { jwtDecode } from 'jwt-decode';
 
-import { propTypesError } from '@material-tailwind/react/types/components/input';
 import { useNavigate } from 'react-router-dom';
-
-import Success from './success';
-
-const { Option } = Select;
 
 function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
   const [paymentMethod, setPaymentMethod] = useState('Onine');
-
+  const [user, setUser] = useState();
+  const userLogin = jwtDecode(window.localStorage.getItem('token'));
+  useEffect(() => {
+    const getUser = async () => {
+      const data = await userApi.GetUserInformation(userLogin.id);
+      setUser(data);
+    };
+    getUser();
+  }, []);
   const handlePaymentMethodChange = (event) => {
     const selectedPaymentMethod = event.target.value;
 
     setPaymentMethod(event.target.value);
-    console.log(selectedPaymentMethod);
   };
 
   const cartItems = useSelector((state) => state.cart.cartItems);
@@ -98,65 +99,6 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
           toast.success('Payment Successful');
           dispatch(cartActions.clearCart());
           navigate('/user/cart/success');
-          // const paymentId = response.razorpay_payment_id;
-          // const orderInfo = {
-          //     cartItems,
-          //     // addressInfo,
-          //     date: new Date().toLocaleString(
-          //         "en-US",
-          //         {
-          //             month: "short",
-          //             day: "2-digit",
-          //             year: "numeric",
-          //         }
-          //     ),
-          //     // email: currentUser?.email,
-          //     // userid: currentUser?.uid,
-          //     paymentId,
-          //     totalAmount,
-          //     Status:"Đã thanh toán"
-          // }
-
-          // try {
-          //     const orderRef = collection(db, 'order')
-          //     addDoc(orderRef, orderInfo);
-
-          //     const updateProductQuantities = async () => {
-          //       for (const item of cartItems) {
-          //         console.log("item", item.quantity)
-          //         // Replace 'products' with the actual collection name in your Firebase
-          //         const productRef = doc(db, 'products', item.id);
-
-          //         try {
-          //           // Get the product document
-          //           const productSnapshot = await getDoc(productRef);
-
-          //           if (productSnapshot.exists()) {
-          //             const productData = productSnapshot.data();
-          //             console.log("productData", productData)
-
-          //             if (productData.quantity >= item.quantity) {
-          //               // Calculate the new available quantity after purchase
-          //               const newQuantity = productData.quantity - item.quantity;
-
-          //               // Update the product's availableQuantity in Firebase
-          //               await updateDoc(productRef, { quantity: newQuantity });
-          //             } else {
-          //               // Handle the case where the quantity goes negative (out of stock)
-          //               // You may want to display an error message or take appropriate action
-          //               toast.error('Product is out of stock');
-          //             }
-          //           }
-          //         } catch (error) {
-          //           console.error("Error updating product quantity:", error);
-          //         }
-          //       }
-          //     };
-          //     updateProductQuantities();
-
-          // } catch (error) {
-          //     console.log(error)
-          // }
         },
         theme: {
           color: '#3399cc',
@@ -165,7 +107,6 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
 
       var pay = new window.Razorpay(options);
       pay.open();
-      console.log(pay);
     }
     // thanh toan off line
     else if (paymentMethod === 'Shipcod') {
@@ -187,7 +128,6 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
                     Customer information
                   </Typography>
                 </div>
-
                 <div className="mb-4">
                   <Typography variant="small" color="blue-gray" className="font-medium">
                     Your name
@@ -198,12 +138,11 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
                     size="lg"
                     placeholder="Enter your name"
                     name="name"
-                    value={formik.values.name}
+                    value={user?.name}
                     onChange={formik.handleChange}
                   />
                   {formik.errors.name && <p className="errorMsg text-red-500"> {formik.errors.name} </p>}
                 </div>
-
                 <div className="flex gap-6">
                   <div className="w-full mb-4">
                     <Typography variant="small" color="blue-gray" className="font-medium">
@@ -213,7 +152,7 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
                       size="lg"
                       placeholder="Enter your phone number"
                       name="phone"
-                      value={formik.values.phone}
+                      value={user?.phoneNumber}
                       onChange={formik.handleChange}
                     />
                     {formik.errors.phone && <p className="text-red-500 text-sm">{formik.errors.phone}</p>}
@@ -228,33 +167,39 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
                       size="lg"
                       placeholder="Enter your email"
                       name="email"
-                      value={formik.values.email}
+                      value={user?.email}
                       onChange={formik.handleChange}
                     />
                     {formik.errors.email && <p className="text-red-500 text-sm">{formik.errors.email}</p>}
                   </div>
                 </div>
-
                 {/* diachi */}
+                <div></div>
                 <div className="mb-4">
                   <Typography variant="small" color="blue-gray" className="font-medium">
                     Address
                   </Typography>
-                  <Input
+
+                  <select className="rounded-[5px] border-blue-gray-200 mt-1 py-3 px-2 border border-1 border-blue-gray-200 w-full h-full bg-transparent text-blue-gray-700 font-sans font-normal">
+                    {user?.addresses.map((item) => (
+                      <option key={item.id} value={item.id}>
+                        {item.addressDetail}
+                      </option>
+                    ))}
+                  </select>
+                  {/* <Input
                     size="lg"
                     placeholder="Enter your address"
                     name="address"
                     value={formik.values.address}
                     onChange={formik.handleChange}
                   />
-                  {formik.errors.address && <p className="text-red-500 text-sm">{formik.errors.address}</p>}
+                  {formik.errors.address && <p className="text-red-500 text-sm">{formik.errors.address}</p>} */}
                 </div>
-
                 <div className="mb-5">
                   <Typography variant="h5" color="blue-gray" className="font-medium mb-5">
                     Payment method
                   </Typography>
-
                   <div className="flex items-center justify-center ">
                     <RadioGroup
                       value={paymentMethod}
@@ -347,7 +292,7 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
           </CardHeader>
           <CardBody className="pt-0 ml-5 mr-5">
             {/* items */}
-            <div className="mt-2 mb-5 ">
+            <div className="mt-2 mb-5">
               <tbody className="mb-5">
                 {cartItems?.map(
                   ({ imgUrl, quantity, productsName, members, price, id, size, category, totalPrice }, key) => {
@@ -360,30 +305,30 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
                             <img
                               src={imgUrl}
                               alt=""
-                              className="w-40 aspect-[3/2] rounded-lg object-cover object-top border border-gray-200"
+                              className="h-auto w-[50px] aspect-[3/2] rounded-lg object-cover object-top border border-gray-200"
                             />
                             <div>
                               <Typography
                                 variant="h1"
                                 color=""
-                                className="mt-0 text-lg font-semibold text-blue-gray-900"
+                                className="mt-0 text-[14px] font-semibold text-blue-gray-900"
                               >
                                 {productsName}
                               </Typography>
                               <div class="font-medium text-gray-400">{category}</div>
                               <div class="font-medium text-gray-400">
-                                <strong>Size: </strong>
+                                <span>Size: </span>
                                 {size}
                               </div>
                               <div class="font-medium text-gray-400">
-                                <strong>Quantity: </strong>
+                                <span>Quantity: </span>
                                 {quantity}
                               </div>
                             </div>
                           </div>
                         </td>
-                        <td className="">
-                          <div className="flex items-end ">
+                        <td className="ml-4">
+                          <div className="ml-4 flex items-end ">
                             <Typography variant="h6" color="blue-gray" className=" font-blod mb-auto">
                               $ {price * quantity}
                             </Typography>
@@ -396,23 +341,26 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
               </tbody>
             </div>
             <div className="flex-col gap-5 border-b border-t broder-blue-gray-500">
-              <Typography variant="small" color="blue-gray" className=" font-medium flex justify-between mt-5">
+              {/* <Typography variant="small" color="blue-gray" className=" font-medium flex justify-between mt-5">
                 <p class="text-base leading-4 text-blue-gray-800 dark:text-gray-400">Subtotal:</p>
                 <p class="text-base leading-4 text-blue-gray-900 dark:text-gray-400">{totalAmount?.toFixed(2)}$</p>
-              </Typography>
-
+              </Typography> */}
+              <div className="flex mt-2">
+                <Input size="lg" placeholder="Discount code" name="discount" />
+                <Button className="ml-2">USE</Button>
+              </div>
               <Typography
                 as="span"
                 variant="small"
-                className="text-xs font-medium text-blue-gray-500 flex items-center justify-between mt-3"
+                className="mb-2 text-xs font-medium text-blue-gray-500 flex items-center justify-between mt-3"
               >
                 <p class="text-base leading-4 text-blue-gray-800 dark:text-gray-400">Shipping:</p>
-                <p class="text-base leading-4 text-blue-gray-900 dark:text-gray-400">Free</p>
+                <p class="text-base leading-4 text-blue-gray-900 dark:text-gray-400"> ___</p>
               </Typography>
-              <Typography variant="small" color="blue-gray" className=" font-medium flex justify-between mt-3 mb-5">
+              {/* <Typography variant="small" color="blue-gray" className=" font-medium flex justify-between mt-3 mb-5">
                 <p class="text-base leading-4 text-blue-gray-800 dark:text-gray-400">Discount:</p>
                 <p class="text-base leading-4 text-blue-gray-900 dark:text-gray-400">10%</p>
-              </Typography>
+              </Typography> */}
             </div>
 
             <div class="flex items-center justify-between w-full mt-5">
@@ -420,8 +368,15 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
                 Total
               </Typography>
               <Typography variant="h5" color="blue-gray" className="mb-1">
-                {(totalAmount - totalAmount * 0.1).toFixed(2)}$
+                {totalAmount.toFixed(2)}$
               </Typography>
+            </div>
+            <div className="mt-4 border-2 border-red-100">
+              <p className="p-3  font-semibold text-[14px]">
+                From March 14, 2024, Office Men Store applies free shipping nationwide for all orders from 0 VND. We
+                confirm orders via Email. Please CHECK your email after successfully placing your order and WAIT TO
+                RECEIVE ITEMS.
+              </p>
             </div>
             {/* san pham */}
           </CardBody>
