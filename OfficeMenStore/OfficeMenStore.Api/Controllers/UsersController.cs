@@ -39,5 +39,19 @@ namespace OfficeMenStore.Api.Controllers
             }
             return BadRequest(result.Message);
         }
+
+        [HttpPost("GetAllUser")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetAllUserAsync(GetAllUserRequest requestDto)
+        {
+            var result = await _userService.GetAllUserAsync(requestDto);
+            if (result.StatusCode == 200)
+            {
+                result.Data.ForEach(s => s.Avatar = setImageName(s.Avatar));
+                
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
     }
 }

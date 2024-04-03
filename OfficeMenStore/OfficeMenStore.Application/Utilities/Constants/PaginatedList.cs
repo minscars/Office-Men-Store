@@ -10,6 +10,7 @@ namespace OfficeMenStore.Application.Utilities.Constants
     {
         public int TotalRecord { get; set; }
         public int PageNumber { get; set; }
+        public int StatusCode { get; set; }
         public T? Data { get; set; }
         public PaginatedList(T? resultData)
         {

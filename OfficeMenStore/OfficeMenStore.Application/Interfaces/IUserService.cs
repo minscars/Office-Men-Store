@@ -13,5 +13,6 @@ namespace OfficeMenStore.Application.Interfaces
     {
         Task<ApiResult<string>> LoginAsync(LoginRequest request);
         Task<ApiResult<GetUserInformationResponse>> GetUserByIdAsync(Guid id);
+        Task<PaginatedList<List<GetUserInformationResponse>>> GetAllUserAsync(GetAllUserRequest reuqestDto);
     }
 }

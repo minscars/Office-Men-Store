@@ -16,6 +16,7 @@ namespace OfficeMenStore.Domain.Extentions
             new Order()
             {
                 Id = 1,
+                Code = "OD20240304125512",
                 UserId = new Guid("8A820ADB-93D7-4C6F-9404-BDBFC14419F4"),
                 Status = 1,
                 OrderTime = DateTime.Now,
