@@ -23,12 +23,13 @@ import Sheet from '@mui/joy/Sheet';
 import paypal from './images/Onine.png';
 import userApi from '@/api/userApi';
 import { jwtDecode } from 'jwt-decode';
-
 import { useNavigate } from 'react-router-dom';
 
 function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
   const [paymentMethod, setPaymentMethod] = useState('Onine');
   const [user, setUser] = useState();
+  const [selectedAddressId, setselectedAddressId] = useState(0);
+
   const userLogin = jwtDecode(window.localStorage.getItem('token'));
   useEffect(() => {
     const getUser = async () => {
@@ -37,6 +38,7 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
     };
     getUser();
   }, []);
+
   const handlePaymentMethodChange = (event) => {
     const selectedPaymentMethod = event.target.value;
 
@@ -56,6 +58,7 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
       phone: '',
       email: '',
     },
+
     validationSchema: Yup.object({
       name: Yup.string().required('Required').min(4, 'Must be 4 characters or more'),
       address: Yup.string().required('Required'),
@@ -70,6 +73,46 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
       console.log('Form submitted:', values);
     },
   });
+
+  useEffect(() => {
+    if (user) {
+      formik.setValues({
+        name: user.name || '',
+        address: user.addresses[selectedAddressId].addressDetail || '',
+        phone: user.phoneNumber || '',
+        email: user.email || '',
+      });
+    }
+  }, [user]);
+
+  // const handleAddressChange = (event) => {
+  //   setselectedAddressId(event.target.value);
+  //   console.log('Selected address:', selectedAddressId); // Debug log
+
+  //   if (selectedAddressId) {
+  //     formik.setValues({
+  //       ...formik.values,
+  //       address:user?.addresses.map((item) => ({item.addressDetail})),
+  //     });
+
+  //     console.log('Formik values after updating address:', formik.values.address); // Debug log
+  //   }
+  // };
+
+  const handleAddressChange = (event) => {
+    const selectedId = parseInt(event.target.value);
+    setselectedAddressId(selectedId);
+
+    if (user && user.addresses.length > 0) {
+      const selectedAddress = user.addresses.find((address) => address.id === selectedId);
+      if (selectedAddress) {
+        formik.setValues({
+          ...formik.values,
+          address: selectedAddress.addressDetail,
+        });
+      }
+    }
+  };
 
   const buyNow = async () => {
     if (paymentMethod === 'Onine') {
@@ -138,7 +181,7 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
                     size="lg"
                     placeholder="Enter your name"
                     name="name"
-                    value={user?.name}
+                    value={formik.values.name}
                     onChange={formik.handleChange}
                   />
                   {formik.errors.name && <p className="errorMsg text-red-500"> {formik.errors.name} </p>}
@@ -152,7 +195,7 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
                       size="lg"
                       placeholder="Enter your phone number"
                       name="phone"
-                      value={user?.phoneNumber}
+                      defaultValue={formik.values.phone}
                       onChange={formik.handleChange}
                     />
                     {formik.errors.phone && <p className="text-red-500 text-sm">{formik.errors.phone}</p>}
@@ -167,20 +210,23 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
                       size="lg"
                       placeholder="Enter your email"
                       name="email"
-                      value={user?.email}
+                      value={formik.values.email}
                       onChange={formik.handleChange}
                     />
                     {formik.errors.email && <p className="text-red-500 text-sm">{formik.errors.email}</p>}
                   </div>
                 </div>
+
                 {/* diachi */}
                 <div></div>
                 <div className="mb-4">
                   <Typography variant="small" color="blue-gray" className="font-medium">
                     Address
                   </Typography>
-
-                  <select className="rounded-[5px] border-blue-gray-200 mt-1 py-3 px-2 border border-1 border-blue-gray-200 w-full h-full bg-transparent text-blue-gray-700 font-sans font-normal">
+                  <select
+                    onChange={handleAddressChange}
+                    className="rounded-[5px]  mt-1 py-3 px-2 border border-1 border-blue-gray-200 w-full h-full bg-transparent text-blue-gray-700 font-sans font-normal"
+                  >
                     {user?.addresses.map((item) => (
                       <option key={item.id} value={item.id}>
                         {item.addressDetail}
