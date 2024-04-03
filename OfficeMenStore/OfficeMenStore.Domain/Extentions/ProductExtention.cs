@@ -19,7 +19,7 @@ namespace OfficeMenStore.Domain.Extentions
                     Name = "Áo sơ mi vải Jersey ngắn tay",
                     Image = "1.png",
                     CategoryId = 1,
-                    Price = 10,
+                    Price = 489000,
                     Rating = 4,
                 },
                 new Product()
@@ -28,7 +28,7 @@ namespace OfficeMenStore.Domain.Extentions
                     Name = "Áo sơ mi vải Jersey ngắn tay",
                     Image = "2.png",
                     CategoryId = 1,
-                    Price = 10,
+                    Price = 489000,
                     Rating = 3,
                 },
                 new Product()
@@ -37,7 +37,7 @@ namespace OfficeMenStore.Domain.Extentions
                     Name = "Áo sơ mi vải Jersey ngắn tay",
                     Image = "3.png",
                     CategoryId = 1,
-                    Price = 10,
+                    Price = 489000,
                     Rating = 5,
 
                 },
@@ -47,7 +47,7 @@ namespace OfficeMenStore.Domain.Extentions
                     Name = "Áo sơ mi vải Jersey ngắn tay",
                     Image = "4.png",
                     CategoryId = 1,
-                    Price = 10,
+                    Price = 489000,
                     Rating = 3.5
                 },
                 new Product()
@@ -56,7 +56,7 @@ namespace OfficeMenStore.Domain.Extentions
                     Name = "Áo sơ mi vải Jersey ngắn tay",
                     Image = "5.png",
                     CategoryId = 1,
-                    Price = 10,
+                    Price = 489000,
                     Rating = 3.5
                 });
         }

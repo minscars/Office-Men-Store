@@ -12,7 +12,7 @@ namespace OfficeMenStore.Domain.Models
         public string? Image { get; set; }
         public string Name { get; set; }
         public int CategoryId { get; set; }
-        public int Price { get; set; }
+        public decimal Price { get; set; }
         public double Rating { get; set; }
         public DateTime CreatedTime { get; set; }
         public DateTime UpdatedTime { get; set; }

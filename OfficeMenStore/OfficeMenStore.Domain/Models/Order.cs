@@ -9,6 +9,7 @@ namespace OfficeMenStore.Domain.Models
     public class Order
     {
         public int Id { get; set; }
+        public string Code { get; set; }
         public Guid UserId { get; set; }
         public int Status { get; set; }
         public DateTime OrderTime { get; set; }

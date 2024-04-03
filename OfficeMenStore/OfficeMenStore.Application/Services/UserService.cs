@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using OfficeMenStore.Application.Interfaces;
 using OfficeMenStore.Application.Models.Address;
+using OfficeMenStore.Application.Models.Product;
 using OfficeMenStore.Application.Models.User;
 using OfficeMenStore.Application.Utilities.Constants;
 using OfficeMenStore.Domain.EF;
@@ -113,6 +115,48 @@ namespace OfficeMenStore.Application.Services
             return new ApiResult<GetUserInformationResponse>(user)
             {
                 Message = "",
+                StatusCode = 200
+            };
+        }
+
+        public async Task<PaginatedList<List<GetUserInformationResponse>>> GetAllUserAsync(GetAllUserRequest requestDto)
+        {
+            var total = await _context.Users.ToListAsync();
+            var userList = _context.Users
+                .AsQueryable();
+            if (!string.IsNullOrEmpty(requestDto.Search))
+            {
+                userList = userList.Where(u => u.PhoneNumber == requestDto.Search);
+                total = await userList.ToListAsync();
+            }
+
+            userList = userList.Skip((requestDto.Page) * requestDto.Limit).Take(requestDto.Limit);
+            var result = await userList.Select(u => new GetUserInformationResponse()
+            {
+                UserId = u.Id,
+                Name = u.Name,
+                Avatar = u.Avatar,
+                Email = u.Email,
+                PhoneNumber = u.PhoneNumber,
+                CartId = u.Cart.Id,
+                Addresses = u.Addresses.Select(a => new GetAddressResponse()
+                {
+                    Id = a.Id,
+                    AddressDetail = a.AddressDetail,
+                    IsDeleted = a.IsDeleted,
+                    UserId = a.UserId,
+                }).ToList(),
+            }).ToListAsync();
+
+            if (result.Count < 1)
+            {
+                return new PaginatedList<List<GetUserInformationResponse>>(null);
+            }
+
+            return new PaginatedList<List<GetUserInformationResponse>>(result)
+            {
+                TotalRecord = total.Count(),
+                PageNumber =requestDto.Page,
                 StatusCode = 200
             };
         }
