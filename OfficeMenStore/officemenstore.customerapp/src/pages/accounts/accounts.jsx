@@ -85,8 +85,8 @@ export function Accounts() {
       </div> */}
       <Card className="grid-cols-1 xl:grid-cols-3 -mt-5 border  border-blue-gray-100 shadow-sm mb-5">
         {/* thẻ tab */}
-        <div className="flex mr-5 mt-5 items-end justify-end">
-          <div className="w-96">
+        <div className="ml-4 mt-5 items-end justify-end">
+          <div className="w-96 float-left left-0">
             <Tabs value={activeTab}>
               <TabsHeader>
                 <Tab value="profile" onClick={() => handleTabChange('profile')}>
@@ -95,7 +95,7 @@ export function Accounts() {
                 </Tab>
                 <Tab value="myorder" onClick={() => handleTabChange('myorder')}>
                   <ListBulletIcon className="-mt-1 mr-2 inline-block h-5 w-5" />
-                  Myoder
+                  Orders
                 </Tab>
 
                 {/* <Tab value="settings" onClick={() => handleTabChange('settings')}>

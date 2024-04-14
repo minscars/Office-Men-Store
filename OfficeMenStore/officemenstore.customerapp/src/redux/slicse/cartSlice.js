@@ -41,6 +41,7 @@ const cartSlice = createSlice({
           quantity: newItem.quantity,
           totalPrice: newItem.price,
           size: newItem.size,
+          sizeid: newItem.sizeid,
         });
         state.totalQuantity++;
       } else if (existingItem && JSON.stringify(existingItem.extraIngredients) === JSON.stringify(extraIngredients)) {
@@ -58,6 +59,7 @@ const cartSlice = createSlice({
           quantity: 1,
           totalPrice: existingItem.price,
           size: existingItem.size,
+          sizeid: existingItem.sizeid,
         };
         state.cartItems.splice(index, 1, newValue);
         state.totalQuantity = state.cartItems.reduce((total, item) => total + Number(item.quantity), 0);

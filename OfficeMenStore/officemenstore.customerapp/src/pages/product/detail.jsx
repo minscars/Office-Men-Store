@@ -1,33 +1,17 @@
-import {
-  Card,
-  CardBody,
-  CardHeader,
-  CardFooter,
-  Avatar,
-  Typography,
-  Tabs,
-  TabsHeader,
-  Tab,
-  Switch,
-  Tooltip,
-  Button,
-  Rating,
-} from '@material-tailwind/react';
+import { Card, CardBody, Button, Rating } from '@material-tailwind/react';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { HomeIcon, ChatBubbleLeftEllipsisIcon, Cog6ToothIcon, PencilIcon } from '@heroicons/react/24/solid';
-import { Link } from 'react-router-dom';
-import { ProfileInfoCard, MessageCard } from '@/widgets/cards';
-import { platformSettingsData, conversationsData, projectsData } from '@/data';
 import { ProductDetailsTab } from './productdetailstab.jsx';
 import { ReviewsTab } from './reviews.jsx';
 import { useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { cartActions } from '../../redux/slicse/cartSlice';
-import { toast } from 'react-toastify';
-import productApi from '@/api/productApi';
 import { PlayDisabled } from '@mui/icons-material';
-
+import { toast } from 'react-toastify';
+import { jwtDecode } from 'jwt-decode';
+import productApi from '@/api/productApi';
+import cartItemApi from '@/api/cartItemApi';
+import userApi from '@/api/userApi';
 export function ProductDetails() {
   const dispatch = useDispatch();
 
@@ -42,7 +26,7 @@ export function ProductDetails() {
 
   const { id } = useParams();
   const [product, setProduct] = useState([]);
-
+  const [selectedSizeid, setSelectedSizesid] = useState(null);
   useEffect(() => {
     const productDetail = async () => {
       const data = await productApi.GetProductById(id);
@@ -51,24 +35,38 @@ export function ProductDetails() {
     productDetail();
   }, []);
 
-  const addTocart = (product) => {
+  const addTocart = async (product) => {
     if (!selectedSize) {
       // Hiển thị thông báo hoặc xử lý khi không có size được chọn
       toast.error('Vui lòng chọn size!');
       return;
     }
     if (product) {
-      dispatch(
-        cartActions.addItem({
-          id: id,
-          productsName: product.name,
-          category: product.category,
-          price: product.price,
-          imgUrl: product.image,
+      var token = window.localStorage.getItem('token');
+      if (token != null) {
+        const user = jwtDecode(token);
+        const dataLogin = await userApi.GetUserInformation(user.id);
+        const data = {
+          cartId: dataLogin?.cartId,
+          productId: id,
+          sizeId: selectedSizeid,
           quantity: Quantity,
-          size: selectedSize,
-        }),
-      );
+        };
+        await cartItemApi.AddToCart(data);
+      } else {
+        dispatch(
+          cartActions.addItem({
+            id: id,
+            productsName: product.name,
+            category: product.category,
+            price: product.price,
+            imgUrl: product.image,
+            quantity: Quantity,
+            size: selectedSize,
+            sizeid: selectedSizeid,
+          }),
+        );
+      }
       toast.success('Thêm sản phẩm thành công!');
     } else {
       toast.error('Product not found');
@@ -86,9 +84,10 @@ export function ProductDetails() {
     console.log(Quantity);
   };
   //hàm chọn size
-  const toggleSize = (size) => {
+  const toggleSize = (size, sizeid) => {
     // Toggle the size
     setSelectedSizes((prevSize) => (prevSize === size ? null : size));
+    setSelectedSizesid((prevSize) => (prevSize === sizeid ? null : sizeid));
   };
 
   const [activeTab, setActiveTab] = useState('details');
@@ -182,8 +181,13 @@ export function ProductDetails() {
                     </div>
                     <p class="max-w-md mb-8 text-gray-700"></p>
                     <p class="inline-block mb-3 text-4xl font-bold text-gray-700 gap-3">
-                      <span className="text-black ">{product.price}.000 VNĐ</span>
-                      <span class="text-base font-normal text-gray-500 line-through ml-5">$1500</span>
+                      <span className="text-black ">
+                        {new Intl.NumberFormat('vi-VN', {
+                          style: 'currency',
+                          currency: 'VND',
+                        }).format(product.price)}
+                      </span>
+                      {/* <span class="text-base font-normal text-gray-500 line-through ml-5">$1500</span> */}
                     </p>
                   </div>
                   {/*  */}
@@ -198,7 +202,7 @@ export function ProductDetails() {
                           <button
                             key={row.id}
                             {...(row.amount === 0 ? 'disabled = {true}' : 'disabled = {false}')}
-                            onClick={() => toggleSize(row.name)}
+                            onClick={() => toggleSize(row.name, row.id)}
                             className={`py-1 mb-2 mr-1 border w-11 focus:outline-none ${
                               selectedSize === row.name
                                 ? 'bg-black text-white'

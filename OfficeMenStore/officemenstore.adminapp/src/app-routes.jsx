@@ -25,6 +25,7 @@ import {
   CustomerTable,
   UpdateProduct,
   Statistic,
+  Dashboard,
 } from '@/pages/admin';
 const icon = {
   className: 'w-5 h-5 text-inherit',
@@ -60,9 +61,9 @@ export const routes = [
         element: <CustomerTable />,
       },
 
-      { icon: <NewspaperIcon {...icon} />, name: 'Orders management', path: '/allorders', element: <Oders /> },
+      { icon: <NewspaperIcon {...icon} />, name: 'Orders management', path: '/orders', element: <Oders /> },
       { icon: <ChartBarIcon {...icon} />, name: 'Statistic', path: '/statistic', element: <Statistic /> },
-      { path: '/allorders/ordersdetail', element: <OdersDetails /> },
+      { path: '/orders/detail/:id', element: <OdersDetails /> },
 
       //Cart
       { path: '/cart/checkout/', name: 'Checkout', element: <Checkout /> },

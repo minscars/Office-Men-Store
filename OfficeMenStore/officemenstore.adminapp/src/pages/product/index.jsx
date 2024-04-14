@@ -145,7 +145,7 @@ export function Products() {
                     ))}
                   </select>
                 </div>
-                <div className=" ml-auto">
+                <div className="ml-auto">
                   <Link to={'addproducts/'}>
                     <Button className="flex items-center gap-3">
                       <svg
@@ -164,7 +164,7 @@ export function Products() {
             </div>
           </CardHeader>
           <CardBody className="h-[570px] px-0 pt-0 pb-2">
-            <table className="mt-5 w-full  min-w-max  table-auto text-left ">
+            <table className="mt-5 w-full min-w-max table-auto text-left ">
               <thead>
                 <tr>
                   {['Product name', 'Category', 'price', 'Created'].map((el) => (
@@ -185,11 +185,7 @@ export function Products() {
                     <tr key={item.id} className="hover:bg-gray-100 transition-colors group">
                       <td className="p-2 py-3 px-10">
                         <div className="flex items-center gap-4">
-                          <img
-                            src={item.image}
-                            alt=""
-                            className="w-[90px] aspect-[3/2] rounded-lg object-cover object-top border border-gray-200"
-                          />
+                          <img src={item.image} alt="" className="w-[70px] border border-gray-200" />
                           <div>
                             <Typography variant="small" color="blue-gray" className="font-bold">
                               {item.name}
@@ -214,7 +210,10 @@ export function Products() {
                         <div className="flex items-center gap-4">
                           <div>
                             <Typography variant="small" color="blue-gray" className="font-normal">
-                              {item.price}
+                              {new Intl.NumberFormat('vi-VN', {
+                                style: 'currency',
+                                currency: 'VND',
+                              }).format(item.price)}
                             </Typography>
                           </div>
                         </div>
@@ -229,7 +228,7 @@ export function Products() {
                           <button class="select-none p-2 ">
                             <Tooltip content="Edit Product">
                               <IconButton variant="text">
-                                <PencilIcon className="h-5 w-5  hover:text-blue-300" onClick={navigateeditproduct} />
+                                <PencilIcon className="h-5 w-5 hover:text-blue-300" onClick={navigateeditproduct} />
                               </IconButton>
                             </Tooltip>
                           </button>
@@ -237,7 +236,7 @@ export function Products() {
                           <button class="p-2 ">
                             <Tooltip content="Delete Product">
                               <IconButton variant="text">
-                                <TrashIcon className="h-5 w-5  hover:text-red-500" onClick={() => setOpen(true)} />
+                                <TrashIcon className="h-5 w-5 hover:text-red-500" onClick={() => setOpen(true)} />
                               </IconButton>
                             </Tooltip>
                           </button>

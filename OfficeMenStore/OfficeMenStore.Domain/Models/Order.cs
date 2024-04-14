@@ -12,6 +12,8 @@ namespace OfficeMenStore.Domain.Models
         public string Code { get; set; }
         public Guid UserId { get; set; }
         public int Status { get; set; }
+        public string AddressDelivery {  get; set; }
+        public int PayStatus { get; set; }
         public DateTime OrderTime { get; set; }
         public DateTime ApproveTime { get; set; }
         public DateTime StartDeliveryTime { get; set; }

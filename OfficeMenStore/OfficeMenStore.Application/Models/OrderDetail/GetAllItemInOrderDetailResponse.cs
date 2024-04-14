@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OfficeMenStore.Application.Models.CartItem
+namespace OfficeMenStore.Application.Models.OrderDetail
 {
-    public class GetAllCartItemResponse
+    public class GetAllItemInOrderDetailResponse
     {
-        public int CartId { get; set; }
         public int ProductId { get; set; }
         public string ProductName { get; set; }
         public string ProductImage { get; set; }
@@ -18,5 +17,5 @@ namespace OfficeMenStore.Application.Models.CartItem
         public int Quantity { get; set; }
         public decimal Subtotal { get; set; }
         public bool IsDeleted { get; set; }
-     }
+    }
 }

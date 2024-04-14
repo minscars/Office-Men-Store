@@ -11,7 +11,7 @@ namespace OfficeMenStore.Domain.Models
         public int CartId { get; set; }
         public int ProductId { get; set; }
         public int SizeProductId { get; set; }
-        public int Quanntity {  get; set; }
+        public int Quantity {  get; set; }
         public bool IsDeleted { get; set; }
         public virtual Cart Cart { get; set; }
         public virtual Product Product { get; set; }

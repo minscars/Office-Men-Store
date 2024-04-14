@@ -14,11 +14,10 @@ namespace OfficeMenStore.Domain.Configurations
         public void Configure(EntityTypeBuilder<OrderDetail> builder)
         {
             //Bảng phụ có thêm Config: kéo 2 khóa chính về làm khóa chính:
-            builder.HasKey(c => new { c.OrderId, c.ProductId });
+            builder.HasKey(c => new { c.OrderId, c.ProductId , c.SizeProductId });
             builder.Property(x => x.OrderId).IsRequired();
             builder.Property(x => x.Amount).IsRequired().HasDefaultValue(1);
             builder.Property(x => x.OrderPrice).IsRequired();
-
         }
     }
 }

@@ -12,5 +12,6 @@ namespace OfficeMenStore.Domain.Models
         public string Name { get; set; }
         public virtual List<SizeDetail> SizeDetails { get; set; }
         public virtual List<CartItem> CartItems { get; set; }
+        //public virtual List<OrderDetail> OrderDetails { get; set; }
     }
 }

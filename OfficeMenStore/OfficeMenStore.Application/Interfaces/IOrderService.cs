@@ -13,5 +13,8 @@ namespace OfficeMenStore.Application.Interfaces
     {
         Task<ApiResult<int>> CreateOrderAsync(CreateOderRequest dto);
         Task<PaginatedList<List<GetAllOrderResponse>>> GetAllOrderAsync(PaginatedRequest requestDto);
+        Task<ApiResult<List<GetAllOrderByUserAccountResponse>>> GetAllOrderByUserAccountAsync(string userId);
+        Task<ApiResult<GetOrderByIdResponse>> GetOrderDetailAsync(int  orderId);
+        Task<ApiResult<bool>> UpdateOrderStatusAsync(UpdateOrderStatusRequest requestDto);
     }
 }

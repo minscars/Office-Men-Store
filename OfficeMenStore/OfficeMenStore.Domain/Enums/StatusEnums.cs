@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LibraryManagement.Data.Enums
+namespace OfficeMenStore.Domain.Enums
 {
     public static class StatusEnums
     {
@@ -17,14 +17,18 @@ namespace LibraryManagement.Data.Enums
             Pending = 1,
             [Display(Name = "Approve")]
             Approve = 2,
+            [Display(Name = "Paid")]
+            Paid = 3,
+            [Display(Name = "Cash")]
+            Cash = 4,
             [Display(Name = "Delivering")]
-            Borrowing = 3,
+            Delivering = 5,
             [Display(Name = "Delivered")]
-            Returned = 4,
+            Delivered = 6,
             [Display(Name = "Rejected")]
-            Rejected = 5,
+            Rejected = 7,
             [Display(Name = "Cancel")]
-            Cancel = 6,
+            Cancel = 8,
         }
         public static string GetDisplayName(Enum enumValue)
         {

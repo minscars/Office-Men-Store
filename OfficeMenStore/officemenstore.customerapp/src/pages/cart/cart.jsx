@@ -5,119 +5,92 @@ import {
   CardHeader,
   CardBody,
   CardFooter,
-  IconButton,
-  Menu,
-  MenuHandler,
-  MenuList,
-  MenuItem,
   Button,
   Avatar,
   Tooltip,
   Progress,
   input,
 } from '@material-tailwind/react';
+import { ShoppingCartIcon } from '@heroicons/react/24/solid';
 import { EllipsisVerticalIcon, ArrowUpIcon } from '@heroicons/react/24/outline';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { StatisticsCard } from '@/widgets/cards';
-import { StatisticsChart } from '@/widgets/charts';
-import { statisticsCardsData, statisticsChartsData, projectsTableData, ordersOverviewData } from '@/data';
-import { CheckCircleIcon, ClockIcon } from '@heroicons/react/24/solid';
 import { useNavigate } from 'react-router-dom';
 import { cartActions } from '../../redux/slicse/cartSlice';
 import { jwtDecode } from 'jwt-decode';
 import { toast } from 'react-toastify';
-
-import ReactDOM from 'react-dom';
-import { loadStripe } from '@stripe/stripe-js';
-import Stripe from 'stripe';
-
+import cartItemApi from '@/api/cartItemApi';
 export function Cart() {
+  const icon = {
+    className: 'w-5 h-5 text-inherit',
+  };
   const cartItems = useSelector((state) => state.cart.cartItems);
   const totalAmount = useSelector((state) => state.cart.totalAmount);
   const totalQuantity = cartItems.reduce((total, item) => total + item.quantity, 0);
 
   const [isLoggedIn, setIsLoggedIn] = useState(false); //kiem tra dang nhap
   const [isEmpty, setIsEmpty] = useState(cartItems.length === 0); // check gio hang co rong hay không
-
-  const [user, setUser] = useState(true); // set để check đăng nhập
+  //const [userLogin, setUser] = useState(true); // set để check đăng nhập
   const navigate = useNavigate();
-  console.log('cart', cartItems);
+  const [cartItemList, setCartItemList] = useState([]);
+  const token = window.localStorage.getItem('token');
+  var userLogin = null;
 
+  useEffect(() => {
+    if (token != null) {
+      userLogin = jwtDecode(token);
+    }
+    const GetCartItem = async () => {
+      const data = await cartItemApi.GetCartItemByUser(userLogin.id);
+      setCartItemList(data.data);
+    };
+    GetCartItem();
+  }, []);
   const handleDec = (id, size) => {
-    // Dispatch action giảm số lượng sản phẩm
     dispatch(cartActions.decreaseQuantity({ id, size }));
-    console.log(size, id);
+    //console.log(size, id);
+  };
+
+  const updateQuantity = async () => {
+    await cartItemApi.UpdateAmount(dto);
   };
 
   const handleInc = (id, size) => {
-    // Dispatch action tăng số lượng sản phẩm
     dispatch(cartActions.increaseQuantity({ id, size }));
-    console.log(cartActions.increaseQuantity(id, size));
+    //console.log(cartActions.increaseQuantity(id, size));
   };
 
   const dispatch = useDispatch();
 
   const deleteProduct = (id, size) => {
     dispatch(cartActions.deleteItem({ id, size }));
-    console.log(cartItems);
+    //console.log(cartItems);
     setIsEmpty(cartItems.length);
   };
 
   const checkLoggedIn = async (event) => {
-    // Kiểm tra trạng thái đăng nhập ở đây (ví dụ: từ state hoặc local storage)
-    const userToken = window.localStorage.getItem('token');
-
-    if (userToken) {
-      setIsLoggedIn(true);
+    const token = window.localStorage.getItem('token');
+    if (token != null && cartItemList.cartItemList.length != 0) {
       navigate('/user/cart/checkout');
     } else {
-      setIsLoggedIn(false);
-      // Chuyển hướng đến trang đăng nhập nếu chưa đăng nhập
-
-      navigate('/auth/sign-in');
+      if (cartItemList.cartItemList.length == 0) {
+        toast.error('Cart is empty!');
+      } else {
+        toast.error('Sign in please!');
+      }
     }
   };
   return (
-    <div className="mt-12">
+    <div className="mt-6 mr-3">
       <div className="mb-4 grid grid-cols-1 gap-6 xl:grid-cols-3">
-        <div className=" xl:col-span-2">
-          <Card className="overflow-hidden xl:col-span-2 border border-blue-gray-100 shadow-sm">
-            <CardHeader
-              floated={false}
-              shadow={false}
-              color="transparent"
-              className="m-0 flex items-center justify-between p-6"
-            >
-              <div>
-                <Typography variant="h4" color="blue-gray" className="mb-1">
-                  Cart
-                </Typography>
-                <Typography variant="small" className="flex items-center gap-1 font-normal text-blue-gray-600">
-                  <CheckCircleIcon strokeWidth={3} className="h-4 w-4 text-blue-gray-200" />
-                  <strong>{totalQuantity}</strong> items
-                </Typography>
-              </div>
-              <Menu placement="left-start">
-                <MenuHandler>
-                  <IconButton size="sm" variant="text" color="blue-gray">
-                    <EllipsisVerticalIcon strokeWidth={3} fill="currenColor" className="h-6 w-6" />
-                  </IconButton>
-                </MenuHandler>
-                <MenuList>
-                  <MenuItem>Action</MenuItem>
-                  <MenuItem>Another Action</MenuItem>
-                  <MenuItem>Something else here</MenuItem>
-                </MenuList>
-              </Menu>
-            </CardHeader>
-
-            <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
+        <div className="xl:col-span-4">
+          <Card className="overflow-hidden  xl:col-span-2 border border-blue-gray-100 shadow-sm">
+            <CardBody className="overflow-x-scroll h-[500px] px-0 pt-0 pb-2">
               <table className="w-full min-w-[640px] table-auto">
                 <thead>
                   <tr>
-                    {['Items', 'Price', 'Quatily', 'Total'].map((el) => (
+                    {['Items', 'Price', 'Quatily', 'Sub Total'].map((el) => (
                       <th key={el} className="border-b border-blue-gray-50 py-3 px-6 text-left">
                         <Typography variant="small" className="text-[11px] font-medium uppercase text-blue-gray-400">
                           {el}
@@ -127,178 +100,273 @@ export function Cart() {
                   </tr>
                 </thead>
                 <tbody>
-                  {cartItems?.map(({ imgUrl, quantity, productsName, members, price, id, size }, key) => {
-                    const className = `py-3 px-5 ${key === cartItems.length - 1 ? '' : 'border-b border-blue-gray-50'}`;
-                    return (
-                      <tr key={key} className={className}>
-                        {/* teen */}
-                        <td className={className}>
-                          <div className="flex items-center gap-4">
-                            <img src={imgUrl} alt={className} className="h-20 w-20 object-cover rounded-lg" />
-                            <div className="flex flex-col justify-between ml-4 flex-grow gap-[2px]">
-                              <span className="font-bold text-sm text-black text-[25px] ">{productsName}</span>
-                              <Typography
-                                variant="small"
-                                className="flex items-center gap-1 font-normal text-blue-gray-600"
-                              >
-                                Size: <strong>{size}</strong>
-                              </Typography>
-                              <Typography
-                                variant="small"
-                                className="flex items-center gap-1 font-normal text-blue-gray-600"
-                              >
-                                Quantity: <strong>{quantity}</strong>
-                              </Typography>
-                              {/* <span className="text-red-500 text-xs capitalize text-[15px]">{cart?.category}</span> */}
-                              <div
-                                className="font-semibold hover:text-red-500 text-gray-500 text-xs cursor-pointer"
-                                onClick={() => deleteProduct(id, size)}
-                              >
-                                Remove
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        {/* gia */}
-                        <td>
-                          <Typography variant="h6" color="blue-gray" className="mb-1 ml-5">
-                            {price}$
-                          </Typography>
-                        </td>
-                        {/* tang giam so luong */}
-                        <td>
-                          <div className="mb-1 ml-4">
-                            <form class="max-w-xs mx-auto">
-                              <div class="relative flex items-center">
-                                <button
-                                  type="button"
-                                  id="decrement-button"
-                                  data-input-counter-decrement="counter-input"
-                                  class="flex-shrink-0 bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-5 w-5 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none"
-                                >
-                                  <svg
-                                    class="w-2.5 h-2.5 text-gray-900 dark:text-white"
-                                    aria-hidden="true"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 18 2"
-                                    onClick={() => handleDec(id, size)}
-                                  >
-                                    <path
-                                      stroke="currentColor"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                      stroke-width="2"
-                                      d="M1 1h16"
-                                    />
-                                  </svg>
-                                </button>
-                                <input
-                                  type="text"
-                                  id="counter-input"
-                                  data-input-counter
-                                  class="flex-shrink-0 text-gray-900 dark:text-white border-0 bg-transparent text-sm font-normal focus:outline-none focus:ring-0 max-w-[2.5rem] text-center"
-                                  placeholder=""
-                                  value={quantity}
-                                  required
+                  {token
+                    ? cartItemList.cartItemList?.map((item, key) => {
+                        const className = `py-3 px-5 ${
+                          key === cartItems.length - 1 ? '' : 'border-b border-blue-gray-50'
+                        }`;
+                        return (
+                          <tr key={key} className={className}>
+                            {/* teen */}
+                            <td className={className}>
+                              <div className="flex items-center gap-4">
+                                <img
+                                  src={item.productImage}
+                                  alt={item.productName}
+                                  className="h-20 w-20 object-cover rounded-lg"
                                 />
-                                <button
-                                  type="button"
-                                  id="increment-button"
-                                  data-input-counter-increment="counter-input"
-                                  class="flex-shrink-0 bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-5 w-5 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none"
-                                >
-                                  <svg
-                                    class="w-2.5 h-2.5 text-gray-900 dark:text-white"
-                                    aria-hidden="true"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 18 18"
-                                    onClick={() => handleInc(id, size)}
+                                <div className="flex flex-col justify-between ml-4 flex-grow gap-[2px]">
+                                  <span className="font-bold text-sm text-black text-[25px] ">{item.productName}</span>
+                                  <Typography
+                                    variant="small"
+                                    className="flex items-center gap-1 font-normal text-blue-gray-600"
                                   >
-                                    <path
-                                      stroke="currentColor"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                      stroke-width="2"
-                                      d="M9 1v16M1 9h16"
-                                    />
-                                  </svg>
-                                </button>
+                                    Size: <strong>{item.sizeName}</strong>
+                                  </Typography>
+                                  <Typography
+                                    variant="small"
+                                    className="flex items-center gap-1 font-normal text-blue-gray-600"
+                                  >
+                                    Quantity: <strong>{item.quantity}</strong>
+                                  </Typography>
+                                  {/* <span className="text-red-500 text-xs capitalize text-[15px]">{cart?.category}</span> */}
+                                  <div
+                                    className="font-semibold hover:text-red-500 text-gray-500 text-xs cursor-pointer"
+                                    //onClick={() => deleteProduct(id, size)}
+                                  >
+                                    Remove
+                                  </div>
+                                </div>
                               </div>
-                            </form>
-                          </div>
-                        </td>
-                        {/* tong gia tri */}
-                        <td className="flex-col items-center mr-4">
-                          <Typography variant="h6" color="blue-gray" className="mb-1 ml-5">
-                            ${price * quantity}
-                          </Typography>
-                        </td>
-                        {/* Add other columns as needed */}
-                      </tr>
-                    );
-                  })}
+                            </td>
+                            {/* gia */}
+                            <td>
+                              <Typography variant="h6" color="blue-gray" className="mb-1 ml-5">
+                                {new Intl.NumberFormat('vi-VN', {
+                                  style: 'currency',
+                                  currency: 'VND',
+                                }).format(item.price)}
+                              </Typography>
+                            </td>
+                            {/* tang giam so luong */}
+                            <td>
+                              <div className="mb-1 ml-4">
+                                <form class="max-w-xs mx-auto">
+                                  <div class="relative flex items-center">
+                                    <button
+                                      type="button"
+                                      id="decrement-button"
+                                      data-input-counter-decrement="counter-input"
+                                      class="flex-shrink-0 bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-5 w-5 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none"
+                                    >
+                                      <svg
+                                        class="w-2.5 h-2.5 text-gray-900 dark:text-white"
+                                        aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 18 2"
+                                        onClick={() => handleDec(id, size)}
+                                      >
+                                        <path
+                                          stroke="currentColor"
+                                          stroke-linecap="round"
+                                          stroke-linejoin="round"
+                                          stroke-width="2"
+                                          d="M1 1h16"
+                                        />
+                                      </svg>
+                                    </button>
+                                    <input
+                                      type="number"
+                                      id="counter-input"
+                                      data-input-counter
+                                      class="flex-shrink-0 text-gray-900 dark:text-white border-0 bg-transparent text-sm font-normal focus:outline-none focus:ring-0 max-w-[2.5rem] text-center"
+                                      value={item.quantity}
+                                    />
+                                    <button
+                                      type="button"
+                                      id="increment-button"
+                                      data-input-counter-increment="counter-input"
+                                      class="flex-shrink-0 bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-5 w-5 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none"
+                                    >
+                                      <svg
+                                        class="w-2.5 h-2.5 text-gray-900 dark:text-white"
+                                        aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 18 18"
+                                        //onClick={() => handleInc(id, size)}
+                                      >
+                                        <path
+                                          stroke="currentColor"
+                                          stroke-linecap="round"
+                                          stroke-linejoin="round"
+                                          stroke-width="2"
+                                          d="M9 1v16M1 9h16"
+                                        />
+                                      </svg>
+                                    </button>
+                                  </div>
+                                </form>
+                              </div>
+                            </td>
+                            {/* tong gia tri */}
+                            <td className="flex-col items-center mr-4">
+                              <Typography variant="h6" color="blue-gray" className="mb-1 ml-5">
+                                {new Intl.NumberFormat('vi-VN', {
+                                  style: 'currency',
+                                  currency: 'VND',
+                                }).format(item.subtotal)}
+                              </Typography>
+                            </td>
+                            {/* Add other columns as needed */}
+                          </tr>
+                        );
+                      })
+                    : cartItems?.map(({ imgUrl, quantity, productsName, members, price, id, size }, key) => {
+                        const className = `py-3 px-5 ${
+                          key === cartItems.length - 1 ? '' : 'border-b border-blue-gray-50'
+                        }`;
+                        return (
+                          <tr key={key} className={className}>
+                            {/* teen */}
+                            <td className={className}>
+                              <div className="flex items-center gap-4">
+                                <img src={imgUrl} alt={className} className="h-20 w-20 object-cover rounded-lg" />
+                                <div className="flex flex-col justify-between ml-4 flex-grow gap-[2px]">
+                                  <span className="font-bold text-sm text-black text-[25px] ">{productsName}</span>
+                                  <Typography
+                                    variant="small"
+                                    className="flex items-center gap-1 font-normal text-blue-gray-600"
+                                  >
+                                    Size: <strong>{size}</strong>
+                                  </Typography>
+                                  <Typography
+                                    variant="small"
+                                    className="flex items-center gap-1 font-normal text-blue-gray-600"
+                                  >
+                                    Quantity: <strong>{quantity}</strong>
+                                  </Typography>
+                                  {/* <span className="text-red-500 text-xs capitalize text-[15px]">{cart?.category}</span> */}
+                                  <div
+                                    className="font-semibold hover:text-red-500 text-gray-500 text-xs cursor-pointer"
+                                    onClick={() => deleteProduct(id, size)}
+                                  >
+                                    Remove
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
+                            {/* gia */}
+                            <td>
+                              <Typography variant="h6" color="blue-gray" className="mb-1 ml-5">
+                                {price}
+                              </Typography>
+                            </td>
+                            {/* tang giam so luong */}
+                            <td>
+                              <div className="mb-1 ml-4">
+                                <form class="max-w-xs mx-auto">
+                                  <div class="relative flex items-center">
+                                    <button
+                                      type="button"
+                                      id="decrement-button"
+                                      data-input-counter-decrement="counter-input"
+                                      class="flex-shrink-0 bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-5 w-5 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none"
+                                    >
+                                      <svg
+                                        class="w-2.5 h-2.5 text-gray-900 dark:text-white"
+                                        aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 18 2"
+                                        onClick={() => handleDec(id, size)}
+                                      >
+                                        <path
+                                          stroke="currentColor"
+                                          stroke-linecap="round"
+                                          stroke-linejoin="round"
+                                          stroke-width="2"
+                                          d="M1 1h16"
+                                        />
+                                      </svg>
+                                    </button>
+                                    <input
+                                      type="text"
+                                      id="counter-input"
+                                      data-input-counter
+                                      class="flex-shrink-0 text-gray-900 dark:text-white border-0 bg-transparent text-sm font-normal focus:outline-none focus:ring-0 max-w-[2.5rem] text-center"
+                                      placeholder=""
+                                      value={quantity}
+                                      required
+                                    />
+                                    <button
+                                      type="button"
+                                      id="increment-button"
+                                      data-input-counter-increment="counter-input"
+                                      class="flex-shrink-0 bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-5 w-5 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none"
+                                    >
+                                      <svg
+                                        class="w-2.5 h-2.5 text-gray-900 dark:text-white"
+                                        aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 18 18"
+                                        onClick={() => handleInc(id, size)}
+                                      >
+                                        <path
+                                          stroke="currentColor"
+                                          stroke-linecap="round"
+                                          stroke-linejoin="round"
+                                          stroke-width="2"
+                                          d="M9 1v16M1 9h16"
+                                        />
+                                      </svg>
+                                    </button>
+                                  </div>
+                                </form>
+                              </div>
+                            </td>
+                            {/* tong gia tri */}
+                            <td className="flex-col items-center mr-4">
+                              <Typography variant="h6" color="blue-gray" className="mb-1 ml-5">
+                                {price * quantity}
+                              </Typography>
+                            </td>
+                            {/* Add other columns as needed */}
+                          </tr>
+                        );
+                      })}
                 </tbody>
               </table>
             </CardBody>
-          </Card>
-        </div>
-        {/* tong gia */}
-        <div className="  xl:col-span-1">
-          <Card className="border border-blue-gray-100 shadow-sm w-90 h-85">
-            <CardHeader floated={false} shadow={false} color="transparent" className="m-0 p-6">
-              <Typography variant="h4" color="blue-gray" className="mb-2">
-                {' '}
-                Order Summary
-              </Typography>
-              <Typography variant="small" className="flex items-center gap-1 font-normal text-blue-gray-600">
-                {/* <ArrowUpIcon strokeWidth={3} className="h-3.5 w-3.5 text-green-500" /> */}
-                <strong>{cartItems.length}</strong> Items
-              </Typography>
-            </CardHeader>
-            <CardBody className="pt-0">
-              <div className="flex-col gap-5">
-                <Typography variant="small" color="blue-gray" className=" font-medium flex justify-between mt-3">
-                  <p class="text-base leading-4 text-gray-800 dark:text-gray-400">Subtotal</p>
-                  <p class="text-base leading-4 text-gray-600 dark:text-gray-400">{totalAmount?.toFixed(2)}$</p>
-                </Typography>
-                <Typography
-                  as="span"
-                  variant="small"
-                  className="text-xs font-medium text-blue-gray-500 flex items-center justify-between mt-3"
-                >
-                  <p class="text-base leading-4 text-gray-800 dark:text-gray-400">Shipping</p>
-                  <p class="text-base leading-4 text-gray-600 dark:text-gray-400">Free</p>
-                </Typography>
-                <Typography variant="small" color="blue-gray" className=" font-medium flex justify-between mt-3">
-                  <p class="text-base leading-4 text-gray-800 dark:text-gray-400">Discount</p>
-                  <p class="text-base leading-4 text-gray-600 dark:text-gray-400">10%</p>
-                </Typography>
-              </div>
-              <div class="flex items-center justify-between w-full mt-10">
-                <p class="text-base font-semibold leading-4 text-gray-800 dark:text-gray-400">Total</p>
-                <p class="text-base font-semibold leading-4 text-gray-600 dark:text-gray-400">
-                  {(totalAmount - totalAmount * 0.1).toFixed(2)}$
+            <div>
+              <div className="float-right flex items-center mr-20">
+                <p className="text-base font-semibold leading-4 text-gray-800 dark:text-gray-400">TOTAL: </p>
+                <p className="ml-8 text-base font-semibold leading-4 text-gray-700 dark:text-gray-400">
+                  {new Intl.NumberFormat('vi-VN', {
+                    style: 'currency',
+                    currency: 'VND',
+                  }).format(cartItemList.total)}
                 </p>
               </div>
-            </CardBody>
+            </div>
             <CardFooter className="pt-1 px-0">
-              <div className="flex flex-col items-center justify-center">
+              <div className="flex mr-4 mt-4 float-right">
+                <Link to={`/user/product`}>
+                  <Button className="items-center flex mr-4 border-blue-gray-100 py-4 px-10 border text-center bg-white text-black shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100">
+                    <ShoppingCartIcon {...icon} />
+                    <p className="ml-2">Go on Buying</p>
+                  </Button>
+                </Link>
                 <Button
                   ripple={false}
                   fullWidth={false}
                   onClick={checkLoggedIn}
-                  disabled={isEmpty}
-                  className=" py-3 px-10 text-center bg-black text-white shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100"
+                  className="py-4 px-10 text-center bg-black text-white shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100"
                 >
                   Check out
                 </Button>
-                <Link to={`/user/product`}>
-                  <Button className="border-blue-gray-100 mt-4 py-3 px-10 border text-center bg-white text-black shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100">
-                    Go on Buying
-                  </Button>
-                </Link>
               </div>
             </CardFooter>
           </Card>

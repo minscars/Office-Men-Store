@@ -43,13 +43,13 @@ namespace OfficeMenStore.Domain.EF
             modelBuilder.FillDataProduct();
             modelBuilder.FillDataCategory();
             modelBuilder.FillDataCart();
-            modelBuilder.FillDataOrder();
-            modelBuilder.FillDataOrderDetail();
+            //modelBuilder.FillDataOrder();
+            //modelBuilder.FillDataOrderDetail();
             modelBuilder.FillDataUser();
             modelBuilder.FillDataFeedBack();
             modelBuilder.FillDataSize();
             modelBuilder.FillDataSizeDetail();
-            modelBuilder.FillDataCartItem();
+            //modelBuilder.FillDataCartItem();
             modelBuilder.FillDataAdress();
 
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())

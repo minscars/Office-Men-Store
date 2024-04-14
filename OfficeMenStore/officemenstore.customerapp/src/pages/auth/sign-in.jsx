@@ -4,41 +4,11 @@ import userApi from '@/api/userApi';
 import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import Alert from '@/components/alert';
-
+import cartApi from '@/api/cartItemApi';
 import { jwtDecode } from 'jwt-decode';
 export function SignIn() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-
-  const handleAddCart = (item) => {
-    const data = {
-      productId: item?.productId,
-      sizeId: item?.sizeId,
-      quantity: item?.quantity,
-      price: item?.price,
-    };
-    localStorage.setItem('cart', JSON.stringify(data));
-  };
-
-  const handleGetCart = () => {
-    const dataLocal = localStorage.getItem('cartItems');
-    const cartItems = JSON.parse(dataLocal);
-    if (cartItems && cartItems.length !== 0) {
-      for (const item of cartItems) {
-        const data = {
-          productId: item?.productId,
-          sizeId: item?.sizeId,
-          quantity: item?.quantity,
-          price: item?.price,
-        };
-        //   call API
-        fetch('url', {
-          method: 'POST',
-          body: data,
-        });
-      }
-    }
-  };
   // ham dang nhap
   async function login(e) {
     e.preventDefault();
@@ -46,17 +16,40 @@ export function SignIn() {
 
     await userApi
       .Login(request)
-      .then((response) => {
+      .then(async (response) => {
         if (response.statusCode === 200) {
           window.localStorage.setItem('token', response.data);
           var token = window.localStorage.getItem('token');
           const user = jwtDecode(token);
           if (user) {
-            Alert.showSuccessAlert(
-              response.message,
-              () => (window.location.href = user.roles === 'User' ? '/user/home' : '/admin'),
-            );
+            // add to cart into db when user login successfully
+            const dataLocal = localStorage.getItem('cartItems');
+            const cartItems = JSON.parse(dataLocal);
+            const dataLogin = await userApi.GetUserInformation(user.id);
+            if (cartItems && cartItems.length !== 0) {
+              for (const item of cartItems) {
+                const data = {
+                  cartId: dataLogin?.cartId,
+                  productId: item?.id,
+                  sizeId: item?.sizeid,
+                  quantity: item?.quantity,
+                };
+                console.log('data', data);
+                cartApi.AddToCart(data);
+                fetch('url', {
+                  method: 'POST',
+                  body: data,
+                });
+              }
+            }
+            window.localStorage.removeItem('cartItems');
           }
+
+          // end
+          Alert.showSuccessAlert(
+            response.message,
+            () => (window.location.href = user.roles === 'User' ? '/user/home' : ''),
+          );
         } else {
           Alert.showErrorAlert(response.message);
         }

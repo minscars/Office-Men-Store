@@ -1,4 +1,5 @@
-﻿using OfficeMenStore.Application.Models.CartItem;
+﻿using OfficeMenStore.Application.Models.Cart;
+using OfficeMenStore.Application.Models.CartItem;
 using OfficeMenStore.Application.Utilities.Constants;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ namespace OfficeMenStore.Application.Interfaces
     {
         Task<ApiResult<bool>> CreateCartItemAsync(CreateCartItemRequest dto);
         Task<ApiResult<bool>> UpdateQuantityAsync(UpdateQuantityCartItemRequest dto);
-        Task<ApiResult<List<GetAllCartItemResponse>>> GetAllCartItemAsync(string userId);
+        Task<ApiResult<GetCartByUserResponse>> GetAllCartItemAsync(string userId);
+        Task<ApiResult<bool>> DeleteCartItemAsync(DeletedCartItemsRequest dto);
     }
 }

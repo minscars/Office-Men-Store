@@ -1,81 +1,110 @@
 import { Card, CardHeader, CardBody, Typography, Avatar, Chip, Tooltip, Progress } from '@material-tailwind/react';
 import { EllipsisVerticalIcon, EyeIcon } from '@heroicons/react/24/outline';
 import { authorsTableData, projectsTableData } from '@/data';
-import { Link, useNavigate} from 'react-router-dom'
-
+import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import orderApi from '@/api/orderApi';
+import { jwtDecode } from 'jwt-decode';
 export function MyOrder() {
-  const navigate = useNavigate()
-  const navigatemyoderdetail=()=>{
-    navigate('orderdetails/')
-  }
+  const navigate = useNavigate();
+  const navigatemyoderdetail = () => {
+    navigate('orderdetails/');
+  };
+
+  const [orderList, setOrderList] = useState([]);
+  const token = window.localStorage.getItem('token');
+  var userLogin = null;
+  useEffect(() => {
+    if (token != null) {
+      userLogin = jwtDecode(token);
+    }
+    const GetOrder = async () => {
+      const data = await orderApi.GetOrderByUserAccount(userLogin.id);
+      setOrderList(data.data);
+    };
+    GetOrder();
+  }, []);
   return (
-    <div className="mt-5 mb-8 flex flex-col gap-12">
-      <Card className=" xl:col-span-1 mt-0 border border-blue-gray-100 shadow-sm ml-5 mr-5 ">
-        <CardHeader variant="gradient" color="gray" className="mb-8 p-6">
-          <Typography variant="h6" color="white">
-          Order history
-          </Typography>
-        </CardHeader>
+    <div className=" mb-8 flex flex-col gap-12">
+      <Card className=" xl:col-span-1 mt-0  shadow-sm ml-5 mr-5 ">
         <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
           <table className="w-full min-w-[640px] table-auto">
-            <thead>
-              <tr>
-                {['Order NO.', 'Date', 'status', 'Action'].map((el) => (
-                  <th key={el} className="border-b border-blue-gray-50 py-3 px-10 text-left">
-                    <Typography variant="small" className="text-[11px] font-bold uppercase text-blue-gray-400">
-                      {el}
-                    </Typography>
-                  </th>
-                ))}
-              </tr>
-            </thead>
             <tbody>
-              {authorsTableData.map(({ id , date,online }, key) => {
-                const className = `py-3 px-10 ${
-                  key === authorsTableData.length - 1 ? '' : 'border-b border-blue-gray-50'
-                }`;
-
+              {orderList.map((item) => {
                 return (
-                  <tr key={id}>
-                    <td className={className}>
-                      {/* order no. */}
-                      <div className="flex items-center gap-4">
-                        <div>
-                          <Typography variant="small" color="blue-gray" className="font-semibold">
-                            {id}
-                          </Typography>
-                        </div>
+                  <div key={item.id} className="p-4 mb-4 border rounded-[5px] border-blue-gray-100 mb-4">
+                    <div className="ml-4 mr-4 flex justify-between">
+                      <div>
+                        <Typography variant="small" className="flex items-center gap-1 font-normal text-blue-gray-600">
+                          Order Code: <strong>{item.code}</strong>
+                        </Typography>
                       </div>
-                    </td>
-                      {/* date*/}
-                      <td className={className}>
-                      <Typography className="text-xs font-semibold text-blue-gray-600">{date}</Typography>
-                    </td>
-                    {/* status */}
-                    <td className={className}>
-                      <Chip
-                        variant="gradient"
-                        color={online ? 'green' : 'blue-gray'}
-                        value={online ? 'online' : 'offline'}
-                        className="py-0.5 px-2 text-[11px] font-medium w-fit"
-                      />
-                    </td>
-                  
-                    <td className={className}>
-                      <Typography as="a" href="#" className="text-xs font-semibold text-blue-gray-600">
-                        <EyeIcon 
-                        onClick={navigatemyoderdetail}
-                        className='w-5 h-5'/>
+                      <div className="flex">
+                        <Typography
+                          variant="small"
+                          className="flex p-1 items-center gap-1 font-normal border-r border-blue-gray-100  text-blue-gray-600"
+                        >
+                          Order Status: <strong>{item.orderStatus}</strong>
+                        </Typography>
+                        <Typography
+                          variant="small"
+                          className="flex p-1 items-center gap-1 font-normal text-blue-gray-600"
+                        >
+                          Payment: <strong>{item.payStatus}</strong>
+                        </Typography>
+                      </div>
+                    </div>
+                    {item.listItemOrderDetails.map((row, index) => {
+                      return (
+                        <div key={index} className="ml-4 flex gap-4 items-center">
+                          <img
+                            src={row.productImage}
+                            alt={row.productName}
+                            className="mb-2 h-auto w-[70px]  object-cover object-top border border-gray-200"
+                          />
+                          <div>
+                            <Typography
+                              variant="h1"
+                              color=""
+                              className="mt-0 text-[14px] font-semibold text-blue-gray-900"
+                            >
+                              {row.productName}
+                            </Typography>
+                            {/* <div class="font-medium text-gray-400">{category}</div> */}
+                            <Typography
+                              variant="small"
+                              className="flex items-center gap-1 font-normal text-blue-gray-600"
+                            >
+                              <strong>
+                                {row.sizeName} x {row.quantity}{' '}
+                              </strong>
+                            </Typography>
+                          </div>
+                        </div>
+                      );
+                    })}
+                    <div className="items-center flex justify-between mr-4">
+                      <div></div>
+                      <Typography
+                        variant="small"
+                        className="ml-2 flex items-center gap-1 font-normal text-blue-gray-600"
+                      >
+                        <p className="text-base font-semibold leading-4 text-gray-800 dark:text-gray-400">Total: </p>
+                        <strong>
+                          {new Intl.NumberFormat('vi-VN', {
+                            style: 'currency',
+                            currency: 'VND',
+                          }).format(item.total)}
+                        </strong>
                       </Typography>
-                    </td>
-                  </tr>
+                    </div>
+                  </div>
                 );
               })}
             </tbody>
           </table>
         </CardBody>
       </Card>
-     
     </div>
   );
 }

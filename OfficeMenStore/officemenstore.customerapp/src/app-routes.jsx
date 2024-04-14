@@ -27,8 +27,6 @@ const icon = {
   className: 'w-5 h-5 text-inherit',
 };
 
-
-
 const options = {
   mode: 'payment',
   amount: 1099,
@@ -77,24 +75,24 @@ export const routes = [
       { path: '/cart/sign-in', name: 'myorder', element: <SignIn /> },
     ],
   },
-  {
-    title: 'auth pages',
-    layout: 'auth',
-    pages: [
-      {
-        icon: <ServerStackIcon {...icon} />,
-        name: 'sign in',
-        path: '/sign-in',
-        element: <SignIn />,
-      },
-      {
-        icon: <RectangleStackIcon {...icon} />,
-        name: 'sign up',
-        path: '/sign-up',
-        element: <SignUp />,
-      },
-    ],
-  },
+  // {
+  //   title: 'auth pages',
+  //   layout: 'auth',
+  //   pages: [
+  //     {
+  //       icon: <ServerStackIcon {...icon} />,
+  //       name: 'sign in',
+  //       path: '/sign-in',
+  //       element: <SignIn />,
+  //     },
+  //     {
+  //       icon: <RectangleStackIcon {...icon} />,
+  //       name: 'sign up',
+  //       path: '/sign-up',
+  //       element: <SignUp />,
+  //     },
+  //   ],
+  // },
 ];
 
 export default routes;

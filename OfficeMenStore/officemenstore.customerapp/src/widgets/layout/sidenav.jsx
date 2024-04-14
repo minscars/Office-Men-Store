@@ -7,17 +7,34 @@ import { Avatar, Button, IconButton, Typography, Chip, ListItemSuffix } from '@m
 import { useMaterialTailwindController, setOpenSidenav } from '@/context';
 import Logo from '@/components/image/logo-store.png';
 import { useSelector } from 'react-redux';
-
+import { jwtDecode } from 'jwt-decode';
+import cartItemApi from '@/api/cartItemApi';
+import { useState, useEffect } from 'react';
 export function Sidenav({ brandImg, brandName, routes }) {
   const cartItems = useSelector((state) => state.cart.cartItems);
   const [controller, dispatch] = useMaterialTailwindController();
   const { sidenavColor, sidenavType, openSidenav } = controller;
-
+  const totalQuantity = cartItems.reduce((total, item) => total + item.quantity, 0);
   const sidenavTypes = {
     dark: 'bg-gradient-to-br from-gray-800 to-gray-900',
     white: 'bg-white shadow-sm',
     transparent: 'bg-transparent',
   };
+
+  const [cartItemList, setCartItemList] = useState([]);
+  const token = window.localStorage.getItem('token');
+  var userLogin = null;
+
+  useEffect(() => {
+    if (token != null) {
+      userLogin = jwtDecode(token);
+    }
+    const GetCartItem = async () => {
+      const data = await cartItemApi.GetCartItemByUser(userLogin.id);
+      setCartItemList(data.data);
+    };
+    GetCartItem();
+  }, [cartItemList.total]);
 
   return (
     <aside
@@ -77,7 +94,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
                         {name === 'Cart' && (
                           <ListItemSuffix>
                             <Chip
-                              value={cartItems?.length}
+                              value={token ? cartItemList.totalItems : totalQuantity}
                               size="sm"
                               variant="ghost"
                               color="blue-gray"
@@ -94,7 +111,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
         ))}
       </div>
 
-      <div className=" mt-[150px] ml-10 flex w-full flex-col items-center justify-center  border-blue-gray-50 py-4 md:flex-row md:justify-between">
+      {/* <div className=" mt-[150px] ml-10 flex w-full flex-col items-center justify-center  border-blue-gray-50 py-4 md:flex-row md:justify-between">
         <div className="flex gap-4 text-blue-gray-900 sm:justify-center">
           <Typography as="a" href="#" className="opacity-80 transition-opacity hover:opacity-100">
             <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -138,7 +155,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
             </svg>
           </Typography>
         </div>
-      </div>
+      </div> */}
     </aside>
   );
 }

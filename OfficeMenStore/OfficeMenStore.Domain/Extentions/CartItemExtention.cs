@@ -18,7 +18,7 @@ namespace OfficeMenStore.Domain.Extentions
                     CartId = 1,
                     ProductId = 1,
                     SizeProductId = 1,
-                    Quanntity = 1,
+                    Quantity = 1,
                 }
                 );
         }

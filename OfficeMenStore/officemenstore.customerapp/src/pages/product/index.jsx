@@ -1,21 +1,4 @@
-import {
-  Card,
-  CardBody,
-  CardHeader,
-  CardFooter,
-  Avatar,
-  Typography,
-  Tabs,
-  TabsHeader,
-  Tab,
-  Switch,
-  Tooltip,
-  Button,
-  Rating,
-  Select,
-  Option,
-  img,
-} from '@material-tailwind/react';
+import { Card, CardBody, Typography } from '@material-tailwind/react';
 import categoryApi from '@/api/categoryApi';
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
@@ -42,8 +25,6 @@ export function Product() {
   const getAllProductsFromReact = async () => {
     setIsLoaded(false);
     const response = await productApi.GetAll(offset, perPage);
-    console.log('offset: ', offset);
-    console.log('per: ', perPage);
     setPageCount(Math.ceil(response.totalRecord / perPage));
     setProducts(response.data);
     setIsLoaded(true);
@@ -95,7 +76,7 @@ export function Product() {
               </div>
             </div>
 
-            <div className="p-2 grid grid-cols-1 gap-12 md:grid-cols-2 xl:grid-cols-5 !w-[1200px] h-[790px]">
+            <div className="p-2 grid grid-cols-1 gap-12 md:grid-cols-2 xl:grid-cols-5 !w-[1040px] h-[790px]">
               {productList?.map((row) => (
                 <Link to={`/user/product/details/${row.id}`}>
                   <Card className="p-3 !h-auto !w-[220px]" key={row.id} color="transparent" shadow={false}>
@@ -124,7 +105,10 @@ export function Product() {
                         </p>
                       </div>
                       <Typography variant="h5" color="blue-gray" className="mt-1 mb-2 !text-[20px]">
-                        {row.price}.000 VNĐ
+                        {new Intl.NumberFormat('vi-VN', {
+                          style: 'currency',
+                          currency: 'VND',
+                        }).format(row.price)}
                       </Typography>
 
                       {/* <Typography

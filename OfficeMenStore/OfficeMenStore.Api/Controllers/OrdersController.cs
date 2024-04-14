@@ -2,6 +2,7 @@
 using OfficeMenStore.Application.Interfaces;
 using OfficeMenStore.Application.Models.Common;
 using OfficeMenStore.Application.Models.Order;
+using OfficeMenStore.Domain.Models;
 
 namespace OfficeMenStore.Api.Controllers
 {
@@ -19,7 +20,10 @@ namespace OfficeMenStore.Api.Controllers
         {
             return String.Format("{0}://{1}{2}/images/users/{3}", Request.Scheme, Request.Host, Request.PathBase, currentName);
         }
-
+        private string setImageNameProduct(string currentName)
+        {
+            return String.Format("{0}://{1}{2}/images/products/{3}", Request.Scheme, Request.Host, Request.PathBase, currentName);
+        }
         [HttpPost]
         public async Task<IActionResult> CreateOrderAsync([FromBody] CreateOderRequest dto)
         {
@@ -32,6 +36,35 @@ namespace OfficeMenStore.Api.Controllers
         {
             var result = await _orderService.GetAllOrderAsync(requestDto);
             result.Data.ForEach(s => s.CustomerAvatar = setImageName(s.CustomerAvatar));
+            return Ok(result);
+        }
+
+        [HttpGet("GetOrderByUser/{userId}")]
+        public async Task<IActionResult> GetAllOrderByUserAccountAsync(string userId)
+        {
+            var result = await _orderService.GetAllOrderByUserAccountAsync(userId);
+            result.Data.ForEach(s => s.CustomerAvatar = setImageName(s.CustomerAvatar));
+            foreach (var item in result.Data)
+            {
+                item.ListItemOrderDetails.ForEach(s => s.ProductImage = setImageNameProduct(s.ProductImage));
+            }
+            
+            return Ok(result);
+        }
+
+        [HttpGet("OrderDetail/{orderId}")]
+        public async Task<IActionResult> GetOrderDetailAsync([FromRoute]int orderId)
+        {
+            var result = await _orderService.GetOrderDetailAsync(orderId);
+            result.Data.CustomerAvatar = setImageName(result.Data.CustomerAvatar);
+            result.Data.ListItemOrderDetails.ForEach(s => s.ProductImage = setImageNameProduct(s.ProductImage));
+            return Ok(result);
+        }
+
+        [HttpPut("UpdateOrderStatus")]
+        public async Task<IActionResult> UpdateOrderStatusAsync([FromBody] UpdateOrderStatusRequest requestDto)
+        {
+            var result = await _orderService.UpdateOrderStatusAsync(requestDto);
             return Ok(result);
         }
     }

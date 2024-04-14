@@ -24,12 +24,14 @@ import paypal from './images/Onine.png';
 import userApi from '@/api/userApi';
 import { jwtDecode } from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
-
+import Swal from 'sweetalert2';
+import cartItemApi from '@/api/cartItemApi';
+import orderApi from '@/api/orderApi';
 function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
   const [paymentMethod, setPaymentMethod] = useState('Onine');
   const [user, setUser] = useState();
-  const [selectedAddressId, setselectedAddressId] = useState(0);
-
+  const [selectedAddressId, setselectedAddressId] = useState(1);
+  const [cartItemList, setCartItemList] = useState([]);
   const userLogin = jwtDecode(window.localStorage.getItem('token'));
   useEffect(() => {
     const getUser = async () => {
@@ -37,11 +39,15 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
       setUser(data);
     };
     getUser();
+    const GetCartItem = async () => {
+      const data = await cartItemApi.GetCartItemByUser(userLogin.id);
+      setCartItemList(data.data);
+    };
+    GetCartItem();
   }, []);
 
   const handlePaymentMethodChange = (event) => {
     const selectedPaymentMethod = event.target.value;
-
     setPaymentMethod(event.target.value);
   };
 
@@ -70,7 +76,6 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
 
     onSubmit: (values) => {
       buyNow();
-      console.log('Form submitted:', values);
     },
   });
 
@@ -85,24 +90,9 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
     }
   }, [user]);
 
-  // const handleAddressChange = (event) => {
-  //   setselectedAddressId(event.target.value);
-  //   console.log('Selected address:', selectedAddressId); // Debug log
-
-  //   if (selectedAddressId) {
-  //     formik.setValues({
-  //       ...formik.values,
-  //       address:user?.addresses.map((item) => ({item.addressDetail})),
-  //     });
-
-  //     console.log('Formik values after updating address:', formik.values.address); // Debug log
-  //   }
-  // };
-
   const handleAddressChange = (event) => {
     const selectedId = parseInt(event.target.value);
     setselectedAddressId(selectedId);
-
     if (user && user.addresses.length > 0) {
       const selectedAddress = user.addresses.find((address) => address.id === selectedId);
       if (selectedAddress) {
@@ -114,56 +104,83 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
     }
   };
 
+  async function checkOut(payMethod) {
+    var userId = userLogin.id;
+    var cartId = user?.cartId;
+    var addressId = selectedAddressId;
+    var pay = payMethod;
+    const dto = { cartId, userId, addressId, pay };
+    console.log(dto);
+    await orderApi
+      .Order(dto)
+      .then((res) => {
+        if (res.statusCode === 200) {
+          toast.success('Order Successfully!');
+        }
+      })
+      .catch(() => {
+        toast.error('Something went wrong!');
+      });
+  }
+
   const buyNow = async () => {
-    if (paymentMethod === 'Onine') {
-      const addressInfo = {
-        // Username,
-        // Email,
-        // Address,
-        // PhoneNumber,
-        date: new Date().toLocaleString('en-US', {
-          month: 'short',
-          day: '2-digit',
-          year: 'numeric',
-        }),
-      };
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to create an order?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, I want it!',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        if (paymentMethod === 'Onine') {
+          const addressInfo = {
+            date: new Date().toLocaleString('en-US', {
+              month: 'short',
+              day: '2-digit',
+              year: 'numeric',
+            }),
+          };
+          var options = {
+            key: 'rzp_test_nW41YserAsUiCq',
+            key_secret: 'HhmQn4VZyicKSaBNMStFRhhD',
+            amount: cartItemList.total,
+            currency: 'INR',
+            order_receipt: 'order_rcptid_',
+            name: 'Thanh toán online',
+            description: 'for testing purpose',
 
-      var options = {
-        key: 'rzp_test_nW41YserAsUiCq',
-        key_secret: 'HhmQn4VZyicKSaBNMStFRhhD',
-        amount: (totalAmount * 100).toFixed(4),
-        currency: 'INR',
-        order_receipt: 'order_rcptid_',
-        name: 'Thanh toán online',
-        description: 'for testing purpose',
+            handler: function (response) {
+              checkOut(3);
+              toast.success('Payment Successful');
+              dispatch(cartActions.clearCart());
+              navigate('/user/cart/success');
+            },
+            theme: {
+              color: '#3399cc',
+            },
+          };
 
-        handler: function (response) {
-          console.log(response);
-          toast.success('Payment Successful');
+          var pay = new window.Razorpay(options);
+          pay.open();
+        }
+        // thanh toan off line
+        else if (paymentMethod === 'Shipcod') {
+          checkOut(4);
           dispatch(cartActions.clearCart());
           navigate('/user/cart/success');
-        },
-        theme: {
-          color: '#3399cc',
-        },
-      };
-
-      var pay = new window.Razorpay(options);
-      pay.open();
-    }
-    // thanh toan off line
-    else if (paymentMethod === 'Shipcod') {
-      dispatch(cartActions.clearCart());
-      navigate('/user/cart/success');
-    }
+        }
+      }
+    });
   };
 
   return (
-    <div className=" mx-0 grid mb-4 gap-3 grid-cols-1 xl:grid-cols-5 ">
+    <div className="mx-0 grid mb-4 gap-3 grid-cols-1 xl:grid-cols-5 ">
       {/* thẻ thanh toán */}
       <div className="xl:col-span-3">
-        <Card className=" mt-5 mb-3 mx-0 h-100 overflow-hidden xl:col-span-2 border border-blue-gray-100 shadow-sm mr-5 ">
-          <CardBody className=" pt-0 pb-2 mt-5 mr-5 ml-5">
+        <Card className="mb-3 mx-0 h-100 overflow-hidden xl:col-span-2 border border-blue-gray-100 shadow-sm mr-5 ">
+          <CardBody className="pt-0 pb-2 mt-5 mr-5 ml-5">
             <div className="w-full flex flex-col ">
               <form className="mt-2 mb-2 mx-auto max-w-screen-lg xl:w-full" onSubmit={formik.handleSubmit}>
                 <div>
@@ -218,7 +235,6 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
                 </div>
 
                 {/* diachi */}
-                <div></div>
                 <div className="mb-4">
                   <Typography variant="small" color="blue-gray" className="font-medium">
                     Address
@@ -232,15 +248,7 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
                         {item.addressDetail}
                       </option>
                     ))}
-                  </select>
-                  {/* <Input
-                    size="lg"
-                    placeholder="Enter your address"
-                    name="address"
-                    value={formik.values.address}
-                    onChange={formik.handleChange}
-                  />
-                  {formik.errors.address && <p className="text-red-500 text-sm">{formik.errors.address}</p>} */}
+                  </select>{' '}
                 </div>
                 <div className="mb-5">
                   <Typography variant="h5" color="blue-gray" className="font-medium mb-5">
@@ -312,9 +320,6 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
                   </div>
                 </div>
                 <div className=" mx-5 mb-5 flex justify-center items-center">
-                  {/* onClick={formik.handleSubmit} */}
-                  {/* onClick={buyNow} */}
-                  {/* <Button type="submit"> Make payment</Button> */}
                   <Button type="submit"> Continue </Button>
                 </div>
               </form>
@@ -325,7 +330,7 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
 
       <div className="xl:col-span-2">
         {/* the chi tiet don hang*/}
-        <Card className=" xl:col-span-1 mt-5 border border-blue-gray-100 shadow-sm">
+        <Card className=" xl:col-span-1 border border-blue-gray-100 shadow-sm">
           <CardHeader floated={false} shadow={false} color="transparent" className="">
             <Typography variant="h4" color="blue-gray" className="mb-2 mt-2 ml-3">
               {' '}
@@ -333,64 +338,61 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
             </Typography>
             <Typography variant="small" className="flex items-center gap-1 font-normal text-blue-gray-600 ml-3">
               {/* <ArrowUpIcon strokeWidth={3} className="h-3.5 w-3.5 text-green-500" /> */}
-              <strong>{cartItems.length}</strong> Items
+              <strong>{cartItemList.cartItemList?.length}</strong> Items
             </Typography>
           </CardHeader>
-          <CardBody className="pt-0 ml-5 mr-5">
+          <CardBody className="!p-2 pt-0 ml-5 mr-5">
             {/* items */}
             <div className="mt-2 mb-5">
               <tbody className="mb-5">
-                {cartItems?.map(
-                  ({ imgUrl, quantity, productsName, members, price, id, size, category, totalPrice }, key) => {
-                    const className = `py-3 border-t-w-{15px} ${key === cartItems.length - 1 ? '' : ''}`;
-                    return (
-                      <tr key={key} className={className}>
-                        {/* teen */}
-                        <td className={className}>
-                          <div className="flex gap-4">
-                            <img
-                              src={imgUrl}
-                              alt=""
-                              className="h-auto w-[50px] aspect-[3/2] rounded-lg object-cover object-top border border-gray-200"
-                            />
-                            <div>
-                              <Typography
-                                variant="h1"
-                                color=""
-                                className="mt-0 text-[14px] font-semibold text-blue-gray-900"
-                              >
-                                {productsName}
-                              </Typography>
-                              <div class="font-medium text-gray-400">{category}</div>
-                              <div class="font-medium text-gray-400">
-                                <span>Size: </span>
-                                {size}
-                              </div>
-                              <div class="font-medium text-gray-400">
-                                <span>Quantity: </span>
-                                {quantity}
-                              </div>
+                {cartItemList.cartItemList?.map((item, key) => {
+                  const className = `py-3 border-t-w-{15px} ${key === cartItemList.length - 1 ? '' : ''}`;
+                  return (
+                    <tr key={key} className={className}>
+                      {/* teen */}
+                      <td className={className}>
+                        <div className="flex gap-4">
+                          <img
+                            src={item.productImage}
+                            alt=""
+                            className="h-auto w-[50px] aspect-[3/2] rounded-lg object-cover object-top border border-gray-200"
+                          />
+                          <div>
+                            <Typography
+                              variant="h1"
+                              color=""
+                              className="mt-0 text-[14px] font-semibold text-blue-gray-900"
+                            >
+                              {item.productName}
+                            </Typography>
+                            {/* <div class="font-medium text-gray-400">{category}</div> */}
+                            <div class="font-medium text-gray-400">
+                              <span>Size: </span>
+                              {item.sizeName}
+                            </div>
+                            <div class="font-medium text-gray-400">
+                              <span>Quantity: </span>
+                              {item.quantity}
                             </div>
                           </div>
-                        </td>
-                        <td className="ml-4">
-                          <div className="ml-4 flex items-end ">
-                            <Typography variant="h6" color="blue-gray" className=" font-blod mb-auto">
-                              $ {price * quantity}
-                            </Typography>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  },
-                )}
+                        </div>
+                      </td>
+                      <td className="ml-4">
+                        <div className="ml-4 flex items-end ">
+                          <Typography variant="h6" color="blue-gray" className=" font-blod mb-auto">
+                            {new Intl.NumberFormat('vi-VN', {
+                              style: 'currency',
+                              currency: 'VND',
+                            }).format(item.subtotal)}
+                          </Typography>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </div>
             <div className="flex-col gap-5 border-b border-t broder-blue-gray-500">
-              {/* <Typography variant="small" color="blue-gray" className=" font-medium flex justify-between mt-5">
-                <p class="text-base leading-4 text-blue-gray-800 dark:text-gray-400">Subtotal:</p>
-                <p class="text-base leading-4 text-blue-gray-900 dark:text-gray-400">{totalAmount?.toFixed(2)}$</p>
-              </Typography> */}
               <div className="flex mt-2">
                 <Input size="lg" placeholder="Discount code" name="discount" />
                 <Button className="ml-2">USE</Button>
@@ -403,10 +405,6 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
                 <p class="text-base leading-4 text-blue-gray-800 dark:text-gray-400">Shipping:</p>
                 <p class="text-base leading-4 text-blue-gray-900 dark:text-gray-400"> ___</p>
               </Typography>
-              {/* <Typography variant="small" color="blue-gray" className=" font-medium flex justify-between mt-3 mb-5">
-                <p class="text-base leading-4 text-blue-gray-800 dark:text-gray-400">Discount:</p>
-                <p class="text-base leading-4 text-blue-gray-900 dark:text-gray-400">10%</p>
-              </Typography> */}
             </div>
 
             <div class="flex items-center justify-between w-full mt-5">
@@ -414,11 +412,14 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
                 Total
               </Typography>
               <Typography variant="h5" color="blue-gray" className="mb-1">
-                {totalAmount.toFixed(2)}$
+                {new Intl.NumberFormat('vi-VN', {
+                  style: 'currency',
+                  currency: 'VND',
+                }).format(cartItemList.total)}
               </Typography>
             </div>
-            <div className="mt-4 border-2 border-red-100">
-              <p className="p-3  font-semibold text-[14px]">
+            <div className="mt-4 mb-2 border-2 border-red-100">
+              <p className="p-4 font-semibold text-[14px]">
                 From March 14, 2024, Office Men Store applies free shipping nationwide for all orders from 0 VND. We
                 confirm orders via Email. Please CHECK your email after successfully placing your order and WAIT TO
                 RECEIVE ITEMS.

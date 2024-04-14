@@ -172,11 +172,7 @@ export function Categories() {
                     <tr key={item.id} className="hover:bg-gray-100 transition-colors group">
                       <td className="p-2 py-3 px-10">
                         <div className="flex items-center gap-4">
-                          <img
-                            src={item.image}
-                            alt=""
-                            className="w-[90px] aspect-[3/2] rounded-lg object-cover object-top border border-gray-200"
-                          />
+                          <img src={item.image} alt="" className="w-[70px] border border-gray-200" />
                           <div>
                             <Typography variant="small" color="blue-gray" className="font-bold">
                               {item.name}

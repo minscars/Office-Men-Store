@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OfficeMenStore.Application.Interfaces;
+using OfficeMenStore.Application.Models.Cart;
 using OfficeMenStore.Application.Models.CartItem;
 using OfficeMenStore.Application.Utilities.Constants;
 using OfficeMenStore.Domain.EF;
@@ -18,7 +19,7 @@ namespace OfficeMenStore.Application.Services
         {
             if(dto == null)
             {
-                return new ApiResult<bool>(false)
+                return new ApiResult<bool>(false)   
                 {
                     Message = "Invalid",
                     StatusCode = 400
@@ -34,7 +35,7 @@ namespace OfficeMenStore.Application.Services
                     ProductId = c.ProductId,
                     SizeProductId = c.SizeProductId,
                     CartId = c.CartId,
-                    Quanntity = c.Quanntity
+                    Quantity = c.Quantity
                 }).FirstOrDefaultAsync();
             if(cartItem == null)
             {
@@ -43,7 +44,7 @@ namespace OfficeMenStore.Application.Services
                     CartId = dto.CartId,
                     ProductId = dto.ProductId,
                     SizeProductId = dto.SizeId,
-                    Quanntity = dto.Quanntity
+                    Quantity = dto.Quantity
                 };
                 await _context.CartItems.AddAsync(newCartItem);
                 await _context.SaveChangesAsync();
@@ -55,7 +56,7 @@ namespace OfficeMenStore.Application.Services
                     CartId = dto.CartId,
                     ProductId = dto.ProductId,
                     SizeId = dto.SizeId,
-                    Quanntity = dto.Quanntity+1
+                    Quanntity = dto.Quantity+1
                 };
                 await UpdateQuantityAsync(newCartItem);
             }
@@ -86,9 +87,9 @@ namespace OfficeMenStore.Application.Services
                     ProductId = c.ProductId,
                     SizeProductId = c.SizeProductId,
                     CartId = c.CartId,
-                    Quanntity = c.Quanntity
+                    Quantity = c.Quantity
                 }).FirstOrDefaultAsync();
-            cartItem.Quanntity = dto.Quanntity;
+            cartItem.Quantity = dto.Quanntity;
             await _context.SaveChangesAsync();
             return new ApiResult<bool>(true)
             {
@@ -97,10 +98,10 @@ namespace OfficeMenStore.Application.Services
             };
         }
 
-        public async Task<ApiResult<List<GetAllCartItemResponse>>> GetAllCartItemAsync(string userId)
+        public async Task<ApiResult<GetCartByUserResponse>> GetAllCartItemAsync(string userId)
         {
             var listItem = await _context.CartItems
-                .Where(c => c.Cart.UserId.ToString() == userId)
+                .Where(c => c.Cart.UserId.ToString() == userId && c.IsDeleted == false)
                 .Select(c => new GetAllCartItemResponse()
                 {
                     ProductId = c.ProductId,
@@ -108,14 +109,45 @@ namespace OfficeMenStore.Application.Services
                     ProductName = c.Product.Name,
                     ProductImage = c.Product.Image,
                     Price = c.Product.Price,
-                    Quanntity = c.Quanntity,
+                    Quantity = c.Quantity,
                     SizeName = c.SizeProduct.Name,
-                    Subtotal = c.Quanntity * c.Product.Price
+                    Subtotal = c.Quantity * c.Product.Price
                 }).ToListAsync();
+            var total = listItem.Sum(c => c.Subtotal);
+            var cartByUser = new GetCartByUserResponse()
+            {
+                CartItemList = listItem,
+                Total = total,
+                TotalItems = listItem.Sum(c => c.Quantity)
+            };
 
-            return new ApiResult<List<GetAllCartItemResponse>>(listItem)
+            return new ApiResult<GetCartByUserResponse>(cartByUser)
             {
                 Message = "",
+                StatusCode = 200
+            };
+        }
+
+        public async Task<ApiResult<bool>> DeleteCartItemAsync(DeletedCartItemsRequest dto)
+        {
+            if (dto == null)
+            {
+                return new ApiResult<bool>(false)
+                {
+                    Message = "Invalid",
+                    StatusCode = 400
+                };
+            }
+
+            var cartItem = await _context.CartItems
+                .Where(c => c.CartId ==  dto.CartId && c.ProductId == dto.ProductId && c.SizeProductId == dto.SizeId)
+                .FirstOrDefaultAsync();
+            cartItem.IsDeleted = true;
+            await _context.SaveChangesAsync();
+
+            return new ApiResult<bool>(true)
+            {
+                Message = "Delete product successfully!",
                 StatusCode = 200
             };
         }
