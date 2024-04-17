@@ -29,7 +29,7 @@ namespace OfficeMenStore.Application.Services
             var cartItem = await _context.CartItems
                 .Where(c => c.CartId == dto.CartId
                 && c.ProductId == dto.ProductId
-                && c.SizeProductId == dto.SizeId)
+                && c.SizeProductId == dto.SizeId && c.IsDeleted ==false)
                 .Select(c => new CartItem()
                 {
                     ProductId = c.ProductId,
@@ -44,7 +44,9 @@ namespace OfficeMenStore.Application.Services
                     CartId = dto.CartId,
                     ProductId = dto.ProductId,
                     SizeProductId = dto.SizeId,
-                    Quantity = dto.Quantity
+                    Quantity = dto.Quantity,
+                    AddedTime = DateTime.Now
+
                 };
                 await _context.CartItems.AddAsync(newCartItem);
                 await _context.SaveChangesAsync();
