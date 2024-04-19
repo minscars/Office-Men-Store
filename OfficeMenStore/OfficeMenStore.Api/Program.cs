@@ -63,6 +63,7 @@ builder.Services.AddTransient<ICategoryService, CategoryService>();
 builder.Services.AddTransient<ICartItemService, CartItemService>();
 builder.Services.AddTransient<IOrderService, OrderService>();
 builder.Services.AddTransient<IFileService, FileService>();
+builder.Services.AddTransient<IStatisticService, StatisticService>();
 builder.Services.AddMvc()
                 .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
