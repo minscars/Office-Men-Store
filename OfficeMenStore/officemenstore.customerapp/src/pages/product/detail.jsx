@@ -1,7 +1,6 @@
-import { Card, CardBody, Button, Rating } from '@material-tailwind/react';
+import { Card, CardBody, Button } from '@material-tailwind/react';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { ProductDetailsTab } from './productdetailstab.jsx';
 import { ReviewsTab } from './reviews.jsx';
 import { useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
@@ -9,31 +8,62 @@ import { cartActions } from '../../redux/slicse/cartSlice';
 import { PlayDisabled } from '@mui/icons-material';
 import { toast } from 'react-toastify';
 import { jwtDecode } from 'jwt-decode';
+import Rating from '@mui/material/Rating';
 import productApi from '@/api/productApi';
 import cartItemApi from '@/api/cartItemApi';
 import userApi from '@/api/userApi';
+import sizeProductApi from '@/api/sizeProductApi';
+import feedBackApi from '@/api/feedBackApi.jsx';
+import ProductCartWidget from '@/pages/product/product-cart-widget';
+import { useSelector } from 'react-redux';
 export function ProductDetails() {
   const dispatch = useDispatch();
-
-  //const product = projectsData.find((product) => product.id === id);
-  //const { img, title, tag, description, price } = product;
   const [selectedSize, setSelectedSizes] = useState(null);
   const [Quantity, setQuantity] = useState(1);
-  const [rating, setRating] = useState(null);
-  const reviewUser = useRef('');
-  const reviewMsg = useRef('');
-  const [tab, setTab] = useState('desc');
-
   const { id } = useParams();
   const [product, setProduct] = useState([]);
   const [selectedSizeid, setSelectedSizesid] = useState(null);
+  const [user, setUser] = useState();
+  const token = window.localStorage.getItem('token');
+  const cartItems = useSelector((state) => state.cart.cartItems);
+  const totalQuantity = cartItems.reduce((total, item) => total + item.quantity, 0);
+  const [cartItemList, setCartItemList] = useState([]);
+  var userLogin = null;
+
+  if (token != null) {
+    userLogin = jwtDecode(token);
+  }
+
+  const [feedBack, setFeedBack] = useState();
+  const [trigger, setTrigger] = useState();
+
   useEffect(() => {
     const productDetail = async () => {
       const data = await productApi.GetProductById(id);
       setProduct(data);
     };
+    setTotalPro(product?.totalProduct);
     productDetail();
-  }, []);
+
+    const getUser = async () => {
+      const data = await userApi.GetUserInformation(userLogin.id);
+      setUser(data);
+    };
+    getUser();
+
+    const GetFeedBack = async () => {
+      const data = await feedBackApi.GetFeedBacksFollowProduct(id);
+      setFeedBack(data.data);
+    };
+    GetFeedBack();
+    const GetCartItem = async () => {
+      const data = await cartItemApi.GetCartItemByUser(userLogin.id);
+      setCartItemList(data.data);
+    };
+    GetCartItem();
+  }, [cartItemList?.totalItems, trigger]);
+
+  const [totalPro, setTotalPro] = useState(product?.totalProduct);
 
   const addTocart = async (product) => {
     if (!selectedSize) {
@@ -44,15 +74,16 @@ export function ProductDetails() {
     if (product) {
       var token = window.localStorage.getItem('token');
       if (token != null) {
-        const user = jwtDecode(token);
-        const dataLogin = await userApi.GetUserInformation(user.id);
         const data = {
-          cartId: dataLogin?.cartId,
+          cartId: user?.cartId,
           productId: id,
           sizeId: selectedSizeid,
           quantity: Quantity,
         };
         await cartItemApi.AddToCart(data);
+        setTrigger(Math.random() + 1)
+          ?.toString(36)
+          .substring(7);
       } else {
         dispatch(
           cartActions.addItem({
@@ -67,9 +98,9 @@ export function ProductDetails() {
           }),
         );
       }
-      toast.success('Thêm sản phẩm thành công!');
+      toast.success('Add to cart successfully!');
     } else {
-      toast.error('Product not found');
+      toast.error('Please choose a size!');
     }
   };
 
@@ -84,10 +115,15 @@ export function ProductDetails() {
     console.log(Quantity);
   };
   //hàm chọn size
-  const toggleSize = (size, sizeid) => {
+  const toggleSize = async (size, sizeid) => {
     // Toggle the size
     setSelectedSizes((prevSize) => (prevSize === size ? null : size));
     setSelectedSizesid((prevSize) => (prevSize === sizeid ? null : sizeid));
+    var dto = { sizeid };
+    dto.productId = id;
+    await sizeProductApi.GetAmountSizeProduct(dto).then((res) => {
+      setTotalPro(res.amount);
+    });
   };
 
   const [activeTab, setActiveTab] = useState('details');
@@ -95,21 +131,20 @@ export function ProductDetails() {
   const handleTabChange = (tab) => {
     setActiveTab(tab);
   };
-
+  console.log(cartItemList);
   return (
     <>
       <Card className="mx-3 mt-8 mb-6 lg:mx-4 border border-blue-gray-100">
+        <ProductCartWidget totalQuantityDb={cartItemList?.totalItems} totalQuantityLocal={totalQuantity} />
         <CardBody className="p-4">
           {/* thẻ Platform Settings */}
           <div className="gird-cols-1 mb-12 grid gap-12 px-4 lg:grid-cols-2 xl:grid-cols-2">
-            <div>
-              <div className="flex flex-col gap-12">
-                <img
-                  className=" mt-5 h-[400px] w-full rounded-lg object-cover object-center"
-                  src={product.image}
-                  alt="nature image"
-                />
-              </div>
+            <div className="flex flex-col gap-12">
+              <img
+                className=" mt-5 h-[400px] w-full rounded-lg object-cover object-center"
+                src={product.image}
+                alt="nature image"
+              />
             </div>
             <div>
               <div class="w-full px-4 ">
@@ -119,65 +154,13 @@ export function ProductDetails() {
                     <span class="text-lg font-medium text-rose-500">{product.category}</span>
                     <h2 class="max-w-xl mt-2 mb-6 text-2xl font-bold md:text-4xl">{product.name}</h2>
                     <div class="flex items-center mb-6">
-                      <ul class="flex mr-2">
-                        <li>
-                          <a href="#">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="16"
-                              height="16"
-                              fill="currentColor"
-                              class="w-4 mr-1 text-red-500 bi bi-star "
-                              viewBox="0 0 16 16"
-                            >
-                              <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z" />
-                            </svg>
-                          </a>
-                        </li>
-                        <li>
-                          <a href="#">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="16"
-                              height="16"
-                              fill="currentColor"
-                              class="w-4 mr-1 text-red-500 bi bi-star "
-                              viewBox="0 0 16 16"
-                            >
-                              <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z" />
-                            </svg>
-                          </a>
-                        </li>
-                        <li>
-                          <a href="#">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="16"
-                              height="16"
-                              fill="currentColor"
-                              class="w-4 mr-1 text-red-500 bi bi-star "
-                              viewBox="0 0 16 16"
-                            >
-                              <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z" />
-                            </svg>
-                          </a>
-                        </li>
-                        <li>
-                          <a href="#">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="16"
-                              height="16"
-                              fill="currentColor"
-                              class="w-4 mr-1 text-red-500 bi bi-star "
-                              viewBox="0 0 16 16"
-                            >
-                              <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z" />
-                            </svg>
-                          </a>
-                        </li>
-                      </ul>
-                      <p class="text-xs dark:text-gray-400 ">(2 customer reviews)</p>
+                      <Rating
+                        className="items-center"
+                        name="half-rating"
+                        size="small"
+                        precision={0.5}
+                        value={feedBack?.rate}
+                      />
                     </div>
                     <p class="max-w-md mb-8 text-gray-700"></p>
                     <p class="inline-block mb-3 text-4xl font-bold text-gray-700 gap-3">
@@ -187,14 +170,10 @@ export function ProductDetails() {
                           currency: 'VND',
                         }).format(product.price)}
                       </span>
-                      {/* <span class="text-base font-normal text-gray-500 line-through ml-5">$1500</span> */}
                     </p>
                   </div>
-                  {/*  */}
 
                   <div class="flex items-center mb-6">
-                    {/* <h2 class="w-16 text-[15px] font-bold text-gray-500">Size</h2> */}
-                    {/* Product Size Options */}
                     <div className="flex items-center">
                       <h2 className="w-16 text-[15px] font-bold text-gray-500">Size</h2>
                       <div className="flex flex-wrap -mx-2 -mb-2">
@@ -242,7 +221,7 @@ export function ProductDetails() {
                           <span class="m-auto text-2xl font-thin">+</span>
                         </button>
                       </div>
-                      <div class="text-green-600 "> 15 sản phẩm sẵn có</div>
+                      <div class="text-green-600 "> {totalPro} sản phẩm sẵn có</div>
                     </div>
                   </div>
 
@@ -252,7 +231,7 @@ export function ProductDetails() {
                         ripple={false}
                         fullWidth={true}
                         onClick={() => addTocart(product)}
-                        className="h-[50px] bg-blue-gray-900/10 text-blue-gray-900 shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100"
+                        className="h-[50px] bg-blue-900 text-white shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100"
                       >
                         Add to Cart
                       </Button>
@@ -267,26 +246,7 @@ export function ProductDetails() {
 
       <Card className="mx-3 mt-5 mb-6 lg:mx-4 border border-blue-gray-100">
         <CardBody>
-          <div className="flex items-center mb-4 ">
-            <button
-              className={`py-2 px-4 mr-0 focus:outline-none ${
-                activeTab === 'details' ? 'border-b-2 border-gray-900' : ''
-              }`}
-              onClick={() => handleTabChange('details')}
-            >
-              Despcription
-            </button>
-            <button
-              className={`py-2 px-4 ml-5 focus:outline-none ${
-                activeTab === 'reviews' ? 'border-b-2 border-gray-900' : ''
-              }`}
-              onClick={() => handleTabChange('reviews')}
-            >
-              Reviews
-            </button>
-          </div>
-
-          {activeTab === 'details' ? <ProductDetailsTab /> : <ReviewsTab />}
+          <ReviewsTab dataUser={user} productId={id} feedBack={feedBack} />
         </CardBody>
       </Card>
     </>

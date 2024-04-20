@@ -22,6 +22,7 @@ import {
   CreditCardIcon,
   Bars3Icon,
 } from '@heroicons/react/24/solid';
+import { styled } from '@mui/material/styles';
 import React, { useRef, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -49,7 +50,6 @@ export function DashboardNavbar() {
     };
     getUser();
   }, []);
-  console.log(user);
 
   const navigatesignin = () => {
     navigate('/auth/sign-in');

@@ -58,9 +58,10 @@ namespace OfficeMenStore.Application.Services
                     CartId = dto.CartId,
                     ProductId = dto.ProductId,
                     SizeId = dto.SizeId,
-                    Quanntity = dto.Quantity+1
+                    Quantity = cartItem.Quantity+dto.Quantity
                 };
                 await UpdateQuantityAsync(newCartItem);
+                await _context.SaveChangesAsync();
             }
             return new ApiResult<bool>(true)
             {
@@ -83,15 +84,9 @@ namespace OfficeMenStore.Application.Services
             var cartItem = await _context.CartItems
                 .Where(c => c.CartId == dto.CartId
                 && c.ProductId == dto.ProductId
-                && c.SizeProductId == dto.SizeId)
-                .Select(c => new CartItem()
-                {
-                    ProductId = c.ProductId,
-                    SizeProductId = c.SizeProductId,
-                    CartId = c.CartId,
-                    Quantity = c.Quantity
-                }).FirstOrDefaultAsync();
-            cartItem.Quantity = dto.Quanntity;
+                && c.SizeProductId == dto.SizeId && c.IsDeleted == false)
+                .FirstOrDefaultAsync();
+            cartItem.Quantity = dto.Quantity;
             await _context.SaveChangesAsync();
             return new ApiResult<bool>(true)
             {
@@ -110,6 +105,7 @@ namespace OfficeMenStore.Application.Services
                     CartId = c.CartId,
                     ProductName = c.Product.Name,
                     ProductImage = c.Product.Image,
+                    SizeId = c.SizeProduct.Id,
                     Price = c.Product.Price,
                     Quantity = c.Quantity,
                     SizeName = c.SizeProduct.Name,

@@ -8,7 +8,7 @@ namespace OfficeMenStore.Domain.Configurations
     {
         public void Configure(EntityTypeBuilder<CartItem> builder)
         {
-            builder.HasKey(c => new { c.CartId, c.ProductId, c.SizeProductId });
+            builder.HasKey(c => new { c.CartId, c.ProductId, c.SizeProductId, c.AddedTime});
         }
     }
 }

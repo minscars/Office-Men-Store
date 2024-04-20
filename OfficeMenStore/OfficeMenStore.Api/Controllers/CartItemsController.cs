@@ -40,7 +40,7 @@ namespace OfficeMenStore.Api.Controllers
             return Ok(result);
         }
 
-        [HttpDelete]
+        [HttpPut("DeleteCartItem")]
         public async Task<IActionResult> DeleteProductInCartItem([FromBody] DeletedCartItemsRequest dto)
         {
             var result =  await _cartItemService.DeleteCartItemAsync(dto);

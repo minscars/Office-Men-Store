@@ -10,6 +10,7 @@ import {
   Button,
   Input,
   Textarea,
+  img,
 } from '@material-tailwind/react';
 
 import productApi from '@/api/productApi';
@@ -17,31 +18,46 @@ import categoryApi from '@/api/categoryApi.jsx';
 import { useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import Alert from '@/components/alert';
-export function AddProducts() {
+export function UpdateProduct() {
+  const [trigger, setTrigger] = useState();
+  const [product, setProduct] = useState();
   const [cateList, setCateList] = useState([]);
-
+  const [cateChose, setCateChose] = useState();
+  const { id } = useParams();
   useEffect(() => {
+    const productDetail = async () => {
+      const data = await productApi.GetProductById(id);
+      setProduct(data);
+    };
+    productDetail();
+    setCateChose(product?.categoryId);
     const GetAllCate = async () => {
       const data = await categoryApi.GetAll();
       setCateList(data);
     };
     GetAllCate();
-  }, []);
+  }, [trigger]);
 
-  const [valueCate, setValueCate] = useState(0);
-  const [valueName, setValueName] = useState('');
-  const [valuePrice, setValuePrice] = useState();
+  const [selectedOption, setSelectedOption] = useState(product?.categoryId ?? 1);
+  const [valueCate, setValueCate] = useState(product?.categoryId);
+  const [valueName, setValueName] = useState(product?.name);
+  const [valuePrice, setValuePrice] = useState(product?.price);
   const [imageUploadFile, setImageUploadFile] = useState(null);
+  useEffect(() => {
+    setValueCate(product?.categoryId);
+    setValueName(product?.name);
+    setValuePrice(product?.price);
+  }, [product]);
 
-  async function handleAddProduct() {
+  async function handleUpdateProduct() {
     var name = valueName;
     var categoryId = valueCate;
     var image = imageUploadFile;
     var price = valuePrice;
-    var dto = { name, image, categoryId, price };
+    var dto = { id, name, image, categoryId, price };
     Swal.fire({
       title: 'Are you sure?',
-      text: 'Do you want to create this product?',
+      text: 'Do you want to update this product?',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
@@ -49,8 +65,11 @@ export function AddProducts() {
       confirmButtonText: 'Yes, I want it!',
     }).then(async (result) => {
       if (result.isConfirmed) {
-        await productApi.CreateProduct(dto).then((res) => {
+        await productApi.UpdateProduct(dto).then((res) => {
           if (res.statusCode === 200) {
+            setTrigger(Math.random() + 1)
+              ?.toString(36)
+              .substring(7);
             Alert.showSuccessAlert(res.message);
           } else {
             Alert.showErrorAlert(res.message);
@@ -117,7 +136,6 @@ export function AddProducts() {
                     value={valueCate}
                     onChange={(event) => setValueCate(event.target.value)}
                   >
-                    <option value={0}>Chose category</option>
                     {cateList?.map((item) => (
                       <option key={item.id} value={item.id}>
                         {item.name}
@@ -200,14 +218,16 @@ export function AddProducts() {
                     <img src={URL.createObjectURL(imageUploadFile)} alt="upload image" className="w-[300px] h-auto" />
                   </div>
                 ) : (
-                  <div></div>
+                  <div>
+                    <img src={product?.image} alt="upload image" className="w-[200px] h-auto" />
+                  </div>
                 )}
               </div>
             </div>
           </div>
         </div>
         <div className="flex justify-center mb-5">
-          <Button className="flex bg-black items-center gap-3" onClick={handleAddProduct}>
+          <Button className="flex bg-black items-center gap-3" onClick={handleUpdateProduct}>
             Update
           </Button>
         </div>
@@ -219,4 +239,4 @@ export function AddProducts() {
     </div>
   );
 }
-export default AddProducts;
+export default UpdateProduct;

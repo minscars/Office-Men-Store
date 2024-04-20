@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using OfficeMenStore.Application.Interfaces;
+using OfficeMenStore.Application.Models.Product;
 
 namespace OfficeMenStore.Api.Controllers
 {
@@ -57,6 +58,42 @@ namespace OfficeMenStore.Api.Controllers
         {
             var result = await _productService.SearchProductByKeyAsync(page,limit,key);
             result.Data.ForEach(s => s.Image = setImageName(s.Image));
+            return Ok(result);
+        }
+
+        [HttpPost("CreateProduct")]
+        [AllowAnonymous]
+        public  async Task<IActionResult> CreateProductAsync([FromForm] CreateProductRequest request)
+        {
+            var result = await _productService.CreateProductAsync(request);
+            if (result.StatusCode == 400)
+            {
+                return BadRequest(result.Message);
+            }
+            return Ok(result);
+        }
+
+        [HttpPut("UpdateProduct")]
+        [AllowAnonymous]
+        public async Task<IActionResult> UpdateProductAsync([FromForm] UpdateProductRequest request)
+        {
+            var result = await _productService.UpdateProductAsync(request);
+            if (result.StatusCode == 400)
+            {
+                return BadRequest(result.Message);
+            }
+            return Ok(result);
+        }
+
+        [HttpDelete("DeleteProduct/{productId}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> DeleteProductAsync([FromRoute] int productId)
+        {
+            var result = await _productService.DeleteProductAsync(productId);
+            if (result.StatusCode == 400)
+            {
+                return BadRequest(result.Message);
+            }
             return Ok(result);
         }
     }

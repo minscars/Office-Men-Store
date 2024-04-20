@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Azure.Core;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using OfficeMenStore.Application.Interfaces;
 using OfficeMenStore.Application.Models.Product;
@@ -6,11 +8,6 @@ using OfficeMenStore.Application.Models.Size;
 using OfficeMenStore.Application.Utilities.Constants;
 using OfficeMenStore.Domain.EF;
 using OfficeMenStore.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OfficeMenStore.Application.Services
 {
@@ -18,10 +15,14 @@ namespace OfficeMenStore.Application.Services
     {
         private readonly OfficeMenStoreDbContext _context;
         private readonly IMapper _mapper;
-        public ProductService(OfficeMenStoreDbContext context, IMapper mapper)
+        private readonly IFileService _fileServivce;
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        public ProductService(OfficeMenStoreDbContext context, IMapper mapper, IFileService fileService, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
             _mapper = mapper;
+            _fileServivce = fileService;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public async Task<PaginatedList<List<GetProductListResponseModel>>> GetAllAsync(int page, int limit)
@@ -29,6 +30,7 @@ namespace OfficeMenStore.Application.Services
             var productList = _context.Products
                 .Include(p => p.Category)
                 .Where(p => p.IsDeleted == false)
+                .OrderByDescending(p =>p.CreatedTime)
                 .AsQueryable();
 
             var total = await _context.Products.Where(p => p.IsDeleted == false).ToListAsync();
@@ -73,6 +75,7 @@ namespace OfficeMenStore.Application.Services
                 {
                     Id = p.Id,
                     CategoryName = p.Category.Name,
+                    CategoryId = p.Category.Id,
                     Name = p.Name,
                     Image = p.Image,
                     Price = p.Price,
@@ -87,7 +90,8 @@ namespace OfficeMenStore.Application.Services
                     CreatedTime = p.CreatedTime,
                 })
                 .FirstOrDefaultAsync();
-            if(checkExit == null)
+            checkExit.TotalProduct = checkExit.SizeProducts.Sum(s => s.Amount);
+            if (checkExit == null)
             {
                 return new ApiResult<GetProductResponseModel>(null)
                 {
@@ -148,6 +152,102 @@ namespace OfficeMenStore.Application.Services
             };
         }
 
+        public async Task<ApiResult<bool>> CreateProductAsync(CreateProductRequest request)
+        {
+            if (request == null)
+            {
+                return new ApiResult<bool>(false)
+                {
+                    Message = "Something went wrong!",
+                    StatusCode = 400
+                };
+            }
+
+            var imageName = await _fileServivce.UploadFileAsync(request.Image, SystemConstant.IMG_PRODUCTS_FOLDER);
+            var product = new Product()
+            {
+                Name = request.Name,
+                Image = imageName,
+                Price = request.Price,
+                CategoryId = request.CategoryId,
+                CreatedTime = DateTime.Now,
+            };
+            await _context.Products.AddAsync(product); 
+            await _context.SaveChangesAsync();
+            return new ApiResult<bool>(true)
+            {
+                Message = "Create new product successfully!",
+                StatusCode = 200
+            };
+        }
+
+        public async Task<ApiResult<bool>> UpdateProductAsync(UpdateProductRequest request)
+        {
+            if (request == null)
+            {
+                return new ApiResult<bool>(false)
+                {
+                    Message = "Something went wrong!",
+                    StatusCode = 400
+                };
+            }
+
+            var product = await _context.Products
+                .Where(p => p.Id == request.Id)
+                .FirstOrDefaultAsync();
+            if (product == null)
+            {
+                return new ApiResult<bool>(false)
+                {
+                    Message = $"Couldn't find the product with id: {request.Id}",
+                    StatusCode = 404
+                };
+            }
+
+            if (request.Image == null)
+            {
+                product.Image = product.Image;
+            }
+            else
+            {
+                string path = Path.Combine(_webHostEnvironment.WebRootPath, SystemConstant.IMG_PRODUCTS_FOLDER, product.Image);
+                await _fileServivce.RemoveFileAsync(path);
+                var imageName = await _fileServivce.UploadFileAsync(request.Image, SystemConstant.IMG_PRODUCTS_FOLDER);
+                product.Image = imageName;
+            }
+
+            product.Name = request.Name;
+            product.Price = (decimal)request.Price;
+            product.CategoryId = (int)request.CategoryId;
+            product.UpdatedTime = DateTime.Now;
+
+            await _context.SaveChangesAsync();
+            return new ApiResult<bool>(true)
+            {
+                Message = "Update product successfully!",
+                StatusCode = 200
+            };
+        }
+
+        public async Task<ApiResult<bool>> DeleteProductAsync(int productId)
+        {
+            var product = await _context.Products.Where(p => p.Id == productId).FirstOrDefaultAsync();
+            if (product == null)
+            {
+                return new ApiResult<bool>(false)
+                {
+                    Message = $"Couldn't find the product with id: {productId}",
+                    StatusCode = 404
+                };
+            }
+            product.IsDeleted = true;
+            await _context.SaveChangesAsync();
+            return new ApiResult<bool>(true)
+            {
+                Message = $"Delete the product with Id = {productId} successfully!",
+                StatusCode = 200
+            };
+        }
     }
 }
 

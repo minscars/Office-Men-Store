@@ -11,16 +11,16 @@ import { jwtDecode } from 'jwt-decode';
 import cartItemApi from '@/api/cartItemApi';
 import { useState, useEffect } from 'react';
 export function Sidenav({ brandImg, brandName, routes }) {
-  const cartItems = useSelector((state) => state.cart.cartItems);
   const [controller, dispatch] = useMaterialTailwindController();
   const { sidenavColor, sidenavType, openSidenav } = controller;
-  const totalQuantity = cartItems.reduce((total, item) => total + item.quantity, 0);
   const sidenavTypes = {
     dark: 'bg-gradient-to-br from-gray-800 to-gray-900',
     white: 'bg-white shadow-sm',
     transparent: 'bg-transparent',
   };
 
+  const cartItems = useSelector((state) => state.cart.cartItems);
+  const totalQuantity = cartItems.reduce((total, item) => total + item.quantity, 0);
   const [cartItemList, setCartItemList] = useState([]);
   const token = window.localStorage.getItem('token');
   var userLogin = null;
@@ -67,8 +67,8 @@ export function Sidenav({ brandImg, brandName, routes }) {
               <li className="mx-3.5 mt-4 mb-2">
                 <Typography
                   variant="small"
-                  color={sidenavType === 'dark' ? 'white' : 'blue-gray'}
-                  className="font-black uppercase opacity-75"
+                  color={sidenavType === 'dark' ? 'white' : 'blue'}
+                  className="font-blue-900 uppercase opacity-75"
                 >
                   {title}
                 </Typography>
@@ -91,7 +91,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
                         <Typography color="inherit" className="font-medium capitalize">
                           {name}
                         </Typography>
-                        {name === 'Cart' && (
+                        {/* {name === 'Cart' && (
                           <ListItemSuffix>
                             <Chip
                               value={token ? cartItemList.totalItems : totalQuantity}
@@ -101,7 +101,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
                               className="rounded-full"
                             />
                           </ListItemSuffix>
-                        )}
+                        )} */}
                       </Button>
                     )}
                   </NavLink>

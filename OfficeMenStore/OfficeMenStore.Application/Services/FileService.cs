@@ -1,7 +1,6 @@
-﻿using OfficeMenStore.Application.Interfaces;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Hosting;
+using OfficeMenStore.Application.Interfaces;
 using System.Net.Http.Headers;
 
 namespace OfficeMenStore.Application.Services
@@ -9,6 +8,10 @@ namespace OfficeMenStore.Application.Services
     public class FileService : IFileService
     {
         private readonly IWebHostEnvironment _webHostEnvironment;
+        public FileService(IWebHostEnvironment webHostEnvironment)
+        {
+            _webHostEnvironment = webHostEnvironment;
+        }
         public async Task<string> UploadFileAsync(IFormFile FileUploaded, string folderName)
         {
             try
@@ -39,6 +42,17 @@ namespace OfficeMenStore.Application.Services
             catch (Exception e)
             {
                 return e.Message;
+            }
+        }
+
+        public async Task RemoveFileAsync(string path)
+        {
+            if (File.Exists(path))
+            {
+                await Task.Run(() =>
+                {
+                    File.Delete(path);
+                });
             }
         }
     }

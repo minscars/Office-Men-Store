@@ -24,6 +24,8 @@ import Pagination from '@/components/pagination/index.jsx';
 import moment from 'moment';
 import { jwtDecode } from 'jwt-decode';
 import { SignIn } from '../auth/index.js';
+import Swal from 'sweetalert2';
+import Alert from '@/components/alert';
 export function Products() {
   const [value, setValue] = useState(null);
   const [open, setOpen] = useState(false);
@@ -31,16 +33,14 @@ export function Products() {
   const [selectedProduct, setSelectedProduct] = useState([]); // Initialize with an empty array
 
   const [searchText, setSearchText] = useState('');
-  const [productsData, setProductData] = useState([]); // Initialize with an empty array
-  const [selectedCategory, setSelectedCategory] = useState('');
 
   const [productList, setProductList] = useState([]);
   const [offset, setOffset] = useState(0);
-  const [perPage] = useState(6);
+  const [perPage] = useState(5);
   const [currentPage, setCurrentPage] = useState(0);
   const [pageCount, setPageCount] = useState(0);
   const [isloaded, setIsLoaded] = useState(false);
-
+  const [trigger, setTrigger] = useState();
   const token = window.localStorage.getItem('token');
   const userLogin = jwtDecode(token);
 
@@ -52,7 +52,7 @@ export function Products() {
     };
     GetAllCate();
     getAllProductsFromReact();
-  }, [perPage, offset]);
+  }, [perPage, offset, trigger]);
 
   const getAllProductsFromReact = async () => {
     setIsLoaded(false);
@@ -90,10 +90,32 @@ export function Products() {
     setIsLoaded(true);
     setSearchText('');
   }
-
-  const navigateeditproduct = () => {
-    navigate('updateproduct');
-  };
+  async function handleDeleteProduct(productId) {
+    console.log(productId);
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to delete this product?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, I want it!',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        await productApi.DeleteProduct(productId).then((res) => {
+          console.log(res);
+          if (res.statusCode === 200) {
+            setTrigger(Math.random() + 1)
+              ?.toString(36)
+              .substring(7);
+            Alert.showSuccessAlert(res.message);
+          } else {
+            Alert.showErrorAlert(res.message);
+          }
+        });
+      }
+    });
+  }
 
   // Hàm mở hộp thoại xác nhận xóa sản phẩm
   const openDeleteConfirmation = (product) => {
@@ -190,7 +212,6 @@ export function Products() {
                             <Typography variant="small" color="blue-gray" className="font-bold">
                               {item.name}
                             </Typography>
-                            <div class="font-light text-sm not-italic	 text-gray-400">{item.categoryName}</div>
                           </div>
                         </div>
                       </td>
@@ -226,9 +247,11 @@ export function Products() {
                         </span>
                         <div class="hidden group-hover:flex group-hover:w-20 group-hover:items-center group-hover:text-gray-500 group-hover:gap-x-2">
                           <button class="select-none p-2 ">
-                            <Tooltip content="Edit Product">
+                            <Tooltip content="Update">
                               <IconButton variant="text">
-                                <PencilIcon className="h-5 w-5 hover:text-blue-300" onClick={navigateeditproduct} />
+                                <Link to={`./updateproduct/${item.id}`}>
+                                  <PencilIcon className="h-5 w-5 hover:text-blue-300" />
+                                </Link>
                               </IconButton>
                             </Tooltip>
                           </button>
@@ -236,7 +259,10 @@ export function Products() {
                           <button class="p-2 ">
                             <Tooltip content="Delete Product">
                               <IconButton variant="text">
-                                <TrashIcon className="h-5 w-5 hover:text-red-500" onClick={() => setOpen(true)} />
+                                <TrashIcon
+                                  className="h-5 w-5 hover:text-red-500"
+                                  onClick={() => handleDeleteProduct(item.id)}
+                                />
                               </IconButton>
                             </Tooltip>
                           </button>
