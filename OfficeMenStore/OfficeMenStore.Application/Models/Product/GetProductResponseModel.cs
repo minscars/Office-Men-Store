@@ -14,6 +14,8 @@ namespace OfficeMenStore.Application.Models.Product
         public string Image { get; set; }
         public string Name { get; set; }
         public string CategoryName { get; set; }
+        public int CategoryId {  get; set; }
+        public int TotalProduct {  get; set; }
         public decimal Price { get; set; }
         public int Amount_Import { get; set; }
         public int Amount_Export { get; set; }

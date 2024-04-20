@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace OfficeMenStore.Application.Models.Product
 {
-    public class CreateProductRequest
+    public class UpdateProductRequest
     {
+        public int Id { get; set; }
         public string? Name { get; set; }
         public IFormFile? Image { get; set; }
-        public int CategoryId { get; set; }
-        public decimal Price { get; set; }
-        
+        public int? CategoryId { get; set; }
+        public decimal? Price { get; set; }
     }
 }

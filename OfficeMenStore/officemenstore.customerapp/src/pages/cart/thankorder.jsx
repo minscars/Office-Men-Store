@@ -19,7 +19,7 @@ function Thankorder({ formData, onSubmit, handlePrev, isFirstStep }) {
               <h3 class="md:text-2xl text-gray-900 my-2 font-semibold">Your order is confirmed</h3>
               <p> Have a great day! </p>
               <div class="py-10 text-center">
-                <a href="#" class="px-12 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3">
+                <a href="#" class="px-12 bg-blue-900 hover:bg-indigo-500 text-white font-semibold py-3">
                   GO BACK
                 </a>
               </div>

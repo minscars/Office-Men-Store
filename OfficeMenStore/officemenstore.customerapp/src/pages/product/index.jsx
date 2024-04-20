@@ -3,12 +3,26 @@ import categoryApi from '@/api/categoryApi';
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import productApi from '@/api/productApi';
+
+import cartItemApi from '@/api/cartItemApi';
 import Pagination from '@/components/pagination/index.jsx';
 import ShopProductCard from '@/components/card/product-card';
 import Grid from '@mui/material/Unstable_Grid2';
+import ProductCartWidget from '@/pages/product/product-cart-widget';
+import userApi from '@/api/userApi';
+import { useSelector } from 'react-redux';
+import { jwtDecode } from 'jwt-decode';
 export function Product() {
   const [productList, setProducts] = useState([]);
   const [cateList, setCateList] = useState([]);
+  const token = window.localStorage.getItem('token');
+  const cartItems = useSelector((state) => state.cart.cartItems);
+  const totalQuantity = cartItems.reduce((total, item) => total + item.quantity, 0);
+  const [cartItemList, setCartItemList] = useState([]);
+  var userLogin = null;
+  if (token != null) {
+    userLogin = jwtDecode(token);
+  }
 
   const [offset, setOffset] = useState(0);
   const [perPage] = useState(16);
@@ -22,7 +36,12 @@ export function Product() {
     };
     GetAllCate();
     getAllProductsFromReact();
-  }, [perPage, offset]);
+    const GetCartItem = async () => {
+      const data = await cartItemApi.GetCartItemByUser(userLogin.id);
+      setCartItemList(data.data);
+    };
+    GetCartItem();
+  }, [perPage, offset, cartItemList?.total]);
 
   const getAllProductsFromReact = async () => {
     setIsLoaded(false);
@@ -53,6 +72,7 @@ export function Product() {
   return (
     <>
       <Card className="mt-4 mb-6 border border-blue-gray-100">
+        <ProductCartWidget totalQuantityDb={cartItemList?.totalItems} totalQuantityLocal={totalQuantity} />
         <CardBody className="!p-4">
           <div className="">
             <div className="flex items-center mb-10">

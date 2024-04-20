@@ -1,4 +1,4 @@
-﻿using OfficeMenStore.Application.Models.Cart;
+﻿using OfficeMenStore.Application.Models.Size;
 using OfficeMenStore.Application.Utilities.Constants;
 using System;
 using System.Collections.Generic;
@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace OfficeMenStore.Application.Interfaces
 {
-    public interface ICartService
+    public interface ISizeProductService
     {
-        Task<ApiResult<GetCartByUserResponse>> GetCartByUserAsync(string userId);
+        Task<ApiResult<GetAmountProductSizeRespnse>> GetAmountProductSizeAsync(GetAmountProductSizeRequest dto);
     }
 }

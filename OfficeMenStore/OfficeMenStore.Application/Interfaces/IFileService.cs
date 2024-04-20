@@ -10,5 +10,6 @@ namespace OfficeMenStore.Application.Interfaces
     public interface IFileService
     {
         Task<string> UploadFileAsync(IFormFile FileUploaded, string folderName);
+        Task RemoveFileAsync(string path);
     }
 }

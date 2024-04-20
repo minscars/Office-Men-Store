@@ -7,7 +7,7 @@ const cartApi = {
     return API.get(`/CartItems/${userId}`);
   },
   DeleteCartItem: (dto) => {
-    return API.delete('/CartItems', dto);
+    return API.put('/CartItems/DeleteCartItem', dto);
   },
   UpdateAmount: (dto) => {
     return API.put('/CartItems', dto);

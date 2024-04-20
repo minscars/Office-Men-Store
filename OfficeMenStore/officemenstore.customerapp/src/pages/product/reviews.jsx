@@ -1,10 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { cartActions } from '../../redux/slicse/cartSlice';
-import { projectsData } from '@/data';
-import { ProfileInfoCard, MessageCard } from '@/widgets/cards';
 import {
   Card,
   CardBody,
@@ -18,241 +15,160 @@ import {
   Switch,
   Tooltip,
   Button,
-  Rating,
+  Input,
 } from '@material-tailwind/react';
-import { HomeIcon, ChatBubbleLeftEllipsisIcon, Cog6ToothIcon, PencilIcon } from '@heroicons/react/24/solid';
-
-export function ReviewsTab() {
-  const dispatch = useDispatch();
-  const { id } = useParams();
-  const product = projectsData.find((product) => product.id === id);
-  const { img, title, tag, description, price } = product;
-
-  const [selectedSize, setSelectedSize] = useState(null);
-  const [quantity, setQuantity] = useState(1);
-  const [rating, setRating] = useState(null);
-  const reviewUser = useRef('');
-  const reviewMsg = useRef('');
-  const [tab, setTab] = useState('desc');
-
-  const [reviews, setReviews] = useState([
-    {
-      id: 1,
-      message: 'Quality is good than the product',
-      user: 'Rinkya Tansen',
-      date: '12, SEP 2022',
-      likes: 12,
-      comments: 8,
-    },
-    {
-      id: 2,
-      message: 'I like the quality of the product.',
-      user: 'Rinkya Tansen',
-      date: '12, SEP 2022',
-      likes: 12,
-      comments: 8,
-    },
-    {
-      id: 3,
-      message: 'This is one of the best product.',
-      user: 'Rinkya Tansen',
-      date: '12, SEP 2022',
-      likes: 12,
-      comments: 8,
-    },
-  ]);
-
-  const addToCart = () => {
-    // Existing logic for adding to cart
+import Rating from '@mui/material/Rating';
+import feedBackApi from '@/api/feedBackApi';
+import moment from 'moment';
+import Alert from '@/components/alert';
+export function ReviewsTab(props) {
+  const [value, setValue] = useState(null);
+  const formRef = useRef(null);
+  const [inputValue, setInputValue] = useState('');
+  const [valueRating, setValueRating] = useState(null);
+  const handleInputChange = (event) => {
+    setInputValue(event.target.value);
   };
 
-  const handleDec = (id) => {
-    // Existing logic for decreasing quantity in cart
-  };
-
-  const handleInc = (id) => {
-    // Existing logic for increasing quantity in cart
-  };
-
-  const toggleSize = (size) => {
-    // Existing logic for toggling size
-  };
-
-  const handleTabChange = (tab) => {
-    setTab(tab);
-  };
-
-  const handleSubmitReview = () => {
-    const user = reviewUser.current.value;
-    const message = reviewMsg.current.value;
-
-    if (!user || !message || !rating) {
-      toast.error('Please fill in all fields and provide a rating.');
-      return;
-    }
-
-    const newReview = {
-      id: reviews.length + 1,
-      user,
-      message,
-      rating,
-    };
-    console.log('rating', newReview);
-
-    setReviews([...reviews, newReview]);
-    toast.success('Review added successfully!');
+  const addFeedBack = async () => {
+    var userId = props?.dataUser.userId;
+    var productId = props?.productId;
+    var content = inputValue;
+    var rate = valueRating;
+    var dto = { userId, productId, content, rate };
+    await feedBackApi.AddFeedBack(dto).then(async (res) => {
+      console.log('dto', dto);
+      console.log('res:', res);
+      if (res.statusCode === 200) {
+        setTrigger(Math.random() + 1)
+          ?.toString(36)
+          .substring(7);
+        Alert.showSuccessAlert(res.message);
+        setInputValue('');
+        setValueRating(null);
+      } else {
+        Alert.showErrorAlert(res.message);
+      }
+      if (formRef.current) {
+        formRef.current.reset();
+      }
+    });
   };
 
   return (
-    <section className="py-10 bg-stone-100 font-poppins dark:bg-gray-800">
+    <section className="bg-stone-100 font-poppins dark:bg-gray-800">
       <div className="px-4 py-2 mx-auto max-w-7xl lg:py-4 md:px-6">
         <div className="grid-cols-1 xl:grid-cols-3 gap-6">
-          <div className="flex gap-5">
-            {/* Customer Reviews */}
-            <div className="-mt-8 space-y-6 xl:w-2/3">
-              {reviews.map((review) => (
-                <div
-                  key={review.id}
-                  className="    bg-white border border-gray-200 rounded-md lg:p-6 dark:border-gray-900 dark:bg-gray-900"
-                >
-                  <h2 className="mb-2 text-xl font-bold dark:text-gray-300">{review.message}</h2>
-                  <p className="mb-3 text-sm text-gray-700 dark:text-gray-400">{/* Nội dung đánh giá */}</p>
-                  <div className="flex items-center justify-between">
-                    <div className="flex flex-wrap items-center">
-                      <img
-                        className="object-cover w-10 h-10 mb-1 mr-2 rounded-full shadow lg:mb-0"
-                        src="https://i.postimg.cc/rF6G0Dh9/pexels-emmy-e-2381069.jpg"
-                        alt="User Avatar"
-                      />
-                      <h2 className="mr-2 text-lg font-semibold text-gray-700 dark:text-gray-400">{review.user}</h2>
-                      <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{review.date}</p>
-                    </div>
-                    <div className="flex items-center">
-                      <div className="flex mr-3 text-sm text-gray-700 dark:text-gray-400">
-                        <a href="#">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            fill="currentColor"
-                            className="w-4 h-4 mr-1 text-blue-400 bi bi-hand-thumbs-up-fill"
-                            viewBox="0 0 16 16"
-                          >
-                            <path d="M6.956 1.745C7.021.81 7.908.087 8.864.325l.261.066c.463.116.874.456 1.012.965.22.816.533 2.511.062 4.51a9.84 9.84 0 0 1 .443-.051c.713-.065 1.669-.072 2.516.21.518.173.994.681 1.2 1.273.184.532.16 1.162-.234 1.733.058.119.103.242.138.363.077.27.113.567.113.856 0 .289-.036.586-.113.856-.039.135-.09.273-.16.404.169.387.107.819-.003 1.148a3.163 3.163 0 0 1-.488.901c.054.152.076.312.076.465 0 .305-.089.625-.253.912C13.1 15.522 12.437 16 11.5 16H8c-.605 0-1.07-.081-1.466-.218a4.82 4.82 0 0 1-.97-.484l-.048-.03c-.504-.307-.999-.609-2.068-.722C2.682 14.464 2 13.846 2 13V9c0-.85.685-1.432 1.357-1.615.849-.232 1.574-.787 2.132-1.41.56-.627.914-1.28 1.039-1.639.199-.575.356-1.539.428-2.59z"></path>
-                          </svg>
-                        </a>
-                        <span>{review.likes}</span>
-                      </div>
-                      <div className="flex text-sm text-gray-700 dark:text-gray-400">
-                        <a href="#">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            fill="currentColor"
-                            className="w-4 h-4 mr-1 text-blue-400 bi bi-chat"
-                            viewBox="0 0 16 16"
-                          >
-                            <path d="M2.678 11.894a1 1 0 0 1 .287.801 10.97 10.97 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8.06 8.06 0 0 0 8 14c3.996 0 7-2.807 7-6 0-3.192-3.004-6-7-6S1 4.808 1 8c0 1.468.617 2.83 1.678 3.894zm-.493 3.905a21.682 21.682 0 0 1-.713.129c-.2.032-.352-.176-.273-.362a9.68 9.68 0 0 0 .244-.637l.003-.01c.248-.72.45-1.548.524-2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9.06 9.06 0 0 1-2.347-.306c-.52.263-1.639.742-3.468 1.105z"></path>
-                          </svg>
-                        </a>
-                        <span>{review.comments}</span>
-                      </div>
-                    </div>
-                  </div>
+          <div className="">
+            {/* thêm bình luận  */}
+            <Card className="p-6 bg-white border border-gray-200 rounded-md dark:bg-gray-900 shadow-none">
+              <div className="flex flex-col justify-center">
+                <div className="mb-10 flex justify-center">
+                  <p className="text-[20px] font-bold text-blue-900">FeedBacks</p>
                 </div>
-              ))}
-            </div>
-            {/* tong rv */}
-            <div className="xl:w-3/6">
-              <Card className="mr-0 -mt-8 shadow-none">
-                <div className="p-1 bg-white border border-gray-200 rounded-md dark:bg-gray-900 ml-0">
-                  <h2 className="mb-6 text-3xl font-black text-center dark:text-gray-400">Customer Reviews</h2>
-                  <div className="mb-4 text-center">
-                    <span className="inline-block text-5xl font-bold text-blue-500 dark:text-gray-300">4.5</span>
-                    <span className="inline-block text-xl font-medium text-gray-700 dark:text-gray-400">/5</span>
-                  </div>
-                  <ul className="flex items-center justify-center mb-6">
-                    {[1, 2, 3, 4, 5].map((index) => (
-                      <li key={index}>
-                        <a href="#">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            fill="currentColor"
-                            className="w-4 mr-1 text-blue-500 dark:text-blue-400 bi bi-star-fill"
-                            viewBox="0 0 16 16"
-                          >
-                            <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
-                          </svg>
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                  <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                    Based on {reviews.length} reviews
-                  </p>
-                </div>
-              </Card>
+                <div>
+                  <form ref={formRef}>
+                    <div className="flex flex-col rounded-[10px] bg-clip-border shadow-3xl shadow-shadow-500 dark:!bg-navy-800 dark:text-white dark:shadow-none">
+                      <div className="flex items-center justify-start">
+                        <img
+                          src={props?.dataUser?.avatar}
+                          className="ml-3 mr-3 h-[35px] w-[35px] rounded-full "
+                          alt=""
+                        />
+                        <Input
+                          size="lg"
+                          placeholder="Let's share about this product"
+                          name="name"
+                          value={inputValue}
+                          onChange={handleInputChange}
+                          className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
+                          labelProps={{
+                            className: 'before:content-none after:content-none',
+                          }}
+                        />
+                      </div>
+                      <div className="row mb-2 ml-[65px] flex items-center justify-between">
+                        <div className="row flex items-center">
+                          <span className="mr-4 text-base text-blue-900">How would you rate this product?</span>
 
-              {/* thêm bình luận  */}
-              <Card className=" mt-10 p-6 bg-white border border-gray-200 rounded-md dark:bg-gray-900 shadow-none">
-                <h2 className="mb-6 text-3xl font-black text-center dark:text-gray-400">Add a Review</h2>
-                <form>
-                  <div className="mb-4">
-                    <label
-                      htmlFor="review-user"
-                      className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-300"
-                    >
-                      Your Name
-                    </label>
-                    <input
-                      type="text"
-                      id="review-user"
-                      ref={reviewUser}
-                      required
-                      className="w-full px-4 py-2 text-sm border rounded-md focus:outline-none focus:border-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
-                    />
-                  </div>
-                  <div className="mb-4">
-                    <label
-                      htmlFor="review-msg"
-                      className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-300"
-                    >
-                      Your Review
-                    </label>
-                    <textarea
-                      id="review-msg"
-                      ref={reviewMsg}
-                      required
-                      rows="4"
-                      className="w-full px-4 py-2 text-sm border rounded-md focus:outline-none focus:border-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
-                    ></textarea>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <label htmlFor="rating" className="mr-2 text-sm font-medium text-gray-600 dark:text-gray-300">
-                        Rating
-                      </label>
-                      <Rating
-                        id="rating"
-                        value={rating}
-                        onChange={(value) => setRating(value)}
-                        className="text-blue-500 dark:text-blue-400"
-                      />
+                          <Rating
+                            className="items-center"
+                            name="half-rating"
+                            value={valueRating}
+                            defaultValue={0}
+                            precision={0.5}
+                            onChange={(e, newValue) => {
+                              setValueRating(newValue);
+                            }}
+                          />
+                        </div>
+                        <Button
+                          onClick={addFeedBack}
+                          className="mt-2 bg-blue-900 text-white shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100"
+                        >
+                          Send
+                        </Button>
+                      </div>
                     </div>
-                    <button
-                      type="button"
-                      onClick={handleSubmitReview}
-                      className="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
-                    >
-                      Submit
-                    </button>
+                  </form>
+                  {props?.feedBack === null && (
+                    <div className="flex flex-col items-center justify-center">
+                      <p className="mt-20 text-xl text-gray-700">Feedbacks is empty!</p>
+                    </div>
+                  )}
+                  {props?.feedBack !== null && (
+                    <div className="mb-2 ml-4 mt-4 text-[18px]">
+                      <span className="font-bold text-blue-900">
+                        All feadbacks ({props?.feedBack?.total}) {props?.feedBack?.rate}/5{' '}
+                      </span>
+                    </div>
+                  )}
+                  <div className="h-[400px] overflow-x-scroll">
+                    {props?.feedBack?.feedBackItems?.map((item) => (
+                      <div
+                        key={item.feedBackId}
+                        className={`mb-2 mt-1 items-center justify-between border-2 bg-white p-3 shadow-3xl shadow-shadow-500 dark:!bg-navy-700 dark:shadow-none`}
+                      >
+                        <div className="float-right mb-6">
+                          {/* {userLogin.id === item.userAccountId && <CardMenu feedBackId={item.id} />} */}
+                        </div>
+                        <div className="w-full items-center">
+                          <div className="ml-2 mr-4 w-auto">
+                            <p className={`text-m text-between text-navy-700 dark:text-white`}>{item.content}</p>
+                          </div>
+                          <div className="ml-4 mt-2">
+                            <div className="mt-1 flex items-center justify-between gap-2">
+                              <div className="flex items-center">
+                                <img src={item?.userAvatar} className={` h-[35px] w-[35px] rounded-full`} />
+                                <div className="ml-2">
+                                  <p className={`text-m font-bold text-navy-800 dark:text-white`}>{item?.userName}</p>
+                                </div>
+                              </div>
+                              <div className="right-0 float-right">
+                                <div className="w-[200px]">
+                                  <span className="text-[14px] text-gray-600">
+                                    {moment(item.createdDate).format('DD/MM/YYYY HH:mm A')}
+                                  </span>
+                                  <div>
+                                    <Rating
+                                      className="items-center"
+                                      name="half-rating"
+                                      size="small"
+                                      precision={0.5}
+                                      value={item?.rate}
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                </form>
-              </Card>
-            </div>
+                </div>
+              </div>
+            </Card>
           </div>
         </div>
       </div>
