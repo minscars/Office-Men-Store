@@ -51,7 +51,7 @@ export const routes = [
       //{ icon: <Squares2X2Icon {...icon} />, name: 'Dashboard', path: '/dashboard', element: <Dashboard /> },
       { icon: <CubeIcon {...icon} />, name: 'product management', path: '/product', element: <Products /> },
       { path: '/product/addproducts', element: <AddProducts /> },
-      { path: '/product/updateproduct', element: <UpdateProduct /> },
+      { path: '/product/updateproduct/:id', element: <UpdateProduct /> },
       { icon: <TagIcon {...icon} />, name: 'category management', path: '/category', element: <Categories /> },
 
       {

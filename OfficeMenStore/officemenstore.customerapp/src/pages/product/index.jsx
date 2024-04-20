@@ -3,13 +3,29 @@ import categoryApi from '@/api/categoryApi';
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import productApi from '@/api/productApi';
+
+import cartItemApi from '@/api/cartItemApi';
 import Pagination from '@/components/pagination/index.jsx';
+import ShopProductCard from '@/components/card/product-card';
+import Grid from '@mui/material/Unstable_Grid2';
+import ProductCartWidget from '@/pages/product/product-cart-widget';
+import userApi from '@/api/userApi';
+import { useSelector } from 'react-redux';
+import { jwtDecode } from 'jwt-decode';
 export function Product() {
   const [productList, setProducts] = useState([]);
   const [cateList, setCateList] = useState([]);
+  const token = window.localStorage.getItem('token');
+  const cartItems = useSelector((state) => state.cart.cartItems);
+  const totalQuantity = cartItems.reduce((total, item) => total + item.quantity, 0);
+  const [cartItemList, setCartItemList] = useState([]);
+  var userLogin = null;
+  if (token != null) {
+    userLogin = jwtDecode(token);
+  }
 
   const [offset, setOffset] = useState(0);
-  const [perPage] = useState(6);
+  const [perPage] = useState(16);
   const [currentPage, setCurrentPage] = useState(0);
   const [pageCount, setPageCount] = useState(0);
   const [isloaded, setIsLoaded] = useState(false);
@@ -20,7 +36,12 @@ export function Product() {
     };
     GetAllCate();
     getAllProductsFromReact();
-  }, [perPage, offset]);
+    const GetCartItem = async () => {
+      const data = await cartItemApi.GetCartItemByUser(userLogin.id);
+      setCartItemList(data.data);
+    };
+    GetCartItem();
+  }, [perPage, offset, cartItemList?.total]);
 
   const getAllProductsFromReact = async () => {
     setIsLoaded(false);
@@ -51,9 +72,10 @@ export function Product() {
   return (
     <>
       <Card className="mt-4 mb-6 border border-blue-gray-100">
+        <ProductCartWidget totalQuantityDb={cartItemList?.totalItems} totalQuantityLocal={totalQuantity} />
         <CardBody className="!p-4">
           <div className="">
-            <div className="flex items-center">
+            <div className="flex items-center mb-10">
               <Typography variant="h4" color="blue-gray" className="mb-2">
                 PRODUCT
               </Typography>
@@ -76,65 +98,15 @@ export function Product() {
               </div>
             </div>
 
-            <div className="p-2 grid grid-cols-1 gap-12 md:grid-cols-2 xl:grid-cols-5 !w-[1040px] h-[790px]">
+            <Grid container spacing={3}>
               {productList?.map((row) => (
-                <Link to={`/user/product/details/${row.id}`}>
-                  <Card className="p-3 !h-auto !w-[220px]" key={row.id} color="transparent" shadow={false}>
-                    <img
-                      src={row.image}
-                      alt="{row.name}"
-                      className="rounded-[2px] border-2 h-auto w-[300px] object-cover"
-                    />
-                    <CardBody className="py-0 px-1 ">
-                      <div className="flex justify-center mt-2">
-                        <p className="mr-10 text-[12px] font-bold">{row.categoryName}</p>
-                        <div className="flex justify-center ml-6 ">
-                          {row.sizeProducts?.map((item) => (
-                            <p key={item.key} className="mr-1 text-[12px] font-bold">
-                              {item.name}
-                            </p>
-                          ))}
-                        </div>
-                      </div>
-                      <div className="justify-center flex flex-col items-center">
-                        <p
-                          color="blue-gray"
-                          className="block antialiased tracking-normal font-sans text-xl font-semibold leading-snug text-blue-gray-900 mt-2 mb-2 !text-[17px]"
-                        >
-                          {row.name}
-                        </p>
-                      </div>
-                      <Typography variant="h5" color="blue-gray" className="mt-1 mb-2 !text-[20px]">
-                        {new Intl.NumberFormat('vi-VN', {
-                          style: 'currency',
-                          currency: 'VND',
-                        }).format(row.price)}
-                      </Typography>
-
-                      {/* <Typography
-                        variant="h6"
-                        color="blue-gray"
-                        className="mt-1 mb-2 left-0 text-blue-gray-500 line-through"
-                      >
-                        {row.price * 2}$
-                      </Typography> */}
-                    </CardBody>
-                    {/* <CardFooter className="pt-1 px-0 !p-0">
-                      <Link >
-                        <Button
-                          ripple={false}
-                          fullWidth={true}
-                          // onClick={() => addTocart(id)}
-                          className="bg-blue-gray-900/10 text-blue-gray-900 shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100"
-                        >
-                          Add to Cart
-                        </Button>
-                      </Link>
-                    </CardFooter> */}
-                  </Card>
-                </Link>
+                <Grid key={row.id} xs={12} sm={6} md={3}>
+                  <Link to={`/user/product/details/${row.id}`}>
+                    <ShopProductCard product={row} />
+                  </Link>
+                </Grid>
               ))}
-            </div>
+            </Grid>
           </div>
         </CardBody>
       </Card>

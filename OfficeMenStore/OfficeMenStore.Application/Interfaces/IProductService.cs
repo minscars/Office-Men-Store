@@ -14,6 +14,8 @@ namespace OfficeMenStore.Application.Interfaces
         public Task<ApiResult<GetProductResponseModel>> GetProductByIdAsync(int id);
         public Task<PaginatedList<List<GetProductListResponseModel>>> GetProductByCategoryIdAsync(int page, int limit, int cateId);
         public Task<PaginatedList<List<GetProductListResponseModel>>> SearchProductByKeyAsync(int page, int limit, string key);
-        //public Task<ApiResult<bool>> CreateProductAsync(CreateProductRequest request);
+        public Task<ApiResult<bool>> CreateProductAsync(CreateProductRequest request);
+        public Task<ApiResult<bool>> UpdateProductAsync(UpdateProductRequest request);
+        public Task<ApiResult<bool>> DeleteProductAsync(int productId);
     }
 }

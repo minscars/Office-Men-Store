@@ -24,85 +24,95 @@ export function MyOrder() {
     };
     GetOrder();
   }, []);
+  console.log(orderList);
   return (
     <div className=" mb-8 flex flex-col gap-12">
       <Card className=" xl:col-span-1 mt-0  shadow-sm ml-5 mr-5 ">
         <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
-          <table className="w-full min-w-[640px] table-auto">
-            <tbody>
-              {orderList.map((item) => {
-                return (
-                  <div key={item.id} className="p-4 mb-4 border rounded-[5px] border-blue-gray-100 mb-4">
-                    <div className="ml-4 mr-4 flex justify-between">
-                      <div>
-                        <Typography variant="small" className="flex items-center gap-1 font-normal text-blue-gray-600">
-                          Order Code: <strong>{item.code}</strong>
-                        </Typography>
-                      </div>
-                      <div className="flex">
-                        <Typography
-                          variant="small"
-                          className="flex p-1 items-center gap-1 font-normal border-r border-blue-gray-100  text-blue-gray-600"
-                        >
-                          Order Status: <strong>{item.orderStatus}</strong>
-                        </Typography>
-                        <Typography
-                          variant="small"
-                          className="flex p-1 items-center gap-1 font-normal text-blue-gray-600"
-                        >
-                          Payment: <strong>{item.payStatus}</strong>
-                        </Typography>
-                      </div>
-                    </div>
-                    {item.listItemOrderDetails.map((row, index) => {
-                      return (
-                        <div key={index} className="ml-4 flex gap-4 items-center">
-                          <img
-                            src={row.productImage}
-                            alt={row.productName}
-                            className="mb-2 h-auto w-[70px]  object-cover object-top border border-gray-200"
-                          />
-                          <div>
-                            <Typography
-                              variant="h1"
-                              color=""
-                              className="mt-0 text-[14px] font-semibold text-blue-gray-900"
-                            >
-                              {row.productName}
-                            </Typography>
-                            {/* <div class="font-medium text-gray-400">{category}</div> */}
-                            <Typography
-                              variant="small"
-                              className="flex items-center gap-1 font-normal text-blue-gray-600"
-                            >
-                              <strong>
-                                {row.sizeName} x {row.quantity}{' '}
-                              </strong>
-                            </Typography>
-                          </div>
+          {orderList.length === 0 ? (
+            <div className="flex flex-col items-center justify-center">
+              <p className="mt-20 text-xl text-gray-700">Order is empty!</p>
+            </div>
+          ) : (
+            <table className="w-full min-w-[640px] table-auto">
+              <tbody>
+                {orderList.map((item) => {
+                  return (
+                    <div key={item.id} className="p-4 mb-4 border rounded-[5px] border-blue-gray-100 mb-4">
+                      <div className="ml-4 mr-4 flex justify-between">
+                        <div>
+                          <Typography
+                            variant="small"
+                            className="flex items-center gap-1 font-normal text-blue-gray-600"
+                          >
+                            Order Code: <strong>{item.code}</strong>
+                          </Typography>
                         </div>
-                      );
-                    })}
-                    <div className="items-center flex justify-between mr-4">
-                      <div></div>
-                      <Typography
-                        variant="small"
-                        className="ml-2 flex items-center gap-1 font-normal text-blue-gray-600"
-                      >
-                        <p className="text-base font-semibold leading-4 text-gray-800 dark:text-gray-400">Total: </p>
-                        <strong>
-                          {new Intl.NumberFormat('vi-VN', {
-                            style: 'currency',
-                            currency: 'VND',
-                          }).format(item.total)}
-                        </strong>
-                      </Typography>
+                        <div className="flex">
+                          <Typography
+                            variant="small"
+                            className="flex p-1 items-center gap-1 font-normal border-r border-blue-gray-100  text-blue-gray-600"
+                          >
+                            Order Status: <strong>{item.orderStatus}</strong>
+                          </Typography>
+                          <Typography
+                            variant="small"
+                            className="flex p-1 items-center gap-1 font-normal text-blue-gray-600"
+                          >
+                            Payment: <strong>{item.payStatus}</strong>
+                          </Typography>
+                        </div>
+                      </div>
+                      {item.listItemOrderDetails.map((row, index) => {
+                        return (
+                          <div key={index} className="ml-4 flex gap-4 items-center">
+                            <img
+                              src={row.productImage}
+                              alt={row.productName}
+                              className="mb-2 h-auto w-[70px]  object-cover object-top border border-gray-200"
+                            />
+                            <div>
+                              <Typography
+                                variant="h1"
+                                color=""
+                                className="mt-0 text-[14px] font-semibold text-blue-gray-900"
+                              >
+                                {row.productName}
+                              </Typography>
+                              {/* <div class="font-medium text-gray-400">{category}</div> */}
+                              <Typography
+                                variant="small"
+                                className="flex items-center gap-1 font-normal text-blue-gray-600"
+                              >
+                                <strong>
+                                  {row.sizeName} x {row.quantity}{' '}
+                                </strong>
+                              </Typography>
+                            </div>
+                          </div>
+                        );
+                      })}
+                      <div className="items-center flex justify-between mr-4">
+                        <div></div>
+                        <Typography
+                          variant="small"
+                          className="ml-2 flex items-center gap-1 font-normal text-blue-gray-600"
+                        >
+                          <p className="text-base font-semibold leading-4 text-gray-800 dark:text-gray-400">Total: </p>
+                          <strong>
+                            {new Intl.NumberFormat('vi-VN', {
+                              style: 'currency',
+                              currency: 'VND',
+                            }).format(item.total)}
+                          </strong>
+                        </Typography>
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
-            </tbody>
-          </table>
+                  );
+                })}
+              </tbody>
+            </table>
+          )}
         </CardBody>
       </Card>
     </div>

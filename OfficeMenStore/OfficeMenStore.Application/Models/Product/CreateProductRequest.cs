@@ -11,8 +11,8 @@ namespace OfficeMenStore.Application.Models.Product
     {
         public string? Name { get; set; }
         public IFormFile? Image { get; set; }
-        public int? CategoryId { get; set; }
-        public int? Price { get; set; }
-        public int? Amount_Import { get; set; }
+        public int CategoryId { get; set; }
+        public decimal Price { get; set; }
+        
     }
 }

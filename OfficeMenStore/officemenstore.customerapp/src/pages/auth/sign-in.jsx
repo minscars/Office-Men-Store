@@ -60,10 +60,10 @@ export function SignIn() {
   }
 
   return (
-    <section className="m-8 flex gap-4">
+    <div className="m-8 flex gap-4 bg-blue-gray-50/50">
       <div className="w-full lg:w-3/5 mt-24">
         <div className="text-center">
-          <Typography variant="h2" className="font-bold mb-4">
+          <Typography variant="h2" className="font-bold mb-4 text-blue-900">
             Sign In
           </Typography>
           <Typography variant="paragraph" color="blue-gray" className="text-lg font-normal">
@@ -101,7 +101,7 @@ export function SignIn() {
             />
           </div>
 
-          <Button type="submit" className="mt-6" fullWidth>
+          <Button type="submit" className="mt-6 bg-blue-900" fullWidth>
             Sign In
           </Button>
 
@@ -119,9 +119,9 @@ export function SignIn() {
         </form>
       </div>
       <div className="w-2/5 h-full hidden lg:block">
-        <img src="/img/pattern.png" className="h-full w-full object-cover rounded-3xl" />
+        <img src="/img/bg-sign-in.jpg" className="h-full w-full object-cover rounded-3xl" />
       </div>
-    </section>
+    </div>
   );
 }
 

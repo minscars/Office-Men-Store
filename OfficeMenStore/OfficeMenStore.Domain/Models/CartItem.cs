@@ -13,6 +13,7 @@ namespace OfficeMenStore.Domain.Models
         public int SizeProductId { get; set; }
         public int Quantity {  get; set; }
         public bool IsDeleted { get; set; }
+        public DateTime AddedTime { get; set; }
         public virtual Cart Cart { get; set; }
         public virtual Product Product { get; set; }
         public virtual SizeProduct SizeProduct { get; set; }

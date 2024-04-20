@@ -27,7 +27,7 @@ import {
   CurrencyDollarIcon,
 } from '@heroicons/react/24/outline';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+
 import orderApi from '@/api/orderApi';
 import { StepStatus } from '@/components/StepStatus';
 import moment from 'moment';
