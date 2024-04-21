@@ -20,6 +20,10 @@ namespace OfficeMenStore.Domain.EF
         public DbSet<SizeProduct> SizeProducts { get; set; }
         public DbSet<SizeDetail> SizeDetails { get; set; }
         public DbSet<Address> Addresses { get; set; }
+        public DbSet<Promotion> Promotions { get; set; }
+        public DbSet<PromotionType> PromotionTypes { get; set; }
+        public DbSet<PromotionDetail> PromotionDetails { get; set; }
+
         public OfficeMenStoreDbContext(DbContextOptions<OfficeMenStoreDbContext> options) : base(options)
         {
 
@@ -37,6 +41,9 @@ namespace OfficeMenStore.Domain.EF
                 .ApplyConfiguration(new SizeConfig())
                 .ApplyConfiguration(new SizeDetailConfig())
                 .ApplyConfiguration(new CartItemConfig())
+                .ApplyConfiguration(new PromotionConfig())
+                .ApplyConfiguration(new PromotionDetailConfig())
+                .ApplyConfiguration(new PromotionTypeConfig())
                 .ApplyConfiguration(new AddressConfig());
 
 
@@ -51,6 +58,9 @@ namespace OfficeMenStore.Domain.EF
             modelBuilder.FillDataSizeDetail();
             //modelBuilder.FillDataCartItem();
             modelBuilder.FillDataAdress();
+            modelBuilder.FillDataPromotionType();
+            modelBuilder.FillDataPromotion();
+            //modelBuilder.FillDataPromotionDetail();
 
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
