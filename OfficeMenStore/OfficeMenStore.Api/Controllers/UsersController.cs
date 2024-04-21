@@ -53,5 +53,13 @@ namespace OfficeMenStore.Api.Controllers
             }
             return BadRequest(result);
         }
+
+        [HttpPost("Register")]
+        [AllowAnonymous]
+        public async Task<IActionResult> RegisterAsync([FromBody] RegisterRequest request)
+        {
+            var result = await _userService.RegisterAsync(request);
+            return Ok(result);
+        }
     }
 }

@@ -82,10 +82,10 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
   useEffect(() => {
     if (user) {
       formik.setValues({
-        name: user.name || '',
-        address: user.addresses[selectedAddressId].addressDetail || '',
-        phone: user.phoneNumber || '',
-        email: user.email || '',
+        name: user?.name || '',
+        address: user?.addresses[selectedAddressId]?.addressDetail || '',
+        phone: user?.phoneNumber || '',
+        email: user?.email || '',
       });
     }
   }, [user]);
@@ -105,6 +105,7 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
   };
 
   async function checkOut(payMethod) {
+    console.log(payMethod);
     var userId = userLogin.id;
     var cartId = user?.cartId;
     var addressId = selectedAddressId;
@@ -320,7 +321,10 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
                   </div>
                 </div>
                 <div className=" mx-5 mb-5 flex justify-center items-center">
-                  <Button type="submit"> Continue </Button>
+                  <Button onClick={buyNow} type="submit">
+                    {' '}
+                    Continue{' '}
+                  </Button>
                 </div>
               </form>
             </div>

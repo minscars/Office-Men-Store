@@ -6,6 +6,9 @@ const userApi = {
   GetUserInformation: (userId) => {
     return API.get(`/Users/${userId}`);
   },
+  Register: (dto) => {
+    return API.post('/Users/Register', dto);
+  },
 };
 
 export default userApi;

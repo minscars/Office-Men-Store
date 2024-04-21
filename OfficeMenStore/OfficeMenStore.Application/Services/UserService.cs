@@ -38,6 +38,7 @@ namespace OfficeMenStore.Application.Services
             _signInManager = signInManager;
             _configuration = configuration;
             _context = context;
+            
         }
 
         public async Task<ApiResult<string>> LoginAsync(LoginRequest request)
@@ -157,6 +158,47 @@ namespace OfficeMenStore.Application.Services
             {
                 TotalRecord = total.Count(),
                 PageNumber =requestDto.Page,
+                StatusCode = 200
+            };
+        }
+
+
+        public async Task<ApiResult<bool>> RegisterAsync(RegisterRequest request)
+        {
+            //Check request
+            //.....
+
+            //Create new user
+            var user = new User { Name = request.Name, UserName = request.Email, Email = request.Email, PhoneNumber = request.Phone };
+            var addUserResult = await _userManager.CreateAsync(user, request.Password);
+
+            //Add role for new user
+            await _userManager.AddToRoleAsync(user, "User");
+
+            //Add claims for new user
+            await _userManager.AddClaimAsync(user, new Claim("id", user.Id.ToString()));
+            await _userManager.AddClaimAsync(user, new Claim("email", user.Email));
+            await _userManager.AddClaimAsync(user, new Claim("roles", string.Join(",", await _userManager.GetRolesAsync(user))));
+            await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.NameIdentifier, user.UserName));
+            await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Email, user.Email));
+            await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, string.Join(",", await _userManager.GetRolesAsync(user))));
+
+
+            var address = new Address()
+            {
+                AddressDetail = request.Address,
+                UserId = user.Id,
+            };
+            var cart = new Cart()
+            {
+                UserId = user.Id,
+            };
+            await _context.Carts.AddAsync(cart);    
+            await _context.Addresses.AddAsync(address);
+            await _context.SaveChangesAsync();
+            return new ApiResult<bool>(addUserResult.Succeeded)
+            {
+                Message = "",
                 StatusCode = 200
             };
         }
