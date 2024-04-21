@@ -21,13 +21,29 @@ import * as Yup from 'yup';
 import { toast } from 'react-toastify';
 import { jwtDecode } from 'jwt-decode';
 import userApi from '@/api/userApi';
+import Swal from 'sweetalert2';
+import addressApi from '@/api/addressApi';
+import Alert from '@/components/alert';
 export function Profile() {
-  const cartItems = useSelector((state) => state.cart.cartItems);
-  const totalAmount = useSelector((state) => state.cart.totalAmount);
   const dispatch = useDispatch();
   const token = window.localStorage.getItem('token');
   const [user, setUser] = useState();
   var userLogin = null;
+  const [userName, setUserName] = useState(user?.name);
+  const [userPhone, setUserPhone] = useState(user?.phoneNumber);
+  const [userEmail, setUserEmail] = useState(user?.email);
+  const [isDisabled, setIsDisabled] = useState(true);
+  const [addressChange, setAddressChange] = useState('');
+  const [trigger, setTrigger] = useState();
+
+  useEffect(() => {
+    setUserName(user?.name);
+    setUserPhone(user?.phoneNumber);
+    setUserEmail(user?.email);
+
+    //setIsDisabled(true);
+  }, [user]);
+
   useEffect(() => {
     if (token != null) {
       userLogin = jwtDecode(token);
@@ -37,9 +53,8 @@ export function Profile() {
       setUser(data);
     };
     getUser();
-  }, []);
-  console.log(user);
-  //from
+  }, [trigger]);
+
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -79,6 +94,36 @@ export function Profile() {
     setActiveTab(tab);
   };
 
+  const handleAddMoreAddress = () => {
+    var dto = {
+      addressDetail: addressChange,
+      userId: user?.userId,
+    };
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to add new an address?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, I want it!',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        await addressApi.CreateAddress(dto).then((res) => {
+          if (res.statusCode === 200) {
+            setTrigger(Math.random() + 1)
+              ?.toString(36)
+              .substring(7);
+            setIsDisabled(true);
+            Alert.showSuccessAlert(res.message);
+          } else {
+            Alert.showErrorAlert(res.message);
+          }
+        });
+      }
+    });
+  };
+
   return (
     <>
       <div className="mx-0 flex justify-center mt-2 gap-5">
@@ -87,9 +132,9 @@ export function Profile() {
         <div className="xl:col-span-2 ">
           <Card className="mt-0 mb-3 mr-5 h-100 overflow-hidden xl:col-span-2 border border-blue-gray-100 shadow-sm">
             <CardBody className=" px-0 pt-0 pb-2 mt-5 flex">
-              <div className="items-center w-[700px] gap-4 px-4 py-4 my-3 mt-20">
+              <div className="items-center w-auto gap-4 px-4 py-4 my-3 mt-20">
                 <div className="mt-2 flex justify-center">
-                  <img src={user?.avatar} alt="avatar" className="rounded-full h-auto w-[200px]" />
+                  <img src={user?.avatar} alt="avatar" className="rounded-full h-auto w-[100px]" />
                 </div>
                 <div className="flex justify-center">
                   <Typography variant="h4" color="blue-gray" className="pt-2">
@@ -116,7 +161,7 @@ export function Profile() {
                   </Button>
                 </div>
               </div>
-              <div className="w-full flex flex-col mt-0">
+              <div className="w-[721px] flex flex-col mt-0">
                 <form className="mt-2 mb-2 mx-auto max-w-screen-lg xl:w-3/4 ml-10" onSubmit={formik.handleSubmit}>
                   <div className="mt-2">
                     <Typography variant="h4" color="blue-gray" className="mb-1 mt">
@@ -132,7 +177,7 @@ export function Profile() {
                       size="lg"
                       placeholder="Enter your name"
                       name="name"
-                      value={formik.values.name}
+                      value={userName}
                       onChange={formik.handleChange}
                       className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
                       labelProps={{
@@ -152,7 +197,7 @@ export function Profile() {
                       size="lg"
                       placeholder="name@mail.com"
                       name="email"
-                      value={formik.values.email}
+                      value={userEmail}
                       onChange={formik.handleChange}
                       className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
                       labelProps={{
@@ -163,26 +208,58 @@ export function Profile() {
                       <p className="font-[0.75rem] w-full text-red-500 -mt-4"> {formik.errors.email} </p>
                     )}
                   </div>
-
-                  <div className="mb-1 flex flex-col gap-6 mt-5">
-                    <Typography variant="small" color="blue-gray" className="-mb-4 font-medium">
-                      Address
-                    </Typography>
-                    <Input
-                      size="lg"
-                      placeholder="Enter your address"
-                      name="address"
-                      value={formik.values.address}
-                      onChange={formik.handleChange}
-                      className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-                      labelProps={{
-                        className: 'before:content-none after:content-none',
-                      }}
-                    />
-                    {formik.errors.address && (
-                      <p className="font-[0.75rem] w-full text-red-500 -mt-4"> {formik.errors.address} </p>
-                    )}
-                  </div>
+                  {isDisabled ? (
+                    <div className="flex items-center">
+                      <div className="mb-1 flex flex-col gap-6 mt-5">
+                        <Typography variant="small" color="blue-gray" className="-mb-4 font-medium">
+                          Address
+                        </Typography>
+                        <select
+                          className="p-3 w-[545px] border-2 rounded-[5px] !border-t-blue-gray-200 focus:!border-t-gray-900"
+                          //value={valueCate}
+                          //onChange={(event) => setValueCate(event.target.value)}
+                        >
+                          {user?.addresses?.map((item) => (
+                            <option key={item.id} value={item.id}>
+                              {item.addressDetail}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="mt-12 ml-4">
+                        <Button onClick={() => setIsDisabled(false)} className="bg-blue-900">
+                          Add
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-center">
+                      <div className="mb-1 flex flex-col gap-6 mt-5">
+                        <Typography variant="small" color="blue-gray" className="-mb-4 font-medium">
+                          Add more address
+                        </Typography>
+                        <Input
+                          size="lg"
+                          placeholder="Enter your address..."
+                          name="email"
+                          value={addressChange}
+                          onChange={(event) => setAddressChange(event.target.value)}
+                          className=" !border-t-blue-gray-200 w-[545px] focus-auto focus:!border-t-gray-900"
+                          labelProps={{
+                            className: 'before:content-none after:content-none',
+                          }}
+                        />
+                        {formik.errors.email && (
+                          <p className="font-[0.75rem] w-full text-red-500 -mt-4"> {formik.errors.email} </p>
+                        )}
+                      </div>
+                      <div className="mt-12 ml-4">
+                        <Button onClick={() => handleAddMoreAddress()} className="bg-blue-900">
+                          Add
+                        </Button>
+                      </div>
+                    </div>
+                  )}
 
                   {/* phone */}
                   <div className="mb-1 flex flex-col gap-6 mt-5">
@@ -193,7 +270,7 @@ export function Profile() {
                       size="lg"
                       placeholder="Enter your phone number"
                       name="phone"
-                      value={formik.values.phone}
+                      value={userPhone}
                       onChange={formik.handleChange}
                       className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
                       labelProps={{

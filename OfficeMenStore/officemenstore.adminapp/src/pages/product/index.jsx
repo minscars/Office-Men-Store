@@ -26,6 +26,7 @@ import { jwtDecode } from 'jwt-decode';
 import { SignIn } from '../auth/index.js';
 import Swal from 'sweetalert2';
 import Alert from '@/components/alert';
+import { data } from 'autoprefixer';
 export function Products() {
   const [value, setValue] = useState(null);
   const [open, setOpen] = useState(false);
@@ -35,8 +36,8 @@ export function Products() {
   const [searchText, setSearchText] = useState('');
 
   const [productList, setProductList] = useState([]);
-  const [offset, setOffset] = useState(0);
-  const [perPage] = useState(5);
+  const [page, setOffset] = useState(0);
+  const [limit] = useState(5);
   const [currentPage, setCurrentPage] = useState(0);
   const [pageCount, setPageCount] = useState(0);
   const [isloaded, setIsLoaded] = useState(false);
@@ -52,44 +53,36 @@ export function Products() {
     };
     GetAllCate();
     getAllProductsFromReact();
-  }, [perPage, offset, trigger]);
+  }, [limit, page, trigger, searchText]);
 
   const getAllProductsFromReact = async () => {
     setIsLoaded(false);
-    const response = await productApi.GetAll(offset, perPage);
-    setPageCount(Math.ceil(response.totalRecord / perPage));
+    var dto = { page, limit };
+    if (searchText) {
+      dto.search = searchText;
+    }
+    const response = await productApi.GetAll(dto);
+
+    setPageCount(Math.ceil(response.totalRecord / limit));
     setProductList(response.data);
     setIsLoaded(true);
-  };
-
-  const handlePageClick = (e) => {
-    setCurrentPage(e.selected);
-    setOffset(e.selected);
   };
 
   async function handleFilter(e) {
     e.preventDefault();
+    var dto = { page, limit };
     if (e.target.value != 0) {
-      const response = await productApi.GetProductByCate(offset, perPage, e.target.value);
-      setPageCount(Math.ceil(response.totalRecord / perPage));
+      dto.cateId = e.target.value;
+      const response = await productApi.GetAll(dto);
+      setPageCount(Math.ceil(response.totalRecord / limit));
       setProductList(response.data);
     } else {
-      const response = await productApi.GetAll(offset, perPage);
-      setPageCount(Math.ceil(response.totalRecord / perPage));
+      const response = await productApi.GetAll(dto);
+      setPageCount(Math.ceil(response.totalRecord / limit));
       setProductList(response.data);
     }
   }
 
-  async function handleSearch(e) {
-    console.log(searchText);
-    e.preventDefault();
-    setIsLoaded(false);
-    const response = await productApi.Search(offset, perPage, searchText);
-    setPageCount(Math.ceil(response.totalRecord / perPage));
-    setProductList(response.data);
-    setIsLoaded(true);
-    setSearchText('');
-  }
   async function handleDeleteProduct(productId) {
     console.log(productId);
     Swal.fire({
@@ -116,7 +109,6 @@ export function Products() {
       }
     });
   }
-
   // Hàm mở hộp thoại xác nhận xóa sản phẩm
   const openDeleteConfirmation = (product) => {
     setSelectedProduct(product);
@@ -134,6 +126,12 @@ export function Products() {
       toast.success('Sản phẩm đã được xóa thành công!');
     } else toast.error('Xoa san pham that bai!');
   };
+
+  const handlePageClick = (e) => {
+    setCurrentPage(e.selected);
+    setOffset(e.selected);
+  };
+
   if (token === '') return <SignIn />;
   if (userLogin.roles === 'Admin')
     return (
@@ -157,13 +155,14 @@ export function Products() {
                 <div className="w-30 ">
                   <select
                     label="Category"
-                    value={value}
                     onChange={(e) => handleFilter(e)}
                     className="mr-4 flex h-12 w-full items-center justify-center rounded-xl border-2 bg-white/0 p-3 text-sm outline-none"
                   >
                     <option value={0}>All</option>
                     {cateList?.map((item) => (
-                      <option value={item.id}>{item.name}</option>
+                      <option key={item.value} value={item.id}>
+                        {item.name}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -189,7 +188,7 @@ export function Products() {
             <table className="mt-5 w-full min-w-max table-auto text-left ">
               <thead>
                 <tr>
-                  {['Product name', 'Category', 'price', 'Created'].map((el) => (
+                  {['Product name', 'Quantity', 'Category', 'price', 'Created'].map((el) => (
                     <th
                       key={el}
                       className="border-y border-blue-gray-100 py-3 px-10 text-left bg-blue-gray-50/50 p-4 ml-4"
@@ -217,6 +216,15 @@ export function Products() {
                       </td>
                       {/* customername*/}
                       <td className="p-4 py-3 px-10">
+                        <div className="flex ml-4 items-center gap-4">
+                          <div>
+                            <Typography variant="small" color="blue-gray" className="font-normal">
+                              {item.totalProduct}
+                            </Typography>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="p-4 py-3 px-10">
                         <div className="flex items-center gap-4">
                           <div>
                             <Typography variant="small" color="blue-gray" className="font-normal">
@@ -241,10 +249,9 @@ export function Products() {
                       </td>
 
                       <td className="p-4 py-3 px-10">
-                        <span class="inline-block w-20 group-hover:hidden">
-                          {' '}
+                        <Typography variant="small" color="blue-gray" className="font-normal">
                           {item.createdTime != null ? moment(item.createdTime).format('DD/MM/YYYY HH:mm A') : '......'}
-                        </span>
+                        </Typography>
                         <div class="hidden group-hover:flex group-hover:w-20 group-hover:items-center group-hover:text-gray-500 group-hover:gap-x-2">
                           <button class="select-none p-2 ">
                             <Tooltip content="Update">

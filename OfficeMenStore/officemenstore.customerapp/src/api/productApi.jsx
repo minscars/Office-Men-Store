@@ -1,7 +1,7 @@
 import API from './API';
 const productApi = {
-  GetAll: (offset, limit) => {
-    return API.get(`/Products?page=${offset}&limit=${limit}`);
+  GetAll: (dto) => {
+    return API.post('/Products/GetAllProductPagination', dto);
   },
 
   GetProductById: (id) => {

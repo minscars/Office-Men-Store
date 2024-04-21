@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using OfficeMenStore.Application.Interfaces;
+using OfficeMenStore.Application.Models.Pagination;
 using OfficeMenStore.Application.Models.Product;
 
 namespace OfficeMenStore.Api.Controllers
@@ -21,11 +22,11 @@ namespace OfficeMenStore.Api.Controllers
             return String.Format("{0}://{1}{2}/images/products/{3}", Request.Scheme, Request.Host, Request.PathBase, currentName);
         }
 
-        [HttpGet]
+        [HttpPost("GetAllProductPagination")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetAllAsync(int page, int limit)
+        public async Task<IActionResult> GetAllAsync(GetPaginationRequest dto)
         {
-            var result = await _productService.GetAllAsync(page,limit);
+            var result = await _productService.GetAllAsync(dto);
                 result.Data.ForEach(s => s.Image = setImageName(s.Image));
                 return Ok(result);
         }

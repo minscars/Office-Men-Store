@@ -237,6 +237,13 @@ namespace OfficeMenStore.Application.Services
             var order = await _context.Orders
                 .Where(o => o.Id == requestDto.OrderId)
                 .FirstOrDefaultAsync();
+            var productInOrder = await _context.OrderDetails
+                .Where(od => od.OrderId == requestDto.OrderId)
+                .ToListAsync();
+            var listSize = await _context.SizeDetails.ToListAsync();
+            var index = 0;
+
+
             if (order == null)
             {
                 return new ApiResult<bool>(false)
@@ -251,7 +258,17 @@ namespace OfficeMenStore.Application.Services
                 case Status.Approve:
                     order.Status = (int)Status.Approve;
                     order.ApproveTime = DateTime.Now;
-                break;
+                    for (int i = 0; i < listSize.Count; i++)
+                    {
+                        if (index == productInOrder.Count) break;
+                        if ((listSize[i].ProductId == productInOrder[index].ProductId && listSize[i].SizeProductId == productInOrder[index].SizeProductId))
+                        {
+                            listSize[i].Quantity -= productInOrder[index].Amount;
+                            index++;
+                        }
+                    }
+                    await _context.SaveChangesAsync();
+                    break;
 
                 case Status.Delivering:
                     order.Status = (int)Status.Delivering;

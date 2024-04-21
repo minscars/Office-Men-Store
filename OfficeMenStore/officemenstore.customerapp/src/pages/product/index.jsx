@@ -1,8 +1,9 @@
-import { Card, CardBody, Typography } from '@material-tailwind/react';
+import { Card, CardBody, Typography, Input } from '@material-tailwind/react';
 import categoryApi from '@/api/categoryApi';
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import productApi from '@/api/productApi';
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 
 import cartItemApi from '@/api/cartItemApi';
 import Pagination from '@/components/pagination/index.jsx';
@@ -24,11 +25,12 @@ export function Product() {
     userLogin = jwtDecode(token);
   }
 
-  const [offset, setOffset] = useState(0);
-  const [perPage] = useState(16);
+  const [page, setOffset] = useState(0);
+  const [limit] = useState(16);
   const [currentPage, setCurrentPage] = useState(0);
   const [pageCount, setPageCount] = useState(0);
   const [isloaded, setIsLoaded] = useState(false);
+  const [searchText, setSearchText] = useState('');
   useEffect(() => {
     const GetAllCate = async () => {
       const data = await categoryApi.GetAll();
@@ -41,12 +43,17 @@ export function Product() {
       setCartItemList(data.data);
     };
     GetCartItem();
-  }, [perPage, offset, cartItemList?.total]);
+  }, [limit, page, cartItemList?.total, searchText]);
 
   const getAllProductsFromReact = async () => {
     setIsLoaded(false);
-    const response = await productApi.GetAll(offset, perPage);
-    setPageCount(Math.ceil(response.totalRecord / perPage));
+    var dto = { page, limit };
+    if (searchText) {
+      dto.search = searchText;
+    }
+    const response = await productApi.GetAll(dto);
+
+    setPageCount(Math.ceil(response.totalRecord / limit));
     setProducts(response.data);
     setIsLoaded(true);
   };
@@ -58,13 +65,15 @@ export function Product() {
 
   async function handleFilter(e) {
     e.preventDefault();
+    var dto = { page, limit };
     if (e.target.value != 0) {
-      const response = await productApi.GetProductByCate(offset, perPage, e.target.value);
-      setPageCount(Math.ceil(response.totalRecord / perPage));
+      dto.cateId = e.target.value;
+      const response = await productApi.GetAll(dto);
+      setPageCount(Math.ceil(response.totalRecord / limit));
       setProducts(response.data);
     } else {
-      const response = await productApi.GetAll(offset, perPage);
-      setPageCount(Math.ceil(response.totalRecord / perPage));
+      const response = await productApi.GetAll(dto);
+      setPageCount(Math.ceil(response.totalRecord / limit));
       setProducts(response.data);
     }
   }
@@ -79,10 +88,13 @@ export function Product() {
               <Typography variant="h4" color="blue-gray" className="mb-2">
                 PRODUCT
               </Typography>
-              {/* <Typography variant="small" className="font-normal text-blue-gray-500">
-                SAN PHAM BAN CHAY
-              </Typography> */}
-              {/* Sắp xếp */}
+              <div className="w-full md:w-72 px-4">
+                <Input
+                  label="Search"
+                  icon={<MagnifyingGlassIcon className="h-5 w-5" />}
+                  onChange={(e) => setSearchText(e.target.value)}
+                />
+              </div>
               <div className="w-50 ml-auto mr-10">
                 <select
                   onChange={(e) => handleFilter(e)}

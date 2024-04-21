@@ -20,5 +20,19 @@ namespace OfficeMenStore.Api.Controllers
             var result = await _sizeProductService.GetAmountProductSizeAsync(dto);
             return Ok(result.Data);
         }
+
+        [HttpGet("{productId}")]
+        public async Task<IActionResult> GetAllSizeByProductAsync([FromRoute]int productId)
+        {
+            var result = await _sizeProductService.GetAllSizeByProductAsync(productId);
+            return Ok(result.Data);
+        }
+
+        [HttpPut("UpdateQuantitySizeProduct")]
+        public async Task<IActionResult> UpdateQuantitySizeProductAsync([FromBody]UpdateQuantitySizeProductRequest dto)
+        {
+            var result = await _sizeProductService.UpdateQuantitySizeProductAsync(dto);
+            return Ok(result);
+        }
     }
 }

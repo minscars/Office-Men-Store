@@ -45,15 +45,20 @@ export function Oders() {
   const [pageCount, setPageCount] = useState(0);
   const [isloaded, setIsLoaded] = useState(false);
   const [orderList, setOrderList] = useState([]);
+  const [searchText, setSearchText] = useState('');
   useEffect(() => {
     getAllOrders();
-  }, [page, limit]);
+  }, [page, limit, searchText]);
 
   const getAllOrders = async () => {
     var dto = { page, limit };
     setIsLoaded(false);
+    console.log(searchText);
+    if (searchText) {
+      dto.phoneNumber = searchText;
+    }
     const response = await orderApi.GetAll(dto);
-    setPageCount(Math.ceil(response.totalRecord / limit));
+    setPageCount(Math.ceil(response?.totalRecord / limit));
     setOrderList(response.data);
     setIsLoaded(true);
   };
@@ -94,7 +99,11 @@ export function Oders() {
           </div>
           <div className="mt-2 flex flex-col items-center justify-between gap-4 md:flex-row">
             <div className="w-full md:w-72">
-              <Input label="Search" icon={<MagnifyingGlassIcon className="h-5 w-5" />} />
+              <Input
+                placeholder="Enter customer's phone number..."
+                onChange={(e) => setSearchText(e.target.value)}
+                icon={<MagnifyingGlassIcon className="h-5 w-5" />}
+              />
             </div>
 
             <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
@@ -114,9 +123,9 @@ export function Oders() {
                 </select>
               </div>
 
-              <Button className="flex items-center gap-3" size="sm">
+              {/* <Button className="flex items-center gap-3" size="sm">
                 <UserPlusIcon strokeWidth={2} className="h-4 w-4" /> Add member
-              </Button>
+              </Button> */}
             </div>
           </div>
         </CardHeader>

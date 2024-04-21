@@ -181,16 +181,16 @@ export function Categories() {
                         </div>
                       </td>
                       <td className="p-4 py-3 px-10">
-                        <span class="inline-block w-20">
+                        <Typography variant="small" color="blue-gray" className="font-normal">
                           {' '}
                           {item.updatedTime != null ? moment(item.updatedTime).format('DD/MM/YYYY HH:mm A') : '......'}
-                        </span>
+                        </Typography>
                       </td>
                       <td className="p-4 py-3 px-10">
-                        <span class="inline-block w-20">
+                        <Typography variant="small" color="blue-gray" className="font-normal">
                           {' '}
                           {item.createdTime != null ? moment(item.createdTime).format('DD/MM/YYYY HH:mm A') : '......'}
-                        </span>
+                        </Typography>
                       </td>
                       <td>
                         <div class="flex w-20 items-center text-gray-500 gap-x-2">

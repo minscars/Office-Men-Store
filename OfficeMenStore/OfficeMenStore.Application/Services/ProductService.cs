@@ -3,6 +3,7 @@ using Azure.Core;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using OfficeMenStore.Application.Interfaces;
+using OfficeMenStore.Application.Models.Pagination;
 using OfficeMenStore.Application.Models.Product;
 using OfficeMenStore.Application.Models.Size;
 using OfficeMenStore.Application.Utilities.Constants;
@@ -25,7 +26,7 @@ namespace OfficeMenStore.Application.Services
             _webHostEnvironment = webHostEnvironment;
         }
 
-        public async Task<PaginatedList<List<GetProductListResponseModel>>> GetAllAsync(int page, int limit)
+        public async Task<PaginatedList<List<GetProductListResponseModel>>> GetAllAsync(GetPaginationRequest dto)
         {
             var productList = _context.Products
                 .Include(p => p.Category)
@@ -34,7 +35,21 @@ namespace OfficeMenStore.Application.Services
                 .AsQueryable();
 
             var total = await _context.Products.Where(p => p.IsDeleted == false).ToListAsync();
-            productList = productList.Skip((page) * limit).Take(limit);
+
+            #region filtering
+            if (!string.IsNullOrEmpty(dto.Search))
+            {
+                productList = productList.Where(p => p.Name.Trim().ToLower().Contains(dto.Search.ToLower()));
+                total = await productList.Where(p => p.Name.Trim().ToLower().Contains(dto.Search.ToLower())).ToListAsync();
+            }
+            if ((dto.CateId != 0) && (dto.CateId != null))
+            {
+                productList = productList.Where(p => p.CategoryId == dto.CateId);
+                total = await productList.Where(p => p.CategoryId == dto.CateId).ToListAsync();
+            }
+            #endregion
+
+            productList = productList.Skip((dto.Page) * dto.Limit).Take(dto.Limit);
             var result = await productList.Select(p => new GetProductListResponseModel()
             {
                 Id = p.Id,
@@ -52,7 +67,10 @@ namespace OfficeMenStore.Application.Services
                 }).ToList(),
                 CreatedTime = p.CreatedTime,
             }).ToListAsync();
-            
+            for(int i =0 ; i < result.Count; i++)
+            {
+                result[i].TotalProduct = result[i].SizeProducts.Sum(s => s.Amount);
+            }
             if (result.Count < 1)
             {
                 return new PaginatedList<List<GetProductListResponseModel>>(null);
@@ -61,7 +79,8 @@ namespace OfficeMenStore.Application.Services
             return new PaginatedList<List<GetProductListResponseModel>>(result)
             {
                 TotalRecord = total.Count(),
-                PageNumber = page,
+                PageNumber = dto.Page,
+                StatusCode = 200
             };
 
         }

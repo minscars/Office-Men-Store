@@ -11,5 +11,7 @@ namespace OfficeMenStore.Application.Interfaces
     public interface ISizeProductService
     {
         Task<ApiResult<GetAmountProductSizeRespnse>> GetAmountProductSizeAsync(GetAmountProductSizeRequest dto);
+        Task<ApiResult<List<GetAllSizeByProductResponse>>> GetAllSizeByProductAsync(int productId);
+        Task<ApiResult<bool>> UpdateQuantitySizeProductAsync(UpdateQuantitySizeProductRequest dto);
     }
 }

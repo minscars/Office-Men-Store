@@ -33,8 +33,8 @@ export function Cart() {
   const totalQuantity = cartItems.reduce((total, item) => total + item.quantity, 0);
   const navigate = useNavigate();
   const [cartItemList, setCartItemList] = useState([]);
-  const token = window.localStorage.getItem('token');
   const [trigger, setTrigger] = useState();
+  const token = window.localStorage.getItem('token');
   const [user, setUser] = useState();
   var userLogin = null;
   useEffect(() => {

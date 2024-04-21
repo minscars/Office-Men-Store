@@ -1,7 +1,7 @@
 import API from './API';
 const orderApi = {
-  GetAll: (requestDto) => {
-    return API.post(`/Orders/GetAll`, requestDto);
+  GetAll: (dto) => {
+    return API.post(`/Orders/GetAll`, dto);
   },
   GetOrderDetail: (orderId) => {
     return API.get(`/Orders/OrderDetail/${orderId}`);

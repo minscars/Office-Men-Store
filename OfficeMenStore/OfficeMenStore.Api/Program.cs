@@ -63,7 +63,7 @@ builder.Services.AddTransient<ICategoryService, CategoryService>();
 builder.Services.AddTransient<ICartItemService, CartItemService>();
 builder.Services.AddTransient<IOrderService, OrderService>();
 builder.Services.AddTransient<IFileService, FileService>();
-
+builder.Services.AddTransient<IAddressService, AddsressService>();
 builder.Services.AddTransient<IStatisticService, StatisticService>();
 builder.Services.AddTransient<ISizeProductService, SizeProductService>();
 builder.Services.AddTransient<IFeedBackService, FeedBackService>();
