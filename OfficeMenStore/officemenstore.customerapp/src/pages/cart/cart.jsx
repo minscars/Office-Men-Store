@@ -29,6 +29,7 @@ export function Cart() {
   const icon = {
     className: 'w-5 h-5 text-inherit',
   };
+  const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.cartItems);
   const totalQuantity = cartItems.reduce((total, item) => total + item.quantity, 0);
   const navigate = useNavigate();
@@ -48,7 +49,7 @@ export function Cart() {
     GetCartItem();
 
     const getUser = async () => {
-      const data = await userApi.GetUserInformation(userLogin.id);
+      const data = await userApi.GetUserInformation(userLogin?.id);
       setUser(data);
     };
     getUser();
@@ -77,32 +78,46 @@ export function Cart() {
     var quantity = e.quantity + 1;
     var cartId = user?.cartId;
     var dto = { productId, sizeId, quantity, cartId };
-    await cartItemApi.UpdateAmount(dto).then((res) => {
-      if (res.statusCode === 200) {
-        setTrigger(Math.random() + 1)
-          ?.toString(36)
-          .substring(7);
-        toast.success(res.message);
-      } else {
-        toast.error(res.message);
-      }
-    });
+    if (token != null) {
+      await cartItemApi.UpdateAmount(dto).then((res) => {
+        if (res.statusCode === 200) {
+          setTrigger(Math.random() + 1)
+            ?.toString(36)
+            .substring(7);
+          toast.success(res.message);
+        } else {
+          toast.error(res.message);
+        }
+      });
+    }
   }
+
+  const handleDecLocal = (id, size) => {
+    // Dispatch action giảm số lượng sản phẩm
+    dispatch(cartActions.decreaseQuantity({ id, size }));
+    console.log(size, id);
+  };
+
+  const handleIncLocal = (id, size) => {
+    // Dispatch action tăng số lượng sản phẩm
+    dispatch(cartActions.increaseQuantity({ id, size }));
+    console.log(id, size);
+    console.log(cartActions.increaseQuantity(id, size));
+  };
+
   const checkLoggedIn = async (event) => {
     const token = window.localStorage.getItem('token');
+    console.log(cartItemList?.cartItemList?.length);
     if (token != null && cartItemList.cartItemList.length != 0) {
       navigate('/user/cart/checkout');
     } else {
-      if (cartItemList.cartItemList.length == 0) {
+      if (cartItemList?.cartItemList?.length === 0) {
         toast.error('Cart is empty!');
       } else {
         toast.error('Sign in please!');
       }
     }
   };
-
-  console.log(cartItemList);
-  console.log('cartItems', cartItems);
 
   async function deleteCartItem(e) {
     var productId = e.productId;
@@ -300,7 +315,7 @@ export function Cart() {
                             </tr>
                           );
                         })
-                      : cartItems?.map(({ imgUrl, quantity, productsName, members, price, id, size }, key) => {
+                      : cartItems?.map(({ imgUrl, quantity, productsName, members, price, id, size, sizeId }, key) => {
                           const className = `py-3 px-5 ${
                             key === cartItems.length - 1 ? '' : 'border-b border-blue-gray-50'
                           }`;
@@ -357,7 +372,7 @@ export function Cart() {
                                           xmlns="http://www.w3.org/2000/svg"
                                           fill="none"
                                           viewBox="0 0 18 2"
-                                          onClick={() => handleDec(id, size)}
+                                          onClick={() => handleDecLocal(id, size)}
                                         >
                                           <path
                                             stroke="currentColor"
@@ -389,7 +404,7 @@ export function Cart() {
                                           xmlns="http://www.w3.org/2000/svg"
                                           fill="none"
                                           viewBox="0 0 18 18"
-                                          onClick={() => handleInc(id, size)}
+                                          onClick={() => handleIncLocal(id, size)}
                                         >
                                           <path
                                             stroke="currentColor"
