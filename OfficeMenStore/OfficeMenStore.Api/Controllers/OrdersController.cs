@@ -67,5 +67,19 @@ namespace OfficeMenStore.Api.Controllers
             var result = await _orderService.UpdateOrderStatusAsync(requestDto);
             return Ok(result);
         }
+
+        [HttpGet("promotions")]
+        public async Task<IActionResult> GetAllPromotionAsync()
+        {
+            var result = await _orderService.GetAllPromotionAsync();
+            return Ok(result);
+        }
+
+        [HttpGet("promotions/get-by-condition/{promotionTypeId}/{orderValue}")]
+        public async Task<IActionResult> GetAllPromotionAsync(string promotionTypeId, decimal orderValue)
+        {
+            var result = await _orderService.GetAllPromotionByConditionAsync(promotionTypeId, orderValue);
+            return Ok(result);
+        }
     }
 }

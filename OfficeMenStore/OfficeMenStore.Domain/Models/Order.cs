@@ -21,6 +21,9 @@ namespace OfficeMenStore.Domain.Models
         public DateTime? CancelTime { get; set; }
         public DateTime? RejectedTime { get; set; }
         public decimal Total { get; set; }
+        public decimal? ShippingFee { get; set; }
+        public decimal? ShippingDiscount { get; set; }
+        public decimal? VoucherDiscount { get; set; }
         public Boolean? IsDeleted { get; set; }
         public virtual User User { get; set; }
         public virtual List<OrderDetail> OrderDetails { get; set; }

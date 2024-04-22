@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using OfficeMenStore.Application.Interfaces;
 using OfficeMenStore.Application.Models.CartItem;
 using OfficeMenStore.Application.Models.Common;
@@ -47,19 +48,46 @@ namespace OfficeMenStore.Application.Services
                 };
             }
 
-            var total = itemCarts.Sum(c => c.Subtotal);
+            //var total = itemCarts.Sum(c => c.Subtotal) + dto.ShippingFee - (dto.ShippingDiscount + dto.VoucherDiscount);
 
             var newOrder = new Order()
             {
                 UserId = new Guid(dto.UserId),
                 Code = SystemConstant.ORDER_PREFIX + $"{DateTime.Now:yyyyMMddHHmmss}",
                 OrderTime = DateTime.Now,
-                Total = total,
+                Total = dto.Total,
                 Status = (int)StatusEnums.Status.Pending,
                 PayStatus = dto.Pay,
                 AddressDelivery = addressDelivery.ToString(),
+                ShippingFee = dto.ShippingFee,
+                ShippingDiscount = dto.ShippingDiscount,
+                VoucherDiscount = dto.VoucherDiscount
             };
             await _context.Orders.AddAsync(newOrder);
+
+            //Add promotion detail to keep track
+            if (!dto.ShippingPromotionId.IsNullOrEmpty())
+            {
+                await _context.PromotionDetails.AddAsync(new PromotionDetail()
+                {
+                    OrderId = newOrder.Id,
+                    PromotionId = dto.ShippingPromotionId!,
+                    AppliedTime = DateTime.Now,
+                    Discount = dto.ShippingDiscount!.Value,
+                });
+            }
+
+            if (!dto.ShopVoucherPromotionId.IsNullOrEmpty())
+            {
+                await _context.PromotionDetails.AddAsync(new PromotionDetail()
+                {
+                    OrderId = newOrder.Id,
+                    PromotionId = dto.ShopVoucherPromotionId!,
+                    AppliedTime = DateTime.Now,
+                    Discount = dto.VoucherDiscount!.Value
+                });
+            }
+
             await _context.SaveChangesAsync();
             foreach (var item in itemCarts)
             {
@@ -286,6 +314,52 @@ namespace OfficeMenStore.Application.Services
             return new ApiResult<bool>(true)
             {
                 Message = "",
+                StatusCode = 200
+            };
+        }
+
+        public async Task<ApiResult<List<GetAllPromotionResponse>>> GetAllPromotionAsync()
+        {
+            var result = await _context.Promotions.Where(p => p.IsDeleted != true && p.EndDate >= DateTime.Now).Select(p => new GetAllPromotionResponse
+            {
+                Id = p.Id,
+                Code = p.Code,
+                StartDate = p.StartDate,
+                EndDate = p.EndDate,
+                LeastValueCondition = p.LeastValueCondition,
+                Discount = p.Discount,
+                DiscountPercent = p.DiscountPercent,
+                MaxDiscount = p.MaxDiscount,
+                Description = p.Description,
+                CreatedTime = p.CreatedTime,
+                UpdatedTime = p.UpdatedTime,
+            }).ToListAsync();
+
+            return new ApiResult<List<GetAllPromotionResponse>>(result)
+            {
+                StatusCode = 200
+            };
+        }
+
+        public async Task<ApiResult<List<GetAllPromotionResponse>>> GetAllPromotionByConditionAsync(string promotionTypeId, decimal orderValue)
+        {
+            var result = await _context.Promotions.Where(p => p.IsDeleted != true && p.EndDate >= DateTime.Now && p.LeastValueCondition <= orderValue && p.PromotionTypeId == promotionTypeId).Select(p => new GetAllPromotionResponse
+            {
+                Id = p.Id,
+                Code = p.Code,
+                StartDate = p.StartDate,
+                EndDate = p.EndDate,
+                LeastValueCondition = p.LeastValueCondition,
+                Discount = p.Discount,
+                DiscountPercent = p.DiscountPercent,
+                MaxDiscount = p.MaxDiscount,
+                Description = p.Description,
+                CreatedTime = p.CreatedTime,
+                UpdatedTime = p.UpdatedTime,
+            }).ToListAsync();
+
+            return new ApiResult<List<GetAllPromotionResponse>>(result)
+            {
                 StatusCode = 200
             };
         }
