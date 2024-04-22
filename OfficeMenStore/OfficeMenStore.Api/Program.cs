@@ -67,6 +67,7 @@ builder.Services.AddTransient<IAddressService, AddsressService>();
 builder.Services.AddTransient<IStatisticService, StatisticService>();
 builder.Services.AddTransient<ISizeProductService, SizeProductService>();
 builder.Services.AddTransient<IFeedBackService, FeedBackService>();
+builder.Services.AddTransient<IPromotionService, PromotionService>();
 
 builder.Services.AddMvc()
                 .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
