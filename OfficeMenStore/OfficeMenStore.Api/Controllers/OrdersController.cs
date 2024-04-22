@@ -75,6 +75,13 @@ namespace OfficeMenStore.Api.Controllers
             return Ok(result);
         }
 
+        [HttpGet("GetDetailPromotion/{promotionId}")]
+        public async Task<IActionResult> GetDetailPromotionAsync(string promotionId)
+        {
+            var result = await _orderService.GetDetailPromotion(promotionId);
+            return Ok(result);
+        }
+
         [HttpGet("promotions/get-by-condition/{promotionTypeId}/{orderValue}")]
         public async Task<IActionResult> GetAllPromotionAsync(string promotionTypeId, decimal orderValue)
         {

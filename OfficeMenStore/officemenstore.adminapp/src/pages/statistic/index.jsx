@@ -72,8 +72,8 @@ export function Statistic() {
   revenueChart.options.xaxis.categories = chartLabel;
 
   return (
-    <div className="mt-12">
-      <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-3">
+    <div className="mt-2">
+      <div className="mb-6 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-3">
         <StatisticsCard
           key={'ABC'}
           title={'Total orders'}

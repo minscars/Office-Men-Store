@@ -93,7 +93,7 @@ export function Oders() {
           <div className="flex items-center justify-between gap-8">
             <div>
               <Typography variant="h5" color="blue-gray">
-                Order Management
+                Orders Management
               </Typography>
             </div>
           </div>

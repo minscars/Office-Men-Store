@@ -95,7 +95,7 @@ export function Product() {
                   onChange={(e) => setSearchText(e.target.value)}
                 />
               </div>
-              <div className="w-50 ml-auto mr-10">
+              <div className="w-50 ml-auto mr-14">
                 <select
                   onChange={(e) => handleFilter(e)}
                   class="ml-4 flex h-12 w-full items-center justify-center rounded-xl border bg-white/0 p-3 text-sm outline-none"

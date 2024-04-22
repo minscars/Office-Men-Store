@@ -64,7 +64,7 @@ namespace OfficeMenStore.Application.Services
                 VoucherDiscount = dto.VoucherDiscount
             };
             await _context.Orders.AddAsync(newOrder);
-
+            await _context.SaveChangesAsync();
             //Add promotion detail to keep track
             if (!dto.ShippingPromotionId.IsNullOrEmpty())
             {
@@ -187,6 +187,10 @@ namespace OfficeMenStore.Application.Services
                     AddressDelivery = o.AddressDelivery,
                     Total = o.Total,
                     OrderTime = o.OrderTime,
+                    ShippingDiscount = (decimal)o.ShippingDiscount!,
+                    ShippingFee = (decimal)o.ShippingFee!,
+                    VoucherDiscount = (decimal)o.VoucherDiscount!,
+                    GrandTotal = o.Total + (decimal)o.ShippingDiscount! + (decimal)o.VoucherDiscount!,
                     ListItemOrderDetails = o.OrderDetails.Select(o => new GetAllItemInOrderDetailResponse()
                     {
                         ProductId = o.ProductId,
@@ -247,6 +251,10 @@ namespace OfficeMenStore.Application.Services
                     StartDeliveryTime = o.StartDeliveryTime,
                     EndDeliveryTime = o.EndDeliveryTime,
                     ListItemOrderDetails = itemInOrder,
+                    ShippingDiscount = (decimal)o.ShippingDiscount!,
+                    ShippingFee = (decimal)o.ShippingFee!,
+                    VoucherDiscount = (decimal)o.VoucherDiscount!,
+                    GrandTotal = o.Total + (decimal)o.ShippingDiscount! + (decimal)o.VoucherDiscount!
                 }).FirstOrDefaultAsync();
 
             if (orderDetail == null)
@@ -315,12 +323,36 @@ namespace OfficeMenStore.Application.Services
             {
                 Message = "",
                 StatusCode = 200
-            };
+            };        
         }
 
         public async Task<ApiResult<List<GetAllPromotionResponse>>> GetAllPromotionAsync()
         {
-            var result = await _context.Promotions.Where(p => p.IsDeleted != true && p.EndDate >= DateTime.Now).Select(p => new GetAllPromotionResponse
+            var result = await _context.Promotions.Include(p => p.PromotionType).Where(p => p.IsDeleted != true && p.EndDate >= DateTime.Now).Select(p => new GetAllPromotionResponse
+            {
+                Id = p.Id,
+                Code = p.Code,
+                StartDate = p.StartDate,
+                EndDate = p.EndDate,
+                PromotionType = p.PromotionType.Name,
+                LeastValueCondition = p.LeastValueCondition,
+                Discount = p.Discount,
+                DiscountPercent = p.DiscountPercent,
+                MaxDiscount = p.MaxDiscount,
+                Description = p.Description,
+                CreatedTime = p.CreatedTime,
+                UpdatedTime = p.UpdatedTime,
+            }).ToListAsync();
+
+            return new ApiResult<List<GetAllPromotionResponse>>(result)
+            {
+                StatusCode = 200
+            };
+        }
+
+        public async Task<ApiResult<GetAllPromotionResponse>> GetDetailPromotion(string promotionId)
+        {
+            var result = await _context.Promotions.Where(p => p.IsDeleted != true && p.EndDate >= DateTime.Now && p.Id == promotionId).Select(p => new GetAllPromotionResponse
             {
                 Id = p.Id,
                 Code = p.Code,
@@ -333,9 +365,9 @@ namespace OfficeMenStore.Application.Services
                 Description = p.Description,
                 CreatedTime = p.CreatedTime,
                 UpdatedTime = p.UpdatedTime,
-            }).ToListAsync();
+            }).FirstOrDefaultAsync();
 
-            return new ApiResult<List<GetAllPromotionResponse>>(result)
+            return new ApiResult<GetAllPromotionResponse>(result)
             {
                 StatusCode = 200
             };

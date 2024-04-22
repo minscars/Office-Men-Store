@@ -42,7 +42,7 @@ export const routes = [
     layout: 'user',
     pages: [
       //Route in sidebar
-      { icon: <HomeIcon {...icon} />, name: 'Home', path: '/home', element: <Home /> },
+      // { icon: <HomeIcon {...icon} />, name: 'Home', path: '/home', element: <Home /> },
       { icon: <ShoppingBagIcon {...icon} />, name: 'product', path: '/product', element: <Product /> },
       {
         icon: <ShoppingCartIcon {...icon} />,

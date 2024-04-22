@@ -60,12 +60,12 @@ export const routes = [
       { icon: <TagIcon {...icon} />, name: 'category management', path: '/category', element: <Categories /> },
       { path: '/category/updatecategory/:id', element: <UpdateCategory /> },
 
-      {
-        icon: <UsersIcon {...icon} />,
-        name: 'customers management',
-        path: '/allcustomers',
-        element: <CustomerTable />,
-      },
+      // {
+      //   icon: <UsersIcon {...icon} />,
+      //   name: 'customers management',
+      //   path: '/allcustomers',
+      //   element: <CustomerTable />,
+      // },
 
       { icon: <NewspaperIcon {...icon} />, name: 'Orders management', path: '/orders', element: <Oders /> },
       { icon: <SwatchIcon {...icon} />, name: 'promotion management', path: '/promotion', element: <Promotions /> },

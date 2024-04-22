@@ -5,6 +5,7 @@
         public string Id { get; set; } = null!;
         public string Code { get; set; } = null!;
         public string? Description { get; set; }
+        public string PromotionType { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public decimal LeastValueCondition { get; set; }

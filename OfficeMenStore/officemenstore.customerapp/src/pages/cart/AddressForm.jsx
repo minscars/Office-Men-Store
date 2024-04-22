@@ -1,17 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Typography,
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  Input,
-  Checkbox,
-  Button,
-  Avatar,
-  Select,
-  Form,
-} from '@material-tailwind/react';
+import { Typography, Card, CardHeader, CardBody, Input, Button, Select, Option, Form } from '@material-tailwind/react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { toast } from 'react-toastify';
@@ -33,18 +21,109 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
   const [selectedAddressId, setselectedAddressId] = useState(1);
   const [cartItemList, setCartItemList] = useState([]);
   const userLogin = jwtDecode(window.localStorage.getItem('token'));
+  const [orderValuedb, setOrderValue] = useState();
+  const [trigger, setTrigger] = useState();
+
+  //promotion
+  const [promotionList, setPromotionList] = useState([]);
+  const [promoId, setPromoId] = useState('');
+  const [valuePromo, setValuePromo] = useState(0);
+  const [promoDiscount, setPromoDiscount] = useState(0);
+  const handleChangePromo = async (e) => {
+    setTrigger(Math.random() + 1)
+      ?.toString(36)
+      .substring(7);
+    setPromoId(e);
+    console.log(promoId);
+    setPromoDiscount(valuePromo?.discount);
+    handleUpdateGrandTotal();
+  };
+
+  const handleChangeShip = async (e) => {
+    setTrigger(Math.random() + 1)
+      ?.toString(36)
+      .substring(7);
+    setShipId(e);
+    setShipDiscount(valueShip?.discount);
+    handleUpdateGrandTotal();
+  };
+
+  //ship
+  const [shipList, setShipList] = useState([]);
+  const [shipId, setShipId] = useState('');
+  const [valueShip, setValueShip] = useState(0);
+  const [shipDiscount, setShipDiscount] = useState(0);
+
+  //grand total: tổng đơn hàng cuối
+  const [grandTotal, setGrandTotal] = useState(0);
+
+  useEffect(() => {
+    const GetCartItem = async () => {
+      const data = await cartItemApi.GetCartItemByUser(userLogin.id);
+      setCartItemList(data?.data);
+    };
+    GetCartItem();
+    setOrderValue(cartItemList?.total);
+  }, []);
+  useEffect(() => {
+    setPromoDiscount(valuePromo?.discount);
+    setShipDiscount(valueShip?.discount);
+  }, [trigger]);
   useEffect(() => {
     const getUser = async () => {
       const data = await userApi.GetUserInformation(userLogin.id);
       setUser(data);
     };
     getUser();
-    const GetCartItem = async () => {
-      const data = await cartItemApi.GetCartItemByUser(userLogin.id);
-      setCartItemList(data.data);
+    getPromotionByCondition();
+    getShipByCondition();
+    setOrderValue(cartItemList?.total);
+    handleUpdateGrandTotal();
+  }, [cartItemList, trigger]);
+
+  useEffect(() => {
+    const getDetailPromotion = async () => {
+      const data = await orderApi.GetDetailPromotion(promoId);
+      setValuePromo(data.data);
     };
-    GetCartItem();
-  }, []);
+    getDetailPromotion();
+    const getDetailShip = async () => {
+      const data = await orderApi.GetDetailPromotion(shipId);
+      setValueShip(data.data);
+    };
+    getDetailShip();
+
+    setShipDiscount(valueShip?.discount);
+    setPromoDiscount(valuePromo?.discount);
+  }, [shipId, promoId, trigger]);
+
+  async function getPromotionByCondition() {
+    var orderValue = orderValuedb;
+    var promotionTypeId = '6052d868-af98-4327-91e2-080bf9b1c192';
+    await orderApi.GetPromotionByCondition(promotionTypeId, orderValue).then(async (res) => {
+      if (res.statusCode === 200) {
+        setPromotionList(res?.data);
+      }
+    });
+  }
+
+  async function getShipByCondition() {
+    var orderValue = orderValuedb;
+    var promotionTypeId = 'c5f71742-8892-40ac-a81f-f7c413bdc6e2';
+    await orderApi.GetPromotionByCondition(promotionTypeId, orderValue).then(async (res) => {
+      if (res.statusCode === 200) {
+        setShipList(res?.data);
+      }
+    });
+    console.log(shipList);
+  }
+
+  const handleUpdateGrandTotal = () => {
+    var grandTotal = cartItemList.total + 35000;
+    if (promoDiscount > 0) grandTotal = grandTotal - promoDiscount;
+    if (shipDiscount > 0) grandTotal = grandTotal - shipDiscount;
+    setGrandTotal(grandTotal);
+  };
 
   const handlePaymentMethodChange = (event) => {
     const selectedPaymentMethod = event.target.value;
@@ -111,7 +190,19 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
     var addressId = selectedAddressId;
     var pay = payMethod;
     const dto = { cartId, userId, addressId, pay };
-    console.log(dto);
+    dto.shippingFee = 35000;
+    if (promoDiscount > 0) {
+      dto.voucherDiscount = promoDiscount;
+      dto.shopVoucherPromotionId = promoId;
+    }
+    if (shipDiscount > 0) {
+      dto.shippingDiscount = shipDiscount;
+      dto.shippingPromotionId = shipId;
+    }
+    dto.total = grandTotal;
+    if (valuePromo > 0) {
+      dto.voucherDiscount = dto.shopVoucherPromotionId;
+    }
     await orderApi
       .Order(dto)
       .then((res) => {
@@ -146,7 +237,7 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
           var options = {
             key: 'rzp_test_nW41YserAsUiCq',
             key_secret: 'HhmQn4VZyicKSaBNMStFRhhD',
-            amount: cartItemList.total,
+            amount: grandTotal,
             currency: 'INR',
             order_receipt: 'order_rcptid_',
             name: 'Thanh toán online',
@@ -397,38 +488,110 @@ function AddressForm({ formData, onSubmit, handlePrev, isFirstStep }) {
               </tbody>
             </div>
             <div className="flex-col gap-5 border-b border-t broder-blue-gray-500">
-              <div className="flex mt-2">
-                <Input size="lg" placeholder="Discount code" name="discount" />
-                <Button className="ml-2">USE</Button>
+              <div className="mb-4">
+                <Typography variant="small" color="blue-gray" className="font-medium">
+                  Shipping
+                </Typography>
+                <Select
+                  className="!h-10"
+                  onChange={(e) => handleChangeShip(e)}
+                  //className="rounded-[5px]  mt-1 py-3 px-2 border border-1 border-blue-gray-200 w-full h-full bg-transparent text-blue-gray-700 font-sans font-normal"
+                >
+                  {shipList?.map((item) => (
+                    <Option key={item.id} value={item?.id}>
+                      {item.description}
+                    </Option>
+                  ))}
+                </Select>{' '}
+              </div>
+              <div className="mb-4">
+                <Typography variant="small" color="blue-gray" className="font-medium">
+                  Voucher
+                </Typography>
+                <Select className="!h-10" onChange={(e) => handleChangePromo(e)}>
+                  {promotionList?.map((item) => (
+                    <Option key={item.id} value={item?.id}>
+                      {item.description}
+                    </Option>
+                  ))}
+                </Select>{' '}
               </div>
               <Typography
                 as="span"
                 variant="small"
                 className="mb-2 text-xs font-medium text-blue-gray-500 flex items-center justify-between mt-3"
               >
+                <p class="text-base leading-4 text-blue-gray-800 dark:text-gray-400">Total:</p>
+                <p class="text-base leading-4 text-blue-gray-900 dark:text-gray-400">
+                  {' '}
+                  {new Intl.NumberFormat('vi-VN', {
+                    style: 'currency',
+                    currency: 'VND',
+                  }).format(cartItemList.total)}
+                </p>
+              </Typography>
+              <Typography
+                as="span"
+                variant="small"
+                className="mb-2 text-xs font-medium text-blue-gray-500 flex items-center justify-between mt-3"
+              >
                 <p class="text-base leading-4 text-blue-gray-800 dark:text-gray-400">Shipping:</p>
-                <p class="text-base leading-4 text-blue-gray-900 dark:text-gray-400"> ___</p>
+                <p class="text-base leading-4 text-blue-gray-900 dark:text-gray-400">
+                  {' '}
+                  {new Intl.NumberFormat('vi-VN', {
+                    style: 'currency',
+                    currency: 'VND',
+                  }).format(35000)}
+                </p>
+              </Typography>
+              <Typography
+                as="span"
+                variant="small"
+                className="mb-2 text-xs font-medium text-blue-gray-500 flex items-center justify-between mt-3"
+              >
+                <p class="text-base leading-4 text-blue-gray-800 dark:text-gray-400">Discount shipping:</p>
+                <p class="text-base leading-4 text-blue-gray-900 dark:text-gray-400">
+                  {' - '}
+                  {new Intl.NumberFormat('vi-VN', {
+                    style: 'currency',
+                    currency: 'VND',
+                  }).format(shipDiscount ? shipDiscount : 0)}
+                </p>
+              </Typography>
+              <Typography
+                as="span"
+                variant="small"
+                className="mb-2 text-xs font-medium text-blue-gray-500 flex items-center justify-between mt-3"
+              >
+                <p class="text-base leading-4 text-blue-gray-800 dark:text-gray-400">Voucher:</p>
+                <p class="text-base leading-4 text-blue-gray-900 dark:text-gray-400">
+                  {' - '}
+                  {new Intl.NumberFormat('vi-VN', {
+                    style: 'currency',
+                    currency: 'VND',
+                  }).format(promoDiscount ? promoDiscount : 0)}
+                </p>
               </Typography>
             </div>
 
             <div class="flex items-center justify-between w-full mt-5">
               <Typography variant="h5" color="blue-gray" className="mb-1">
-                Total
+                Grand total
               </Typography>
               <Typography variant="h5" color="blue-gray" className="mb-1">
                 {new Intl.NumberFormat('vi-VN', {
                   style: 'currency',
                   currency: 'VND',
-                }).format(cartItemList.total)}
+                }).format(grandTotal)}
               </Typography>
             </div>
-            <div className="mt-4 mb-2 border-2 border-red-100">
+            {/* <div className="mt-4 mb-2 border-2 border-red-100">
               <p className="p-4 font-semibold text-[14px]">
                 From March 14, 2024, Office Men Store applies free shipping nationwide for all orders from 0 VND. We
                 confirm orders via Email. Please CHECK your email after successfully placing your order and WAIT TO
                 RECEIVE ITEMS.
               </p>
-            </div>
+            </div> */}
             {/* san pham */}
           </CardBody>
         </Card>

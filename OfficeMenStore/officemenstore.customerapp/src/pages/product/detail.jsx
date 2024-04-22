@@ -36,7 +36,7 @@ export function ProductDetails() {
 
   const [feedBack, setFeedBack] = useState();
   const [trigger, setTrigger] = useState();
-
+  const [valueRating, setValueRating] = useState(0);
   useEffect(() => {
     const productDetail = async () => {
       const data = await productApi.GetProductById(id);
@@ -61,6 +61,7 @@ export function ProductDetails() {
       setCartItemList(data.data);
     };
     GetCartItem();
+    setValueRating(feedBack?.rate);
   }, [cartItemList?.totalItems, trigger]);
 
   const [totalPro, setTotalPro] = useState(product?.totalProduct);

@@ -29,63 +29,20 @@ import orderApi from '@/api/orderApi';
 import Pagination from '@/components/pagination/index.jsx';
 import moment from 'moment';
 import { toast } from 'react-toastify';
-const dataStatus = [
-  { statusValue: 1, statusName: 'Pending' },
-  { statusValue: 2, statusName: 'Approve' },
-  { statusValue: 5, statusName: 'Delivering' },
-  { statusValue: 6, statusName: 'Delivered' },
-];
 
 export function Promotions() {
-  const TABLE_HEAD = ['Code', 'CreateDate', 'Customer', 'Total price', 'Status', 'Action'];
+  const TABLE_HEAD = ['Code', 'StartDate', 'EndDate', 'Description', 'Discount', 'Type'];
 
-  const [page, setOffset] = useState(0);
-  const [limit] = useState(6);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [pageCount, setPageCount] = useState(0);
-  const [isloaded, setIsLoaded] = useState(false);
-  const [orderList, setOrderList] = useState([]);
-  const [searchText, setSearchText] = useState('');
+  const [promotionList, setPromotionList] = useState([]);
   useEffect(() => {
-    getAllOrders();
-  }, [page, limit, searchText]);
-
-  const getAllOrders = async () => {
-    var dto = { page, limit };
-    setIsLoaded(false);
-    console.log(searchText);
-    if (searchText) {
-      dto.phoneNumber = searchText;
-    }
-    const response = await orderApi.GetAll(dto);
-    setPageCount(Math.ceil(response?.totalRecord / limit));
-    setOrderList(response.data);
-    setIsLoaded(true);
-  };
-
-  async function handleFilter(e) {
-    e.preventDefault();
-    var status = e.target.value;
-    var dto = { page, limit, status };
-    if (e.target.value != 0) {
-      const response = await orderApi.GetAll(dto);
-      if (response) {
-        setPageCount(Math.ceil(response.totalRecord / limit));
-        setOrderList(response.data);
-      } else {
-        toast.error('Order is empty!');
-      }
-    } else {
-      const response = await orderApi.GetAll(dto);
-      setPageCount(Math.ceil(response.totalRecord / limit));
-      setOrderList(response.data);
-    }
-  }
-
-  const handlePageClick = (e) => {
-    setCurrentPage(e.selected);
-    setOffset(e.selected);
-  };
+    //getAllOrders();
+    const getAllPromotion = async () => {
+      const result = await orderApi.GetAllPromotions();
+      setPromotionList(result?.data);
+    };
+    getAllPromotion();
+  }, []);
+  console.log(promotionList);
   return (
     <div className="gap-12">
       <Card className="h-full w-full">
@@ -117,7 +74,7 @@ export function Promotions() {
               </tr>
             </thead>
             <tbody>
-              {orderList?.map((item) => {
+              {promotionList?.map((item) => {
                 const classes = 'p-4 border-b border-blue-gray-50 ';
 
                 return (
@@ -133,17 +90,25 @@ export function Promotions() {
                     <td className={classes}>
                       <div className="flex flex-col">
                         <Typography variant="small" color="blue-gray" className="font-normal">
-                          {item.createdTime != null ? moment(item.createdTime).format('DD/MM/YYYY HH:mm A') : '......'}
+                          {item.startDate != null ? moment(item.startDate).format('DD/MM/YYYY HH:mm A') : '......'}
+                        </Typography>
+                      </div>
+                    </td>
+
+                    <td className={classes}>
+                      <div className="flex flex-col">
+                        <Typography variant="small" color="blue-gray" className="font-normal">
+                          {item.endDate != null ? moment(item.endDate).format('DD/MM/YYYY HH:mm A') : '......'}
                         </Typography>
                       </div>
                     </td>
 
                     <td className={classes}>
                       <div className="flex items-center gap-3">
-                        <Avatar src={item.customerAvatar} alt={item.customerName} size="sm" />
+                        {/* <Avatar src={item.customerAvatar} alt={item.customerName} size="sm" /> */}
                         <div className="flex flex-col">
                           <Typography variant="small" color="blue-gray" className="font-normal">
-                            {item.customerName}
+                            {item.description}
                           </Typography>
                         </div>
                       </div>
@@ -155,49 +120,16 @@ export function Promotions() {
                           {new Intl.NumberFormat('vi-VN', {
                             style: 'currency',
                             currency: 'VND',
-                          }).format(item.total)}
+                          }).format(item.discount)}
                         </Typography>
-                      </div>
-                    </td>
-
-                    <td>
-                      <div class="relative  w-40 min-w-[100px] flex">
-                        {item.status === 'Pending' && (
-                          <Chip
-                            variant="ghost"
-                            size="sm"
-                            value={item.status}
-                            color={'yellow'}
-                            className="ml-5 !w-auto"
-                          />
-                        )}
-                        {item.status === 'Approve' && (
-                          <Chip variant="ghost" size="sm" value={item.status} color={'red'} className="ml-5 !w-auto" />
-                        )}
-                        {item.status === 'Delivering' && (
-                          <Chip variant="ghost" size="sm" value={item.status} color={'blue'} className="ml-5 !w-auto" />
-                        )}
-                        {item.status === 'Delivered' && (
-                          <Chip
-                            variant="ghost"
-                            size="sm"
-                            value={item.status}
-                            color={'green'}
-                            className="ml-5 !w-auto"
-                          />
-                        )}
                       </div>
                     </td>
 
                     <td className={classes}>
                       <div className="flex flex-col">
-                        <Tooltip content="View">
-                          <IconButton variant="text">
-                            <Link to={`./detail/${item.orderId}`}>
-                              <PencilIcon className="h-4 w-4" />
-                            </Link>
-                          </IconButton>
-                        </Tooltip>
+                        <Typography variant="small" color="blue-gray" className="font-normal">
+                          {item.promotionType}
+                        </Typography>
                       </div>
                     </td>
                   </tr>
@@ -207,7 +139,6 @@ export function Promotions() {
           </table>
         </CardBody>
       </Card>
-      <Pagination handlePageClick={handlePageClick} currentPage={currentPage} pageCount={pageCount} />
     </div>
   );
 }
