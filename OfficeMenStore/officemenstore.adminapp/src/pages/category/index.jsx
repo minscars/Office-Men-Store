@@ -117,37 +117,22 @@ export function Categories() {
     return (
       <div className="mb-8 gap-12">
         <Card className="xl:col-span-1 mt-0 border border-blue-gray-100 shadow-sm ">
-          <CardHeader floated={false} shadow={false} className="rounded-none">
+          <CardHeader floated={false} shadow={false} className="rounded-none flex">
             <Typography variant="h5" color="blue-gray">
               Categories list
             </Typography>
+            <div className=" ml-auto">
+              <Link to={'addcategory'}>
+                <Button className="flex items-center gap-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
+                    <path d="M11 11V7H13V11H17V13H13V17H11V13H7V11H11ZM12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM12 20C16.4183 20 20 16.4183 20 12C20 7.58172 16.4183 4 12 4C7.58172 4 4 7.58172 4 12C4 16.4183 7.58172 20 12 20Z"></path>
+                  </svg>
+                  Add new category
+                </Button>
+              </Link>
+            </div>
             <div className="mt-2 flex items-center">
-              {/* <div className="w-full md:w-72 px-4">
-                <form onSubmit={(e) => handleSearch(e)}>
-                  <Input
-                    label="Search"
-                    icon={<MagnifyingGlassIcon className="h-5 w-5" />}
-                    onChange={(e) => setSearchText(e.target.value)}
-                  />
-                </form>
-              </div> */}
-              <div className="mr-4 flex items-center gap-5 ml-auto px-4">
-                <div className=" ml-auto">
-                  <Link to={'addproducts/'}>
-                    <Button className="flex items-center gap-3">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        className="h-5 w-5"
-                      >
-                        <path d="M11 11V7H13V11H17V13H13V17H11V13H7V11H11ZM12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM12 20C16.4183 20 20 16.4183 20 12C20 7.58172 16.4183 4 12 4C7.58172 4 4 7.58172 4 12C4 16.4183 7.58172 20 12 20Z"></path>
-                      </svg>
-                      Add new category
-                    </Button>
-                  </Link>
-                </div>
-              </div>
+              <div className="mr-4 flex items-center gap-5 ml-auto px-4"></div>
             </div>
           </CardHeader>
           <CardBody className="h-[570px] px-0 pt-0 pb-2">
@@ -193,22 +178,24 @@ export function Categories() {
                         </Typography>
                       </td>
                       <td>
-                        <div class="flex w-20 items-center text-gray-500 gap-x-2">
-                          <button class="select-none p-2 ">
+                        <div className="flex w-20 items-center text-gray-500 gap-x-2">
+                          <button className="ml-8 select-none p-2 ">
                             <Tooltip content="Edit Product">
                               <IconButton variant="text">
-                                <PencilIcon className="h-5 w-5  hover:text-blue-300" onClick={navigateeditproduct} />
+                                <Link to={`./updatecategory/${item.id}`}>
+                                  <PencilIcon className="h-5 w-5  hover:text-blue-300" />
+                                </Link>
                               </IconButton>
                             </Tooltip>
                           </button>
 
-                          <button class="p-2 ">
+                          {/* <button class="p-2 ">
                             <Tooltip content="Delete Product">
                               <IconButton variant="text">
                                 <TrashIcon className="h-5 w-5  hover:text-red-500" onClick={() => setOpen(true)} />
                               </IconButton>
                             </Tooltip>
-                          </button>
+                          </button> */}
                         </div>
                       </td>
                     </tr>

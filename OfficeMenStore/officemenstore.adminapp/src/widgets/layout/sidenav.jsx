@@ -23,7 +23,12 @@ export function Sidenav({ brandImg, brandName, routes }) {
       } fixed inset-0 z-50 my-4 mb-10 ml-4 h-[calc(100vh-32px)] w-72 rounded-xl transition-transform duration-300 xl:translate-x-0 border border-blue-gray-100`}
     >
       <div className={`relative`}>
-        <img src={Logo} alt="" className="ml-4 mt-10 mb-10 h-auto w-[250px]" />
+        <img src={Logo} alt="" className="ml-4 mt-10 mb-16 h-auto w-[250px]" />
+        {/* <div className="flex justify-center mb-10">
+          <Typography color="blue-gray-100" className="text-[18px] font-medium capitalize">
+            Hello Admin
+          </Typography>
+        </div> */}
         {/* nút thoát */}
         <IconButton
           variant="text"

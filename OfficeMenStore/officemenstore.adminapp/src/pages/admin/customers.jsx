@@ -16,7 +16,9 @@ import {
   IconButton,
   Tooltip,
 } from '@material-tailwind/react';
-
+import React, { useState, useEffect } from 'react';
+import userApi from '@/api/userApi';
+import Pagination from '@/components/pagination/index.jsx';
 const TABS = [
   {
     label: 'All',
@@ -83,95 +85,120 @@ const TABLE_ROWS = [
 ];
 
 export function CustomerTable() {
-  return (
-    <Card className="mt-10 mb-10 h-full w-full">
-      <CardHeader floated={false} shadow={false} className="rounded-none">
-        <div className="mb-8 flex items-center justify-between gap-8">
-          <div>
-            <Typography variant="h5" color="blue-gray">
-              Members list
-            </Typography>
-          </div>
-          <div></div>
-        </div>
-        <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-          <div className="w-full md:w-72">
-            <Input label="Search" icon={<MagnifyingGlassIcon className="h-5 w-5" />} />
-          </div>
+  const [userList, setUserList] = useState([]);
+  const [page, setOffset] = useState(0);
+  const [limit] = useState(5);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [pageCount, setPageCount] = useState(0);
+  const [isloaded, setIsLoaded] = useState(false);
+  const [searchText, setSearchText] = useState('');
+  useEffect(() => {
+    getAllUser();
+  }, [page, limit]);
+  const getAllUser = async () => {
+    setIsLoaded(false);
+    var dto = { page, limit };
+    if (searchText) {
+      dto.search = searchText;
+    }
+    console.log('dto', dto);
+    const response = await userApi.GetAllUser(dto);
+    setPageCount(Math.ceil(response?.totalRecord / limit));
+    setUserList(response?.data);
+    setIsLoaded(true);
+  };
+  console.log(userList);
+  const handlePageClick = (e) => {
+    setCurrentPage(e.selected);
+    setOffset(e.selected);
+  };
 
-          <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
+  return (
+    <div>
+      <Card className="mt-10 mb-10 h-full w-full">
+        <CardHeader floated={false} shadow={false} className="rounded-none">
+          <div className="mb-2 flex items-center justify-between gap-8">
+            <div>
+              <Typography variant="h5" color="blue-gray">
+                Members list
+              </Typography>
+            </div>
+            <div>
+              <Input label="Search" icon={<MagnifyingGlassIcon className="h-5 w-5" />} />
+            </div>
+          </div>
+          <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+            <div className="w-full md:w-72"></div>
+
+            {/* <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
             <Button variant="outlined" size="sm">
               view all
             </Button>
             <Button className="flex items-center gap-3" size="sm">
               <UserPlusIcon strokeWidth={2} className="h-4 w-4" /> Add member
             </Button>
+          </div> */}
           </div>
-        </div>
-      </CardHeader>
-      <CardBody className="overflow-scroll px-0">
-        <table className="mt-4 w-full min-w-max table-auto text-left">
-          <thead>
-            <tr className="hover:bg-gray-100 transition-colors">
-              {TABLE_HEAD.map((head) => (
-                <th key={head} className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4">
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className=" leading-none text-[11px] font-bold uppercase text-blue-gray-400"
-                  >
-                    {head}
-                  </Typography>
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {TABLE_ROWS.map(({ img, name, email, job, org, online, date }, index) => {
-              const isLast = index === TABLE_ROWS.length - 1;
-              const classes = isLast ? 'p-4' : 'p-4 border-b border-blue-gray-50 ';
-
-              return (
-                <tr key={name} className="hover:bg-gray-100 transition-colors">
-                  <td className={classes}>
+        </CardHeader>
+        <CardBody className="overflow-scroll px-0">
+          <table className="mt-4 w-full min-w-max table-auto text-left">
+            <thead>
+              <tr className="hover:bg-gray-100 transition-colors">
+                {TABLE_HEAD.map((head) => (
+                  <th key={head} className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4">
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className=" leading-none text-[11px] font-bold uppercase text-blue-gray-400"
+                    >
+                      {head}
+                    </Typography>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {userList?.map((item) => (
+                <tr key={item.userId} className="hover:bg-gray-100 transition-colors">
+                  <td className="p-4 border-b border-blue-gray-50">
                     <div className="flex items-center gap-3">
-                      <Avatar src={img} alt={name} size="sm" />
+                      <Avatar src={item.avatar} size="sm" />
                       <div className="flex flex-col">
                         <Typography variant="small" color="blue-gray" className="font-normal">
-                          {name}
+                          {item.name}
                         </Typography>
                         <Typography variant="small" color="blue-gray" className="font-normal opacity-70">
-                          {email}
+                          {item.email}
                         </Typography>
                       </div>
                     </div>
                   </td>
-                  <td className={classes}>
+                  <td className="p-4 border-b border-blue-gray-50">
                     <div className="flex flex-col">
                       <Typography variant="small" color="blue-gray" className="font-normal">
-                        {job}
+                        {'job'}
                       </Typography>
                       <Typography variant="small" color="blue-gray" className="font-normal opacity-70">
-                        {org}
+                        {'org'}
                       </Typography>
                     </div>
                   </td>
-                  <td className={classes}>
+                  <td className="p-4 border-b border-blue-gray-50">
                     <div className="w-max">
-                      <Chip
-                        variant="ghost"
-                        size="sm"
-                        value={online ? 'online' : 'offline'}
-                        color={online ? 'green' : 'blue-gray'}
-                      />
+                      {/* <Chip
+                          variant="ghost"
+                          size="sm"
+                          value={online ? 'online' : 'offline'}
+                          color={online ? 'green' : 'blue-gray'}
+                        /> */}
                     </div>
                   </td>
-                  <td className={classes}>
+                  <td className="p-4 border-b border-blue-gray-50">
                     <Typography variant="small" color="blue-gray" className="font-normal">
-                      {date}
+                      {'date'}
                     </Typography>
                   </td>
-                  <td className={classes}>
+                  <td className="p-4 border-b border-blue-gray-50">
                     <Tooltip content="Edit User">
                       <IconButton variant="text">
                         <PencilIcon className="h-4 w-4" />
@@ -179,25 +206,13 @@ export function CustomerTable() {
                     </Tooltip>
                   </td>
                 </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </CardBody>
-      <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-        <Typography variant="small" color="blue-gray" className="font-normal">
-          Page 1 of 10
-        </Typography>
-        <div className="flex gap-2">
-          <Button variant="outlined" size="sm">
-            Previous
-          </Button>
-          <Button variant="outlined" size="sm">
-            Next
-          </Button>
-        </div>
-      </CardFooter>
-    </Card>
+              ))}
+            </tbody>
+          </table>
+        </CardBody>
+      </Card>
+      <Pagination handlePageClick={handlePageClick} currentPage={currentPage} pageCount={pageCount} />
+    </div>
   );
 }
 export default CustomerTable;
