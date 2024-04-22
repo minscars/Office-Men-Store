@@ -139,13 +139,12 @@ namespace OfficeMenStore.Application.Services
                 Avatar = u.Avatar,
                 Email = u.Email,
                 PhoneNumber = u.PhoneNumber,
-                CartId = u.Cart.Id,
                 Addresses = u.Addresses.Select(a => new GetAddressResponse()
                 {
                     Id = a.Id,
                     AddressDetail = a.AddressDetail,
                     IsDeleted = a.IsDeleted,
-                    UserId = a.UserId,
+                    UserId = a.UserId
                 }).ToList(),
             }).ToListAsync();
 

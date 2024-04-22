@@ -10,6 +10,7 @@ namespace OfficeMenStore.Application.Utilities.Constants
     {
         //
         public const string IMG_PRODUCTS_FOLDER = "images/products/";
+        public const string IMG_CATEGORIES_FOLDER = "images/categories/";
 
 
         //Prefix

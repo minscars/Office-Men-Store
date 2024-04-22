@@ -42,7 +42,7 @@ namespace OfficeMenStore.Api.Controllers
 
         [HttpPost("GetAllUser")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetAllUserAsync(GetAllUserRequest requestDto)
+        public async Task<IActionResult> GetAllUserAsync([FromBody] GetAllUserRequest requestDto)
         {
             var result = await _userService.GetAllUserAsync(requestDto);
             if (result.StatusCode == 200)

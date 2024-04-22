@@ -13,6 +13,7 @@ import {
   UsersIcon,
   TagIcon,
   ChartBarIcon,
+  SwatchIcon,
 } from '@heroicons/react/24/solid';
 import MyOrderDetail from './pages/accounts/orderhistorydetail';
 import { Checkout, Cart } from '@/pages/cart';
@@ -26,11 +27,13 @@ import {
   UpdateProduct,
   Statistic,
   Dashboard,
+  AddCategory,
+  UpdateCategory,
 } from '@/pages/admin';
 const icon = {
   className: 'w-5 h-5 text-inherit',
 };
-
+import { Promotions } from '@/pages/admin';
 export const routes = [
   {
     layout: 'admin',
@@ -51,8 +54,11 @@ export const routes = [
       //{ icon: <Squares2X2Icon {...icon} />, name: 'Dashboard', path: '/dashboard', element: <Dashboard /> },
       { icon: <CubeIcon {...icon} />, name: 'product management', path: '/product', element: <Products /> },
       { path: '/product/addproducts', element: <AddProducts /> },
+      { path: '/category/addcategory', element: <AddCategory /> },
       { path: '/product/updateproduct/:id', element: <UpdateProduct /> },
+
       { icon: <TagIcon {...icon} />, name: 'category management', path: '/category', element: <Categories /> },
+      { path: '/category/updatecategory/:id', element: <UpdateCategory /> },
 
       {
         icon: <UsersIcon {...icon} />,
@@ -62,6 +68,7 @@ export const routes = [
       },
 
       { icon: <NewspaperIcon {...icon} />, name: 'Orders management', path: '/orders', element: <Oders /> },
+      { icon: <SwatchIcon {...icon} />, name: 'promotion management', path: '/promotion', element: <Promotions /> },
       { icon: <ChartBarIcon {...icon} />, name: 'Statistic', path: '/statistic', element: <Statistic /> },
       { path: '/orders/detail/:id', element: <OdersDetails /> },
 
