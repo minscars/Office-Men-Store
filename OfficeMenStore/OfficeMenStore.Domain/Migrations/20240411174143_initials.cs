@@ -21,8 +21,8 @@ namespace OfficeMenStore.Domain.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Image = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2024, 3, 7, 22, 4, 39, 424, DateTimeKind.Local).AddTicks(5598)),
-                    UpdatedTime = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2024, 3, 7, 22, 4, 39, 424, DateTimeKind.Local).AddTicks(5838)),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2024, 4, 12, 0, 41, 43, 726, DateTimeKind.Local).AddTicks(8647)),
+                    UpdatedTime = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2024, 4, 12, 0, 41, 43, 726, DateTimeKind.Local).AddTicks(8818)),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
                 },
                 constraints: table =>
@@ -45,7 +45,7 @@ namespace OfficeMenStore.Domain.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Sizes",
+                name: "SizeProducts",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -54,7 +54,7 @@ namespace OfficeMenStore.Domain.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Sizes", x => x.Id);
+                    table.PrimaryKey("PK_SizeProducts", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -91,15 +91,12 @@ namespace OfficeMenStore.Domain.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Image = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CategoryId = table.Column<int>(type: "int", nullable: true),
-                    Price = table.Column<int>(type: "int", nullable: false),
-                    Amount_Import = table.Column<int>(type: "int", nullable: true, defaultValue: 100),
-                    Amount_Export = table.Column<int>(type: "int", nullable: true),
-                    Amount_InStock = table.Column<int>(type: "int", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CategoryId = table.Column<int>(type: "int", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Rating = table.Column<double>(type: "float", nullable: false),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2024, 3, 7, 22, 4, 39, 424, DateTimeKind.Local).AddTicks(4504)),
-                    UpdatedTime = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2024, 3, 7, 22, 4, 39, 424, DateTimeKind.Local).AddTicks(4779)),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2024, 4, 12, 0, 41, 43, 726, DateTimeKind.Local).AddTicks(7678)),
+                    UpdatedTime = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2024, 4, 12, 0, 41, 43, 726, DateTimeKind.Local).AddTicks(7936)),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: true, defaultValue: false)
                 },
                 constraints: table =>
@@ -109,7 +106,8 @@ namespace OfficeMenStore.Domain.Migrations
                         name: "FK_Products_Categories_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "Categories",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -129,6 +127,27 @@ namespace OfficeMenStore.Domain.Migrations
                         name: "FK_RoleClaims_Roles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "Roles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Addresses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AddressDetail = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Addresses", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Addresses_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -159,15 +178,18 @@ namespace OfficeMenStore.Domain.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: true),
-                    OrderTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ApproveTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    StartDeliveryTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    EndDeliveryTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    AddressDelivery = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PayStatus = table.Column<int>(type: "int", nullable: false),
+                    OrderTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ApproveTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    StartDeliveryTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndDeliveryTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CancelTime = table.Column<DateTime>(type: "datetime2", nullable: true),
                     RejectedTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Total = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    Total = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: true, defaultValue: false)
                 },
                 constraints: table =>
@@ -277,7 +299,7 @@ namespace OfficeMenStore.Domain.Migrations
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Rate = table.Column<int>(type: "int", nullable: true, defaultValue: 0),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: true, defaultValue: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2024, 3, 7, 22, 4, 39, 424, DateTimeKind.Local).AddTicks(7855))
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2024, 4, 12, 0, 41, 43, 727, DateTimeKind.Local).AddTicks(122))
                 },
                 constraints: table =>
                 {
@@ -298,13 +320,13 @@ namespace OfficeMenStore.Domain.Migrations
                 name: "SizeDetails",
                 columns: table => new
                 {
-                    SizeId = table.Column<int>(type: "int", nullable: false),
+                    SizeProductId = table.Column<int>(type: "int", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SizeDetails", x => new { x.ProductId, x.SizeId });
+                    table.PrimaryKey("PK_SizeDetails", x => new { x.ProductId, x.SizeProductId });
                     table.ForeignKey(
                         name: "FK_SizeDetails_Products_ProductId",
                         column: x => x.ProductId,
@@ -312,9 +334,9 @@ namespace OfficeMenStore.Domain.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_SizeDetails_Sizes_SizeId",
-                        column: x => x.SizeId,
-                        principalTable: "Sizes",
+                        name: "FK_SizeDetails_SizeProducts_SizeProductId",
+                        column: x => x.SizeProductId,
+                        principalTable: "SizeProducts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -325,13 +347,13 @@ namespace OfficeMenStore.Domain.Migrations
                 {
                     CartId = table.Column<int>(type: "int", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false),
-                    SizeId = table.Column<int>(type: "int", nullable: false),
-                    Quanntity = table.Column<int>(type: "int", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: true)
+                    SizeProductId = table.Column<int>(type: "int", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CartItems", x => new { x.CartId, x.ProductId, x.SizeId });
+                    table.PrimaryKey("PK_CartItems", x => new { x.CartId, x.ProductId, x.SizeProductId });
                     table.ForeignKey(
                         name: "FK_CartItems_Carts_CartId",
                         column: x => x.CartId,
@@ -345,9 +367,9 @@ namespace OfficeMenStore.Domain.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_CartItems_Sizes_SizeId",
-                        column: x => x.SizeId,
-                        principalTable: "Sizes",
+                        name: "FK_CartItems_SizeProducts_SizeProductId",
+                        column: x => x.SizeProductId,
+                        principalTable: "SizeProducts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -358,12 +380,14 @@ namespace OfficeMenStore.Domain.Migrations
                 {
                     OrderId = table.Column<int>(type: "int", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false),
+                    SizeId = table.Column<int>(type: "int", nullable: false),
                     Amount = table.Column<int>(type: "int", nullable: false, defaultValue: 1),
-                    OrderPrice = table.Column<int>(type: "int", nullable: false)
+                    OrderPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    SizeProductId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_OrderDetails", x => new { x.OrderId, x.ProductId });
+                    table.PrimaryKey("PK_OrderDetails", x => new { x.OrderId, x.ProductId, x.SizeId });
                     table.ForeignKey(
                         name: "FK_OrderDetails_Orders_OrderId",
                         column: x => x.OrderId,
@@ -374,6 +398,12 @@ namespace OfficeMenStore.Domain.Migrations
                         name: "FK_OrderDetails_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OrderDetails_SizeProducts_SizeProductId",
+                        column: x => x.SizeProductId,
+                        principalTable: "SizeProducts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -393,12 +423,12 @@ namespace OfficeMenStore.Domain.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { new Guid("8f7579ee-4af9-4b71-9ada-7f792f76dc31"), "13ab16e3-eb90-443c-b470-e35bd85ee07d", "User", "USER" },
-                    { new Guid("9e87b492-5343-4272-9a34-fa5de7cffb22"), "d3483630-7b38-43f8-b9de-79276b93292c", "Admin", "ADMIN" }
+                    { new Guid("8f7579ee-4af9-4b71-9ada-7f792f76dc31"), "44808810-a2b8-45df-a82d-b1fdad5e31a1", "User", "USER" },
+                    { new Guid("9e87b492-5343-4272-9a34-fa5de7cffb22"), "fa1e6476-a986-44b0-a7fa-6cbc8e4f2091", "Admin", "ADMIN" }
                 });
 
             migrationBuilder.InsertData(
-                table: "Sizes",
+                table: "SizeProducts",
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
                 {
@@ -413,9 +443,18 @@ namespace OfficeMenStore.Domain.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "Avatar", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "Name", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { new Guid("2a738bf3-a14b-488e-b04e-17f918e8d6a4"), 0, "nhan.jpg", "d99dd4b1-f550-4470-b3da-4018e10674cb", "nhan@gmail.com", false, false, null, "Nguyễn Trung Nhẩn", "NHAN@GMAIL.COM", "NHAN@GMAIL.COM", "AQAAAAEAACcQAAAAEGHCmcmofqGL2Dzqtwmr3xoHEHghkoFd4YhCjtnBe6gtqUI4gOOS7YCil/N0/+kQlQ==", "0123456789", false, null, false, "nhan@gmail.com" },
-                    { new Guid("372ea575-2536-4076-9bab-3e3138de495f"), 0, "admin.jpg", "ae486a20-23ea-4dd1-94bf-0fb077f45471", "admin@gmail.com", false, false, null, "John", "ADMIN@GMAIL.COM", "ADMIN@GMAIL.COM", "AQAAAAEAACcQAAAAEDo9xjQ+ERalesSPPTrkZn5EIJWDterILI31C+lrxlWU9nB7v/n2O2ozW0p8ykcMAQ==", "0123456789", false, null, false, "admin@gmail.com" },
-                    { new Guid("8a820adb-93d7-4c6f-9404-bdbfc14419f4"), 0, "kha.jpg", "4a6f63fe-7533-42b1-8c5b-68982a005ef1", "kha@gmail.com", false, false, null, "Lê Minh Kha", "KHA@GMAIL.COM", "KHA@GMAIL.COM", "AQAAAAEAACcQAAAAEEHw1VP+9OhWUtZLogbjGQxd6HaT+Q2uElyUZef6904wxQHI+oygfqY199hadJYF/Q==", "0398897634", false, null, false, "kha@gmail.com" }
+                    { new Guid("2a738bf3-a14b-488e-b04e-17f918e8d6a4"), 0, "nhan.jpg", "89f33966-eb66-44a9-99df-a9437928b2e7", "nhan@gmail.com", false, false, null, "Nguyễn Trung Nhẩn", "NHAN@GMAIL.COM", "NHAN@GMAIL.COM", "AQAAAAEAACcQAAAAEE0TsXFlf3Kg+Y8QnMr93ccCSrSb0GGAG4nvOW22vvejWUh05WqIrXsyUUS/CbT3ZQ==", "0123456789", false, null, false, "nhan@gmail.com" },
+                    { new Guid("372ea575-2536-4076-9bab-3e3138de495f"), 0, "admin.jpg", "a263b22c-9ad4-44aa-918f-b3d1896f5a48", "admin@gmail.com", false, false, null, "John", "ADMIN@GMAIL.COM", "ADMIN@GMAIL.COM", "AQAAAAEAACcQAAAAEGq5A31fE7GlRWscShZR3VxoTYgsP32uPWOgt5fVodis7NH+8fyVbpnVrR89+29aTQ==", "0123456789", false, null, false, "admin@gmail.com" },
+                    { new Guid("8a820adb-93d7-4c6f-9404-bdbfc14419f4"), 0, "kha.jpg", "cb6c29ea-e1e8-4ed5-b909-9cdc8150a85e", "kha@gmail.com", false, false, null, "Lê Minh Kha", "KHA@GMAIL.COM", "KHA@GMAIL.COM", "AQAAAAEAACcQAAAAEMOmtBNEGXIAaUA6Ry1gOo3lAIfWOa1POzbBNr63FwnHxyNu9ZM5AxGm/QrfziA92Q==", "0398897634", false, null, false, "kha@gmail.com" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Addresses",
+                columns: new[] { "Id", "AddressDetail", "UserId" },
+                values: new object[,]
+                {
+                    { 1, "Ký túc xá A, Trường Đại học Cần Thơ, đường 3/2, phường Xuân Khánh, quận Ninh Kiều, TP.Cần Thơ", new Guid("8a820adb-93d7-4c6f-9404-bdbfc14419f4") },
+                    { 2, "87 Lê Văn Huân, phường 13, quận Tân Bình, TP. Hồ Chí Minh", new Guid("8a820adb-93d7-4c6f-9404-bdbfc14419f4") }
                 });
 
             migrationBuilder.InsertData(
@@ -424,20 +463,15 @@ namespace OfficeMenStore.Domain.Migrations
                 values: new object[] { 1, new Guid("8a820adb-93d7-4c6f-9404-bdbfc14419f4") });
 
             migrationBuilder.InsertData(
-                table: "Orders",
-                columns: new[] { "Id", "ApproveTime", "CancelTime", "EndDeliveryTime", "OrderTime", "RejectedTime", "StartDeliveryTime", "Status", "Total", "UserId" },
-                values: new object[] { 1, null, null, null, new DateTime(2024, 3, 7, 22, 4, 39, 425, DateTimeKind.Local).AddTicks(6428), null, null, 1, null, new Guid("8a820adb-93d7-4c6f-9404-bdbfc14419f4") });
-
-            migrationBuilder.InsertData(
                 table: "Products",
-                columns: new[] { "Id", "Amount_Export", "Amount_InStock", "CategoryId", "Image", "Name", "Price", "Rating" },
+                columns: new[] { "Id", "CategoryId", "Image", "Name", "Price", "Rating" },
                 values: new object[,]
                 {
-                    { 1, null, null, 1, "1.png", "Áo sơ mi vải Jersey ngắn tay", 10, 4.0 },
-                    { 2, null, null, 1, "2.png", "Áo sơ mi vải Jersey ngắn tay", 10, 3.0 },
-                    { 3, null, null, 1, "3.png", "Áo sơ mi vải Jersey ngắn tay", 10, 5.0 },
-                    { 4, null, null, 1, "4.png", "Áo sơ mi vải Jersey ngắn tay", 10, 3.5 },
-                    { 5, null, null, 1, "5.png", "Áo sơ mi vải Jersey ngắn tay", 10, 3.5 }
+                    { 1, 1, "1.png", "Áo sơ mi vải Jersey ngắn tay", 489000m, 4.0 },
+                    { 2, 1, "2.png", "Áo sơ mi vải Jersey ngắn tay", 489000m, 3.0 },
+                    { 3, 1, "3.png", "Áo sơ mi vải Jersey ngắn tay", 489000m, 5.0 },
+                    { 4, 1, "4.png", "Áo sơ mi vải Jersey ngắn tay", 489000m, 3.5 },
+                    { 5, 1, "5.png", "Áo sơ mi vải Jersey ngắn tay", 489000m, 3.5 }
                 });
 
             migrationBuilder.InsertData(
@@ -467,23 +501,13 @@ namespace OfficeMenStore.Domain.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "CartItems",
-                columns: new[] { "CartId", "ProductId", "SizeId", "IsDeleted", "Quanntity" },
-                values: new object[] { 1, 1, 1, null, 1 });
-
-            migrationBuilder.InsertData(
                 table: "FeedBacks",
                 columns: new[] { "Id", "Content", "CreatedDate", "ProductId", "Rate", "UserId" },
-                values: new object[] { 1, "Test", new DateTime(2024, 3, 7, 22, 4, 39, 432, DateTimeKind.Local).AddTicks(3814), 1, 5, new Guid("8a820adb-93d7-4c6f-9404-bdbfc14419f4") });
-
-            migrationBuilder.InsertData(
-                table: "OrderDetails",
-                columns: new[] { "OrderId", "ProductId", "Amount", "OrderPrice" },
-                values: new object[] { 1, 1, 2, 20 });
+                values: new object[] { 1, "Test", new DateTime(2024, 4, 12, 0, 41, 43, 731, DateTimeKind.Local).AddTicks(5647), 1, 5, new Guid("8a820adb-93d7-4c6f-9404-bdbfc14419f4") });
 
             migrationBuilder.InsertData(
                 table: "SizeDetails",
-                columns: new[] { "ProductId", "SizeId", "Quantity" },
+                columns: new[] { "ProductId", "SizeProductId", "Quantity" },
                 values: new object[,]
                 {
                     { 1, 1, 10 },
@@ -509,19 +533,25 @@ namespace OfficeMenStore.Domain.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Addresses_UserId",
+                table: "Addresses",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CartItems_ProductId",
                 table: "CartItems",
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CartItems_SizeId",
+                name: "IX_CartItems_SizeProductId",
                 table: "CartItems",
-                column: "SizeId");
+                column: "SizeProductId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Carts_UserId",
                 table: "Carts",
-                column: "UserId");
+                column: "UserId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_FeedBacks_ProductId",
@@ -537,6 +567,11 @@ namespace OfficeMenStore.Domain.Migrations
                 name: "IX_OrderDetails_ProductId",
                 table: "OrderDetails",
                 column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderDetails_SizeProductId",
+                table: "OrderDetails",
+                column: "SizeProductId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_UserId",
@@ -561,9 +596,9 @@ namespace OfficeMenStore.Domain.Migrations
                 filter: "[NormalizedName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SizeDetails_SizeId",
+                name: "IX_SizeDetails_SizeProductId",
                 table: "SizeDetails",
-                column: "SizeId");
+                column: "SizeProductId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserClaims_UserId",
@@ -596,6 +631,9 @@ namespace OfficeMenStore.Domain.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Addresses");
+
             migrationBuilder.DropTable(
                 name: "CartItems");
 
@@ -633,7 +671,7 @@ namespace OfficeMenStore.Domain.Migrations
                 name: "Products");
 
             migrationBuilder.DropTable(
-                name: "Sizes");
+                name: "SizeProducts");
 
             migrationBuilder.DropTable(
                 name: "Roles");

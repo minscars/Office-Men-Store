@@ -29,63 +29,20 @@ import orderApi from '@/api/orderApi';
 import Pagination from '@/components/pagination/index.jsx';
 import moment from 'moment';
 import { toast } from 'react-toastify';
-const dataStatus = [
-  { statusValue: 1, statusName: 'Pending' },
-  { statusValue: 2, statusName: 'Approve' },
-  { statusValue: 5, statusName: 'Delivering' },
-  { statusValue: 6, statusName: 'Delivered' },
-];
 
 export function Promotions() {
-  const TABLE_HEAD = ['Code', 'CreateDate', 'Customer', 'Total price', 'Status', 'Action'];
+  const TABLE_HEAD = ['Code', 'StartDate', 'EndDate', 'Description', 'Discount', 'Type', 'Action'];
 
-  const [page, setOffset] = useState(0);
-  const [limit] = useState(6);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [pageCount, setPageCount] = useState(0);
-  const [isloaded, setIsLoaded] = useState(false);
-  const [orderList, setOrderList] = useState([]);
-  const [searchText, setSearchText] = useState('');
+  const [promotionList, setPromotionList] = useState([]);
   useEffect(() => {
-    getAllOrders();
-  }, [page, limit, searchText]);
-
-  const getAllOrders = async () => {
-    var dto = { page, limit };
-    setIsLoaded(false);
-    console.log(searchText);
-    if (searchText) {
-      dto.phoneNumber = searchText;
-    }
-    const response = await orderApi.GetAll(dto);
-    setPageCount(Math.ceil(response?.totalRecord / limit));
-    setOrderList(response.data);
-    setIsLoaded(true);
-  };
-
-  async function handleFilter(e) {
-    e.preventDefault();
-    var status = e.target.value;
-    var dto = { page, limit, status };
-    if (e.target.value != 0) {
-      const response = await orderApi.GetAll(dto);
-      if (response) {
-        setPageCount(Math.ceil(response.totalRecord / limit));
-        setOrderList(response.data);
-      } else {
-        toast.error('Order is empty!');
-      }
-    } else {
-      const response = await orderApi.GetAll(dto);
-      setPageCount(Math.ceil(response.totalRecord / limit));
-      setOrderList(response.data);
-    }
-  }
-
-  const handlePageClick = (e) => {
-    setCurrentPage(e.selected);
-    setOffset(e.selected);
-  };
+    //getAllOrders();
+    const getAllPromotion = async () => {
+      const result = await orderApi.GetAllPromotions();
+      setPromotionList(result?.data);
+    };
+    getAllPromotion();
+  }, []);
+  console.log(promotionList);
   return (
     <div className="gap-12">
       <Card className="h-full w-full">
@@ -96,8 +53,17 @@ export function Promotions() {
                 Promotions Management
               </Typography>
             </div>
+            <div className="mt-2 flex flex-col items-center justify-between gap-4 md:flex-row">
+              <Link to={'addpromotion/'}>
+                <Button className="flex items-center gap-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
+                    <path d="M11 11V7H13V11H17V13H13V17H11V13H7V11H11ZM12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM12 20C16.4183 20 20 16.4183 20 12C20 7.58172 16.4183 4 12 4C7.58172 4 4 7.58172 4 12C4 16.4183 7.58172 20 12 20Z"></path>
+                  </svg>
+                  Add new Promotion
+                </Button>
+              </Link>
+            </div>
           </div>
-          <div className="mt-2 flex flex-col items-center justify-between gap-4 md:flex-row"></div>
         </CardHeader>
         <CardBody className="h-[550px] overflow-scroll px-0">
           <table className=" w-full min-w-max table-auto text-left">
@@ -117,7 +83,7 @@ export function Promotions() {
               </tr>
             </thead>
             <tbody>
-              {orderList?.map((item) => {
+              {promotionList?.map((item) => {
                 const classes = 'p-4 border-b border-blue-gray-50 ';
 
                 return (
@@ -133,17 +99,25 @@ export function Promotions() {
                     <td className={classes}>
                       <div className="flex flex-col">
                         <Typography variant="small" color="blue-gray" className="font-normal">
-                          {item.createdTime != null ? moment(item.createdTime).format('DD/MM/YYYY HH:mm A') : '......'}
+                          {item.startDate != null ? moment(item.startDate).format('DD/MM/YYYY') : '......'}
+                        </Typography>
+                      </div>
+                    </td>
+
+                    <td className={classes}>
+                      <div className="flex flex-col">
+                        <Typography variant="small" color="blue-gray" className="font-normal">
+                          {item.endDate != null ? moment(item.endDate).format('DD/MM/YYYY') : '......'}
                         </Typography>
                       </div>
                     </td>
 
                     <td className={classes}>
                       <div className="flex items-center gap-3">
-                        <Avatar src={item.customerAvatar} alt={item.customerName} size="sm" />
+                        {/* <Avatar src={item.customerAvatar} alt={item.customerName} size="sm" /> */}
                         <div className="flex flex-col">
                           <Typography variant="small" color="blue-gray" className="font-normal">
-                            {item.customerName}
+                            {item.description}
                           </Typography>
                         </div>
                       </div>
@@ -155,45 +129,23 @@ export function Promotions() {
                           {new Intl.NumberFormat('vi-VN', {
                             style: 'currency',
                             currency: 'VND',
-                          }).format(item.total)}
+                          }).format(item.discount)}
                         </Typography>
-                      </div>
-                    </td>
-
-                    <td>
-                      <div class="relative  w-40 min-w-[100px] flex">
-                        {item.status === 'Pending' && (
-                          <Chip
-                            variant="ghost"
-                            size="sm"
-                            value={item.status}
-                            color={'yellow'}
-                            className="ml-5 !w-auto"
-                          />
-                        )}
-                        {item.status === 'Approve' && (
-                          <Chip variant="ghost" size="sm" value={item.status} color={'red'} className="ml-5 !w-auto" />
-                        )}
-                        {item.status === 'Delivering' && (
-                          <Chip variant="ghost" size="sm" value={item.status} color={'blue'} className="ml-5 !w-auto" />
-                        )}
-                        {item.status === 'Delivered' && (
-                          <Chip
-                            variant="ghost"
-                            size="sm"
-                            value={item.status}
-                            color={'green'}
-                            className="ml-5 !w-auto"
-                          />
-                        )}
                       </div>
                     </td>
 
                     <td className={classes}>
                       <div className="flex flex-col">
-                        <Tooltip content="View">
+                        <Typography variant="small" color="blue-gray" className="font-normal">
+                          {item.promotionType}
+                        </Typography>
+                      </div>
+                    </td>
+                    <td className={classes}>
+                      <div className="flex flex-col">
+                        <Tooltip content="Update">
                           <IconButton variant="text">
-                            <Link to={`./detail/${item.orderId}`}>
+                            <Link to={`./detail/${item.id}`}>
                               <PencilIcon className="h-4 w-4" />
                             </Link>
                           </IconButton>
@@ -207,7 +159,6 @@ export function Promotions() {
           </table>
         </CardBody>
       </Card>
-      <Pagination handlePageClick={handlePageClick} currentPage={currentPage} pageCount={pageCount} />
     </div>
   );
 }

@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OfficeMenStore.Application.Interfaces;
+using OfficeMenStore.Application.Models.Product;
+using OfficeMenStore.Application.Models.Size;
 using OfficeMenStore.Application.Models.Statistic;
 using OfficeMenStore.Application.Utilities.Constants;
 using OfficeMenStore.Domain.EF;
@@ -17,11 +19,39 @@ namespace OfficeMenStore.Application.Services
 
         public async Task<ApiResult<GetStatisticResponse>> GetStatisticDetailAsync()
         {
+
+            var productList = await _context.Products
+                .Include(p => p.Category)
+                .Where(p => p.IsDeleted == false)
+                .Select(p => new GetProductListResponseModel()
+                {
+                    Id = p.Id,
+                    CategoryName = p.Category.Name,
+                    Name = p.Name,
+                    Image = p.Image,
+                    Price = p.Price,
+                    IsDeleted = false,
+                    SizeProducts = p.SizeDetails.Select(s => new GetAllSizeByProductResponse()
+                    {
+                        Id = s.SizeProductId,
+                        Name = s.SizeProduct.Name,
+                        Amount = s.Quantity
+
+                    }).ToList(),
+                    CreatedTime = p.CreatedTime,
+                }).ToListAsync();
+
+            for (int i = 0; i < productList.Count; i++)
+            {
+                productList[i].TotalProduct = productList[i].SizeProducts.Sum(s => s.Amount);
+            }
+
+
             var result = new GetStatisticResponse();
 
             result.CustomerAccount = _context.Users.Count();
             result.TotalOrder = _context.Orders.Where(o => o.IsDeleted != true).Count();
-            result.TotalItem = _context.Products.Where(p => p.IsDeleted != true).Count();
+            result.TotalItem = productList.Sum(p => p.TotalProduct);
 
             //Revenue by month
             var currentDate = DateTime.Now;

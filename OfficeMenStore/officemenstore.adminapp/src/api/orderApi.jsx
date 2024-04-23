@@ -9,5 +9,11 @@ const orderApi = {
   UpdateOrderStatus: (dto) => {
     return API.put('/Orders/UpdateOrderStatus', dto);
   },
+  GetAllPromotions: () => {
+    return API.get('/Orders/promotions');
+  },
+  GetDetailPromotion: (promotionId) => {
+    return API.get(`/Orders/GetDetailPromotion/${promotionId}`);
+  },
 };
 export default orderApi;

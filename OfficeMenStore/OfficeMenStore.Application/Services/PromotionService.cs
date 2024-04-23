@@ -60,7 +60,7 @@ namespace OfficeMenStore.Application.Services
             promotion.PromotionTypeId = request.PromotionTypeId;
             promotion.UpdatedTime = DateTime.Now;
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();  
 
             return new ApiResult<bool>(true)
             {

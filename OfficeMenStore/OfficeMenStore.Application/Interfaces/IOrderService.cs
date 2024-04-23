@@ -18,5 +18,6 @@ namespace OfficeMenStore.Application.Interfaces
         Task<ApiResult<bool>> UpdateOrderStatusAsync(UpdateOrderStatusRequest requestDto);
         Task<ApiResult<List<GetAllPromotionResponse>>> GetAllPromotionAsync();
         Task<ApiResult<List<GetAllPromotionResponse>>> GetAllPromotionByConditionAsync(string promotionTypeId, decimal orderValue);
+        Task<ApiResult<GetAllPromotionResponse>> GetDetailPromotion(string promotionId);
     }
 }

@@ -52,11 +52,11 @@ export function SignUp() {
   return (
     <section className="m-8 flex">
       <div className="w-2/5 h-full hidden lg:block">
-        <img src="/img/pattern.png" className="h-full w-full object-cover rounded-3xl" />
+        <img src="/img/register-img.jpg" className="h-full w-full object-cover rounded-3xl" />
       </div>
       <div className="w-full lg:w-3/5 flex flex-col items-center justify-center">
         <div className="text-center">
-          <Typography variant="h2" className="font-bold mb-4">
+          <Typography variant="h2" className="font-bold mb-4 text-blue-900">
             Join Us Today
           </Typography>
           <Typography variant="paragraph" color="blue-gray" className="text-lg font-normal">
@@ -161,12 +161,12 @@ export function SignUp() {
             )}
           </div>
 
-          <Button type="submit" className="mt-6" fullWidth>
+          <Button type="submit" className="mt-6 bg-blue-900" fullWidth>
             Register Now
           </Button>
           <Typography variant="paragraph" className="text-center text-blue-gray-500 font-medium mt-4">
             Already have an account?
-            <Link to="/auth/sign-in" className="text-gray-900 ml-1">
+            <Link to="/auth/sign-in" className="text-gray-900 ml-1 ">
               Sign in
             </Link>
           </Typography>

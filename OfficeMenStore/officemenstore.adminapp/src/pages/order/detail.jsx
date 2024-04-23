@@ -43,6 +43,7 @@ export function OdersDetails() {
     };
     orderDetail();
   }, [trigger]);
+  console.log(orderDetail);
 
   const TABLE_HEAD = ['Items', 'Price', 'Subtotal'];
   const now = new Date().toLocaleString('en-US', {
@@ -209,14 +210,52 @@ export function OdersDetails() {
                   <Typography
                     as="span"
                     variant="small"
+                    className="text-xs font-medium gap-5 text-blue-gray-500 flex items-center justify-between mt-3"
+                  >
+                    <p className="text-base leading-4 text-blue-gray-800 dark:text-gray-400 mr-10">Total:</p>
+                    <p className="ml-10 text-base leading-4 text-blue-gray-900 dark:text-gray-400">
+                      {new Intl.NumberFormat('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND',
+                      }).format(orderDetail.grandTotal)}
+                    </p>
+                  </Typography>
+                  <Typography
+                    as="span"
+                    variant="small"
+                    className="text-xs font-medium gap-5 text-blue-gray-500 flex items-center justify-between mt-3"
+                  >
+                    <p className="text-base leading-4 text-blue-gray-800 dark:text-gray-400 mr-4">Shipping:</p>
+                    <p className="text-base leading-4 text-blue-gray-900 dark:text-gray-400 ml-4">
+                      {' '}
+                      {new Intl.NumberFormat('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND',
+                      }).format(orderDetail.shippingFee)}
+                    </p>
+                  </Typography>
+                  <Typography
+                    as="span"
+                    variant="small"
                     className="text-xs font-medium text-blue-gray-500 flex items-center justify-between mt-3"
                   >
-                    <p className="text-base leading-4 text-blue-gray-800 dark:text-gray-400">Shipping:</p>
-                    <p className="text-base leading-4 text-blue-gray-900 dark:text-gray-400">---</p>
+                    <p className="text-base leading-4 text-blue-gray-800 dark:text-gray-400">Discount shipping:</p>
+                    <p className="text-base leading-4 text-blue-gray-900 dark:text-gray-400">
+                      {' '}
+                      {new Intl.NumberFormat('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND',
+                      }).format(-orderDetail.shippingDiscount)}
+                    </p>
                   </Typography>
                   <Typography variant="small" color="blue-gray" className=" font-medium flex justify-between mt-3 mb-5">
                     <p className="text-base leading-4 text-blue-gray-800 dark:text-gray-400">Discount:</p>
-                    <p className="text-base leading-4 text-blue-gray-900 dark:text-gray-400">---</p>
+                    <p className="text-base leading-4 text-blue-gray-900 dark:text-gray-400">
+                      {new Intl.NumberFormat('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND',
+                      }).format(-orderDetail.voucherDiscount)}
+                    </p>
                   </Typography>
                   <Typography variant="small" color="blue-gray" className=" font-medium flex justify-between mb-3">
                     <p className="text-base leading-4 text-blue-gray-800 dark:text-gray-400">Payment:</p>

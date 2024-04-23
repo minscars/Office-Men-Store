@@ -7,7 +7,7 @@ import { runFireworks } from '../../lib/utils';
 export function Success() {
   const navigate = useNavigate();
   const navigatehome = () => {
-    navigate('/user/home');
+    navigate('/user/product');
   };
 
   // const { setCartItems, setTotalPrice, setTotalQuantities } = useStateContext();

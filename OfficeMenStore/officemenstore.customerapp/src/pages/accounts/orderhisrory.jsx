@@ -24,6 +24,7 @@ export function MyOrder() {
     };
     GetOrder();
   }, []);
+
   console.log(orderList);
   return (
     <div className=" mb-8 flex flex-col gap-12">
@@ -93,19 +94,90 @@ export function MyOrder() {
                         );
                       })}
                       <div className="items-center flex justify-between mr-4">
-                        <div></div>
-                        <Typography
-                          variant="small"
-                          className="ml-2 flex items-center gap-1 font-normal text-blue-gray-600"
-                        >
-                          <p className="text-base font-semibold leading-4 text-gray-800 dark:text-gray-400">Total: </p>
-                          <strong>
-                            {new Intl.NumberFormat('vi-VN', {
-                              style: 'currency',
-                              currency: 'VND',
-                            }).format(item.total)}
-                          </strong>
-                        </Typography>
+                        <div className="xl:col-span-2 ml-auto items-end mr-5">
+                          <div className="flex-col gap-5 border-b-2 broder-blue-gray-500">
+                            <Typography
+                              as="span"
+                              variant="small"
+                              className="text-xs font-medium gap-5 text-blue-gray-500 flex items-center justify-between mt-3"
+                            >
+                              <p className="text-base leading-4 text-blue-gray-800 dark:text-gray-400 mr-10">Total:</p>
+                              <p className="ml-10 text-base leading-4 text-blue-gray-900 dark:text-gray-400">
+                                {new Intl.NumberFormat('vi-VN', {
+                                  style: 'currency',
+                                  currency: 'VND',
+                                }).format(item.grandTotal)}
+                              </p>
+                            </Typography>
+                            <Typography
+                              as="span"
+                              variant="small"
+                              className="text-xs font-medium gap-5 text-blue-gray-500 flex items-center justify-between mt-3"
+                            >
+                              <p className="text-base leading-4 text-blue-gray-800 dark:text-gray-400 mr-4">
+                                Shipping:
+                              </p>
+                              <p className="text-base leading-4 text-blue-gray-900 dark:text-gray-400 ml-4">
+                                {' '}
+                                {new Intl.NumberFormat('vi-VN', {
+                                  style: 'currency',
+                                  currency: 'VND',
+                                }).format(item.shippingFee)}
+                              </p>
+                            </Typography>
+                            <Typography
+                              as="span"
+                              variant="small"
+                              className="text-xs font-medium text-blue-gray-500 flex items-center justify-between mt-3"
+                            >
+                              <p className="text-base leading-4 text-blue-gray-800 dark:text-gray-400">
+                                Discount shipping:
+                              </p>
+                              <p className="text-base leading-4 text-blue-gray-900 dark:text-gray-400">
+                                {' '}
+                                {new Intl.NumberFormat('vi-VN', {
+                                  style: 'currency',
+                                  currency: 'VND',
+                                }).format(-item.shippingDiscount)}
+                              </p>
+                            </Typography>
+                            <Typography
+                              variant="small"
+                              color="blue-gray"
+                              className=" font-medium flex justify-between mt-3 mb-5"
+                            >
+                              <p className="text-base leading-4 text-blue-gray-800 dark:text-gray-400">Discount:</p>
+                              <p className="text-base leading-4 text-blue-gray-900 dark:text-gray-400">
+                                {new Intl.NumberFormat('vi-VN', {
+                                  style: 'currency',
+                                  currency: 'VND',
+                                }).format(-item.voucherDiscount)}
+                              </p>
+                            </Typography>
+                            <Typography
+                              variant="small"
+                              color="blue-gray"
+                              className=" font-medium flex justify-between mb-3"
+                            >
+                              <p className="text-base leading-4 text-blue-gray-800 dark:text-gray-400">Payment:</p>
+                              <p className="text-base font-bold leading-4 text-blue-gray-900 dark:text-gray-400">
+                                {item.payStatus}
+                              </p>
+                            </Typography>
+                          </div>
+
+                          <div className="flex items-center justify-between w-full">
+                            <Typography variant="h5" color="blue-gray" className="mr-2">
+                              Total:
+                            </Typography>
+                            <Typography variant="h5" color="blue-gray" className="p-2">
+                              {new Intl.NumberFormat('vi-VN', {
+                                style: 'currency',
+                                currency: 'VND',
+                              }).format(item.total)}
+                            </Typography>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   );

@@ -72,8 +72,8 @@ export function Statistic() {
   revenueChart.options.xaxis.categories = chartLabel;
 
   return (
-    <div className="mt-12">
-      <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-3">
+    <div className="mt-10">
+      <div className="mb-6 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-3">
         <StatisticsCard
           key={'ABC'}
           title={'Total orders'}
@@ -140,7 +140,7 @@ export function Statistic() {
         />
       </div>
 
-      <div className="mb-4 grid grid-cols-1 gap-6 xl:grid-cols-3">
+      {/* <div className="mb-4 grid grid-cols-1 gap-6 xl:grid-cols-3">
         <Card className="overflow-hidden xl:col-span-3 border border-blue-gray-100 shadow-sm">
           <CardHeader
             floated={false}
@@ -195,7 +195,7 @@ export function Statistic() {
             </table>
           </CardBody>
         </Card>
-      </div>
+      </div> */}
     </div>
   );
 }

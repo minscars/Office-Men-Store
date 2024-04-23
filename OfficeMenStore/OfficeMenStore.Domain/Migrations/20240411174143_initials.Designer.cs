@@ -12,7 +12,7 @@ using OfficeMenStore.Domain.EF;
 namespace OfficeMenStore.Domain.Migrations
 {
     [DbContext(typeof(OfficeMenStoreDbContext))]
-    [Migration("20240307150439_initials")]
+    [Migration("20240411174143_initials")]
     partial class initials
     {
         /// <inheritdoc />
@@ -210,6 +210,49 @@ namespace OfficeMenStore.Domain.Migrations
                     b.ToTable("UserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("OfficeMenStore.Domain.Models.Address", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AddressDetail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Addresses");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AddressDetail = "Ký túc xá A, Trường Đại học Cần Thơ, đường 3/2, phường Xuân Khánh, quận Ninh Kiều, TP.Cần Thơ",
+                            IsDeleted = false,
+                            UserId = new Guid("8a820adb-93d7-4c6f-9404-bdbfc14419f4")
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AddressDetail = "87 Lê Văn Huân, phường 13, quận Tân Bình, TP. Hồ Chí Minh",
+                            IsDeleted = false,
+                            UserId = new Guid("8a820adb-93d7-4c6f-9404-bdbfc14419f4")
+                        });
+                });
+
             modelBuilder.Entity("OfficeMenStore.Domain.Models.Cart", b =>
                 {
                     b.Property<int>("Id")
@@ -228,7 +271,8 @@ namespace OfficeMenStore.Domain.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("Carts");
 
@@ -248,31 +292,22 @@ namespace OfficeMenStore.Domain.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<int>("SizeId")
+                    b.Property<int>("SizeProductId")
                         .HasColumnType("int");
 
-                    b.Property<bool?>("IsDeleted")
+                    b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<int>("Quanntity")
+                    b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.HasKey("CartId", "ProductId", "SizeId");
+                    b.HasKey("CartId", "ProductId", "SizeProductId");
 
                     b.HasIndex("ProductId");
 
-                    b.HasIndex("SizeId");
+                    b.HasIndex("SizeProductId");
 
                     b.ToTable("CartItems");
-
-                    b.HasData(
-                        new
-                        {
-                            CartId = 1,
-                            ProductId = 1,
-                            SizeId = 1,
-                            Quanntity = 1
-                        });
                 });
 
             modelBuilder.Entity("OfficeMenStore.Domain.Models.Category", b =>
@@ -286,7 +321,7 @@ namespace OfficeMenStore.Domain.Migrations
                     b.Property<DateTime?>("CreatedTime")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2024, 3, 7, 22, 4, 39, 424, DateTimeKind.Local).AddTicks(5598));
+                        .HasDefaultValue(new DateTime(2024, 4, 12, 0, 41, 43, 726, DateTimeKind.Local).AddTicks(8647));
 
                     b.Property<string>("Image")
                         .HasColumnType("nvarchar(max)");
@@ -304,7 +339,7 @@ namespace OfficeMenStore.Domain.Migrations
                     b.Property<DateTime?>("UpdatedTime")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2024, 3, 7, 22, 4, 39, 424, DateTimeKind.Local).AddTicks(5838));
+                        .HasDefaultValue(new DateTime(2024, 4, 12, 0, 41, 43, 726, DateTimeKind.Local).AddTicks(8818));
 
                     b.HasKey("Id");
 
@@ -349,7 +384,7 @@ namespace OfficeMenStore.Domain.Migrations
                     b.Property<DateTime?>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2024, 3, 7, 22, 4, 39, 424, DateTimeKind.Local).AddTicks(7855));
+                        .HasDefaultValue(new DateTime(2024, 4, 12, 0, 41, 43, 727, DateTimeKind.Local).AddTicks(122));
 
                     b.Property<bool?>("IsDeleted")
                         .ValueGeneratedOnAdd()
@@ -380,7 +415,7 @@ namespace OfficeMenStore.Domain.Migrations
                         {
                             Id = 1,
                             Content = "Test",
-                            CreatedDate = new DateTime(2024, 3, 7, 22, 4, 39, 432, DateTimeKind.Local).AddTicks(3814),
+                            CreatedDate = new DateTime(2024, 4, 12, 0, 41, 43, 731, DateTimeKind.Local).AddTicks(5647),
                             ProductId = 1,
                             Rate = 5,
                             UserId = new Guid("8a820adb-93d7-4c6f-9404-bdbfc14419f4")
@@ -395,13 +430,21 @@ namespace OfficeMenStore.Domain.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime?>("ApproveTime")
+                    b.Property<string>("AddressDelivery")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ApproveTime")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("CancelTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("EndDeliveryTime")
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("EndDeliveryTime")
                         .HasColumnType("datetime2");
 
                     b.Property<bool?>("IsDeleted")
@@ -409,19 +452,22 @@ namespace OfficeMenStore.Domain.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<DateTime?>("OrderTime")
+                    b.Property<DateTime>("OrderTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("PayStatus")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("RejectedTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("StartDeliveryTime")
+                    b.Property<DateTime>("StartDeliveryTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("Status")
+                    b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<decimal?>("Total")
+                    b.Property<decimal>("Total")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<Guid>("UserId")
@@ -432,15 +478,6 @@ namespace OfficeMenStore.Domain.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Orders");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            OrderTime = new DateTime(2024, 3, 7, 22, 4, 39, 425, DateTimeKind.Local).AddTicks(6428),
-                            Status = 1,
-                            UserId = new Guid("8a820adb-93d7-4c6f-9404-bdbfc14419f4")
-                        });
                 });
 
             modelBuilder.Entity("OfficeMenStore.Domain.Models.OrderDetail", b =>
@@ -451,30 +488,27 @@ namespace OfficeMenStore.Domain.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Amount")
-                        .IsRequired()
+                    b.Property<int>("SizeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Amount")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasDefaultValue(1);
 
-                    b.Property<int?>("OrderPrice")
-                        .IsRequired()
+                    b.Property<decimal>("OrderPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("SizeProductId")
                         .HasColumnType("int");
 
-                    b.HasKey("OrderId", "ProductId");
+                    b.HasKey("OrderId", "ProductId", "SizeId");
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderDetails");
+                    b.HasIndex("SizeProductId");
 
-                    b.HasData(
-                        new
-                        {
-                            OrderId = 1,
-                            ProductId = 1,
-                            Amount = 2,
-                            OrderPrice = 20
-                        });
+                    b.ToTable("OrderDetails");
                 });
 
             modelBuilder.Entity("OfficeMenStore.Domain.Models.Product", b =>
@@ -485,24 +519,13 @@ namespace OfficeMenStore.Domain.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("Amount_Export")
+                    b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Amount_Import")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(100);
-
-                    b.Property<int?>("Amount_InStock")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("CreatedTime")
+                    b.Property<DateTime>("CreatedTime")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2024, 3, 7, 22, 4, 39, 424, DateTimeKind.Local).AddTicks(4504));
+                        .HasDefaultValue(new DateTime(2024, 4, 12, 0, 41, 43, 726, DateTimeKind.Local).AddTicks(7678));
 
                     b.Property<string>("Image")
                         .HasColumnType("nvarchar(max)");
@@ -513,19 +536,19 @@ namespace OfficeMenStore.Domain.Migrations
                         .HasDefaultValue(false);
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("Price")
-                        .IsRequired()
-                        .HasColumnType("int");
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<double>("Rating")
                         .HasColumnType("float");
 
-                    b.Property<DateTime?>("UpdatedTime")
+                    b.Property<DateTime>("UpdatedTime")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2024, 3, 7, 22, 4, 39, 424, DateTimeKind.Local).AddTicks(4779));
+                        .HasDefaultValue(new DateTime(2024, 4, 12, 0, 41, 43, 726, DateTimeKind.Local).AddTicks(7936));
 
                     b.HasKey("Id");
 
@@ -538,50 +561,200 @@ namespace OfficeMenStore.Domain.Migrations
                         {
                             Id = 1,
                             CategoryId = 1,
+                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Image = "1.png",
                             Name = "Áo sơ mi vải Jersey ngắn tay",
-                            Price = 10,
-                            Rating = 4.0
+                            Price = 489000m,
+                            Rating = 4.0,
+                            UpdatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = 2,
                             CategoryId = 1,
+                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Image = "2.png",
                             Name = "Áo sơ mi vải Jersey ngắn tay",
-                            Price = 10,
-                            Rating = 3.0
+                            Price = 489000m,
+                            Rating = 3.0,
+                            UpdatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = 3,
                             CategoryId = 1,
+                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Image = "3.png",
                             Name = "Áo sơ mi vải Jersey ngắn tay",
-                            Price = 10,
-                            Rating = 5.0
+                            Price = 489000m,
+                            Rating = 5.0,
+                            UpdatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = 4,
                             CategoryId = 1,
+                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Image = "4.png",
                             Name = "Áo sơ mi vải Jersey ngắn tay",
-                            Price = 10,
-                            Rating = 3.5
+                            Price = 489000m,
+                            Rating = 3.5,
+                            UpdatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = 5,
                             CategoryId = 1,
+                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Image = "5.png",
                             Name = "Áo sơ mi vải Jersey ngắn tay",
-                            Price = 10,
-                            Rating = 3.5
+                            Price = 489000m,
+                            Rating = 3.5,
+                            UpdatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 
-            modelBuilder.Entity("OfficeMenStore.Domain.Models.Size", b =>
+            modelBuilder.Entity("OfficeMenStore.Domain.Models.SizeDetail", b =>
+                {
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SizeProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("ProductId", "SizeProductId");
+
+                    b.HasIndex("SizeProductId");
+
+                    b.ToTable("SizeDetails");
+
+                    b.HasData(
+                        new
+                        {
+                            ProductId = 1,
+                            SizeProductId = 1,
+                            Quantity = 10
+                        },
+                        new
+                        {
+                            ProductId = 1,
+                            SizeProductId = 2,
+                            Quantity = 10
+                        },
+                        new
+                        {
+                            ProductId = 1,
+                            SizeProductId = 3,
+                            Quantity = 10
+                        },
+                        new
+                        {
+                            ProductId = 1,
+                            SizeProductId = 4,
+                            Quantity = 10
+                        },
+                        new
+                        {
+                            ProductId = 2,
+                            SizeProductId = 1,
+                            Quantity = 10
+                        },
+                        new
+                        {
+                            ProductId = 2,
+                            SizeProductId = 2,
+                            Quantity = 10
+                        },
+                        new
+                        {
+                            ProductId = 2,
+                            SizeProductId = 3,
+                            Quantity = 10
+                        },
+                        new
+                        {
+                            ProductId = 2,
+                            SizeProductId = 4,
+                            Quantity = 10
+                        },
+                        new
+                        {
+                            ProductId = 3,
+                            SizeProductId = 1,
+                            Quantity = 10
+                        },
+                        new
+                        {
+                            ProductId = 3,
+                            SizeProductId = 2,
+                            Quantity = 10
+                        },
+                        new
+                        {
+                            ProductId = 3,
+                            SizeProductId = 3,
+                            Quantity = 10
+                        },
+                        new
+                        {
+                            ProductId = 3,
+                            SizeProductId = 4,
+                            Quantity = 10
+                        },
+                        new
+                        {
+                            ProductId = 4,
+                            SizeProductId = 1,
+                            Quantity = 10
+                        },
+                        new
+                        {
+                            ProductId = 4,
+                            SizeProductId = 2,
+                            Quantity = 10
+                        },
+                        new
+                        {
+                            ProductId = 4,
+                            SizeProductId = 3,
+                            Quantity = 10
+                        },
+                        new
+                        {
+                            ProductId = 4,
+                            SizeProductId = 4,
+                            Quantity = 10
+                        },
+                        new
+                        {
+                            ProductId = 5,
+                            SizeProductId = 1,
+                            Quantity = 10
+                        },
+                        new
+                        {
+                            ProductId = 5,
+                            SizeProductId = 2,
+                            Quantity = 10
+                        },
+                        new
+                        {
+                            ProductId = 5,
+                            SizeProductId = 3,
+                            Quantity = 10
+                        },
+                        new
+                        {
+                            ProductId = 5,
+                            SizeProductId = 4,
+                            Quantity = 10
+                        });
+                });
+
+            modelBuilder.Entity("OfficeMenStore.Domain.Models.SizeProduct", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -595,7 +768,7 @@ namespace OfficeMenStore.Domain.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Sizes");
+                    b.ToTable("SizeProducts");
 
                     b.HasData(
                         new
@@ -617,146 +790,6 @@ namespace OfficeMenStore.Domain.Migrations
                         {
                             Id = 4,
                             Name = "XXL"
-                        });
-                });
-
-            modelBuilder.Entity("OfficeMenStore.Domain.Models.SizeDetail", b =>
-                {
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SizeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.HasKey("ProductId", "SizeId");
-
-                    b.HasIndex("SizeId");
-
-                    b.ToTable("SizeDetails");
-
-                    b.HasData(
-                        new
-                        {
-                            ProductId = 1,
-                            SizeId = 1,
-                            Quantity = 10
-                        },
-                        new
-                        {
-                            ProductId = 1,
-                            SizeId = 2,
-                            Quantity = 10
-                        },
-                        new
-                        {
-                            ProductId = 1,
-                            SizeId = 3,
-                            Quantity = 10
-                        },
-                        new
-                        {
-                            ProductId = 1,
-                            SizeId = 4,
-                            Quantity = 10
-                        },
-                        new
-                        {
-                            ProductId = 2,
-                            SizeId = 1,
-                            Quantity = 10
-                        },
-                        new
-                        {
-                            ProductId = 2,
-                            SizeId = 2,
-                            Quantity = 10
-                        },
-                        new
-                        {
-                            ProductId = 2,
-                            SizeId = 3,
-                            Quantity = 10
-                        },
-                        new
-                        {
-                            ProductId = 2,
-                            SizeId = 4,
-                            Quantity = 10
-                        },
-                        new
-                        {
-                            ProductId = 3,
-                            SizeId = 1,
-                            Quantity = 10
-                        },
-                        new
-                        {
-                            ProductId = 3,
-                            SizeId = 2,
-                            Quantity = 10
-                        },
-                        new
-                        {
-                            ProductId = 3,
-                            SizeId = 3,
-                            Quantity = 10
-                        },
-                        new
-                        {
-                            ProductId = 3,
-                            SizeId = 4,
-                            Quantity = 10
-                        },
-                        new
-                        {
-                            ProductId = 4,
-                            SizeId = 1,
-                            Quantity = 10
-                        },
-                        new
-                        {
-                            ProductId = 4,
-                            SizeId = 2,
-                            Quantity = 10
-                        },
-                        new
-                        {
-                            ProductId = 4,
-                            SizeId = 3,
-                            Quantity = 10
-                        },
-                        new
-                        {
-                            ProductId = 4,
-                            SizeId = 4,
-                            Quantity = 10
-                        },
-                        new
-                        {
-                            ProductId = 5,
-                            SizeId = 1,
-                            Quantity = 10
-                        },
-                        new
-                        {
-                            ProductId = 5,
-                            SizeId = 2,
-                            Quantity = 10
-                        },
-                        new
-                        {
-                            ProductId = 5,
-                            SizeId = 3,
-                            Quantity = 10
-                        },
-                        new
-                        {
-                            ProductId = 5,
-                            SizeId = 4,
-                            Quantity = 10
                         });
                 });
 
@@ -839,14 +872,14 @@ namespace OfficeMenStore.Domain.Migrations
                             Id = new Guid("8a820adb-93d7-4c6f-9404-bdbfc14419f4"),
                             AccessFailedCount = 0,
                             Avatar = "kha.jpg",
-                            ConcurrencyStamp = "4a6f63fe-7533-42b1-8c5b-68982a005ef1",
+                            ConcurrencyStamp = "cb6c29ea-e1e8-4ed5-b909-9cdc8150a85e",
                             Email = "kha@gmail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             Name = "Lê Minh Kha",
                             NormalizedEmail = "KHA@GMAIL.COM",
                             NormalizedUserName = "KHA@GMAIL.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEEHw1VP+9OhWUtZLogbjGQxd6HaT+Q2uElyUZef6904wxQHI+oygfqY199hadJYF/Q==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEMOmtBNEGXIAaUA6Ry1gOo3lAIfWOa1POzbBNr63FwnHxyNu9ZM5AxGm/QrfziA92Q==",
                             PhoneNumber = "0398897634",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
@@ -857,14 +890,14 @@ namespace OfficeMenStore.Domain.Migrations
                             Id = new Guid("372ea575-2536-4076-9bab-3e3138de495f"),
                             AccessFailedCount = 0,
                             Avatar = "admin.jpg",
-                            ConcurrencyStamp = "ae486a20-23ea-4dd1-94bf-0fb077f45471",
+                            ConcurrencyStamp = "a263b22c-9ad4-44aa-918f-b3d1896f5a48",
                             Email = "admin@gmail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             Name = "John",
                             NormalizedEmail = "ADMIN@GMAIL.COM",
                             NormalizedUserName = "ADMIN@GMAIL.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEDo9xjQ+ERalesSPPTrkZn5EIJWDterILI31C+lrxlWU9nB7v/n2O2ozW0p8ykcMAQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEGq5A31fE7GlRWscShZR3VxoTYgsP32uPWOgt5fVodis7NH+8fyVbpnVrR89+29aTQ==",
                             PhoneNumber = "0123456789",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
@@ -875,14 +908,14 @@ namespace OfficeMenStore.Domain.Migrations
                             Id = new Guid("2a738bf3-a14b-488e-b04e-17f918e8d6a4"),
                             AccessFailedCount = 0,
                             Avatar = "nhan.jpg",
-                            ConcurrencyStamp = "d99dd4b1-f550-4470-b3da-4018e10674cb",
+                            ConcurrencyStamp = "89f33966-eb66-44a9-99df-a9437928b2e7",
                             Email = "nhan@gmail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             Name = "Nguyễn Trung Nhẩn",
                             NormalizedEmail = "NHAN@GMAIL.COM",
                             NormalizedUserName = "NHAN@GMAIL.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEGHCmcmofqGL2Dzqtwmr3xoHEHghkoFd4YhCjtnBe6gtqUI4gOOS7YCil/N0/+kQlQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEE0TsXFlf3Kg+Y8QnMr93ccCSrSb0GGAG4nvOW22vvejWUh05WqIrXsyUUS/CbT3ZQ==",
                             PhoneNumber = "0123456789",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
@@ -921,14 +954,14 @@ namespace OfficeMenStore.Domain.Migrations
                         new
                         {
                             Id = new Guid("9e87b492-5343-4272-9a34-fa5de7cffb22"),
-                            ConcurrencyStamp = "d3483630-7b38-43f8-b9de-79276b93292c",
+                            ConcurrencyStamp = "fa1e6476-a986-44b0-a7fa-6cbc8e4f2091",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = new Guid("8f7579ee-4af9-4b71-9ada-7f792f76dc31"),
-                            ConcurrencyStamp = "13ab16e3-eb90-443c-b470-e35bd85ee07d",
+                            ConcurrencyStamp = "44808810-a2b8-45df-a82d-b1fdad5e31a1",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -985,11 +1018,22 @@ namespace OfficeMenStore.Domain.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("OfficeMenStore.Domain.Models.Address", b =>
+                {
+                    b.HasOne("OfficeMenStore.Domain.Models.User", "User")
+                        .WithMany("Addresses")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("OfficeMenStore.Domain.Models.Cart", b =>
                 {
                     b.HasOne("OfficeMenStore.Domain.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
+                        .WithOne("Cart")
+                        .HasForeignKey("OfficeMenStore.Domain.Models.Cart", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1010,15 +1054,17 @@ namespace OfficeMenStore.Domain.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("OfficeMenStore.Domain.Models.Size", null)
+                    b.HasOne("OfficeMenStore.Domain.Models.SizeProduct", "SizeProduct")
                         .WithMany("CartItems")
-                        .HasForeignKey("SizeId")
+                        .HasForeignKey("SizeProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Cart");
 
                     b.Navigation("Product");
+
+                    b.Navigation("SizeProduct");
                 });
 
             modelBuilder.Entity("OfficeMenStore.Domain.Models.FeedBack", b =>
@@ -1061,16 +1107,26 @@ namespace OfficeMenStore.Domain.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("OfficeMenStore.Domain.Models.SizeProduct", "SizeProduct")
+                        .WithMany()
+                        .HasForeignKey("SizeProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Order");
 
                     b.Navigation("Product");
+
+                    b.Navigation("SizeProduct");
                 });
 
             modelBuilder.Entity("OfficeMenStore.Domain.Models.Product", b =>
                 {
                     b.HasOne("OfficeMenStore.Domain.Models.Category", "Category")
                         .WithMany("Products")
-                        .HasForeignKey("CategoryId");
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Category");
                 });
@@ -1083,15 +1139,15 @@ namespace OfficeMenStore.Domain.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("OfficeMenStore.Domain.Models.Size", "Size")
+                    b.HasOne("OfficeMenStore.Domain.Models.SizeProduct", "SizeProduct")
                         .WithMany("SizeDetails")
-                        .HasForeignKey("SizeId")
+                        .HasForeignKey("SizeProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Product");
 
-                    b.Navigation("Size");
+                    b.Navigation("SizeProduct");
                 });
 
             modelBuilder.Entity("OfficeMenStore.Domain.Models.Cart", b =>
@@ -1118,11 +1174,19 @@ namespace OfficeMenStore.Domain.Migrations
                     b.Navigation("SizeDetails");
                 });
 
-            modelBuilder.Entity("OfficeMenStore.Domain.Models.Size", b =>
+            modelBuilder.Entity("OfficeMenStore.Domain.Models.SizeProduct", b =>
                 {
                     b.Navigation("CartItems");
 
                     b.Navigation("SizeDetails");
+                });
+
+            modelBuilder.Entity("OfficeMenStore.Domain.Models.User", b =>
+                {
+                    b.Navigation("Addresses");
+
+                    b.Navigation("Cart")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

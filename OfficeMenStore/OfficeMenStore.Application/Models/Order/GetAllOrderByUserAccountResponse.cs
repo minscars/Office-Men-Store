@@ -18,6 +18,10 @@ namespace OfficeMenStore.Application.Models.Order
         public string PayStatus { get; set; }
         public string AddressDelivery { get; set; }
         public decimal Total { get; set; }
+        public decimal VoucherDiscount { get; set; }
+        public decimal ShippingFee { get; set; }
+        public decimal ShippingDiscount { get; set; }
+        public decimal GrandTotal { get; set; }
         public DateTime OrderTime { get; set; }
         public DateTime ApproveTime { get; set; }
         public DateTime StartDeliveryTime { get; set; }

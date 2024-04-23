@@ -26,6 +26,10 @@ namespace OfficeMenStore.Application.Models.Order
         public DateTime? CancelTime { get; set; }
         public DateTime? RejectedTime { get; set; }
         public decimal Total { get; set; }
+        public decimal VoucherDiscount { get; set; }
+        public decimal ShippingFee { get; set; }
+        public decimal ShippingDiscount { get; set; }
+        public decimal GrandTotal { get; set; }
         public Boolean? IsDeleted { get; set; }
         public List<GetAllItemInOrderDetailResponse> ListItemOrderDetails { get; set; }
     }
