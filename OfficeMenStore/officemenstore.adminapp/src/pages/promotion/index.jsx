@@ -31,7 +31,7 @@ import moment from 'moment';
 import { toast } from 'react-toastify';
 
 export function Promotions() {
-  const TABLE_HEAD = ['Code', 'StartDate', 'EndDate', 'Description', 'Discount', 'Type'];
+  const TABLE_HEAD = ['Code', 'StartDate', 'EndDate', 'Description', 'Discount', 'Type', 'Action'];
 
   const [promotionList, setPromotionList] = useState([]);
   useEffect(() => {
@@ -53,8 +53,17 @@ export function Promotions() {
                 Promotions Management
               </Typography>
             </div>
+            <div className="mt-2 flex flex-col items-center justify-between gap-4 md:flex-row">
+              <Link to={'addpromotion/'}>
+                <Button className="flex items-center gap-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
+                    <path d="M11 11V7H13V11H17V13H13V17H11V13H7V11H11ZM12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM12 20C16.4183 20 20 16.4183 20 12C20 7.58172 16.4183 4 12 4C7.58172 4 4 7.58172 4 12C4 16.4183 7.58172 20 12 20Z"></path>
+                  </svg>
+                  Add new Promotion
+                </Button>
+              </Link>
+            </div>
           </div>
-          <div className="mt-2 flex flex-col items-center justify-between gap-4 md:flex-row"></div>
         </CardHeader>
         <CardBody className="h-[550px] overflow-scroll px-0">
           <table className=" w-full min-w-max table-auto text-left">
@@ -90,7 +99,7 @@ export function Promotions() {
                     <td className={classes}>
                       <div className="flex flex-col">
                         <Typography variant="small" color="blue-gray" className="font-normal">
-                          {item.startDate != null ? moment(item.startDate).format('DD/MM/YYYY HH:mm A') : '......'}
+                          {item.startDate != null ? moment(item.startDate).format('DD/MM/YYYY') : '......'}
                         </Typography>
                       </div>
                     </td>
@@ -98,7 +107,7 @@ export function Promotions() {
                     <td className={classes}>
                       <div className="flex flex-col">
                         <Typography variant="small" color="blue-gray" className="font-normal">
-                          {item.endDate != null ? moment(item.endDate).format('DD/MM/YYYY HH:mm A') : '......'}
+                          {item.endDate != null ? moment(item.endDate).format('DD/MM/YYYY') : '......'}
                         </Typography>
                       </div>
                     </td>
@@ -130,6 +139,17 @@ export function Promotions() {
                         <Typography variant="small" color="blue-gray" className="font-normal">
                           {item.promotionType}
                         </Typography>
+                      </div>
+                    </td>
+                    <td className={classes}>
+                      <div className="flex flex-col">
+                        <Tooltip content="Update">
+                          <IconButton variant="text">
+                            <Link to={`./detail/${item.id}`}>
+                              <PencilIcon className="h-4 w-4" />
+                            </Link>
+                          </IconButton>
+                        </Tooltip>
                       </div>
                     </td>
                   </tr>

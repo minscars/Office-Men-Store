@@ -132,7 +132,6 @@ export function ProductDetails() {
   const handleTabChange = (tab) => {
     setActiveTab(tab);
   };
-  console.log(cartItemList);
   return (
     <>
       <Card className="mx-3 mt-8 mb-6 lg:mx-4 border border-blue-gray-100">
@@ -247,7 +246,7 @@ export function ProductDetails() {
 
       <Card className="mx-3 mt-5 mb-6 lg:mx-4 border border-blue-gray-100">
         <CardBody>
-          <ReviewsTab dataUser={user} productId={id} feedBack={feedBack} />
+          <ReviewsTab setTrigger={setTrigger} dataUser={user} productId={id} feedBack={feedBack} />
         </CardBody>
       </Card>
     </>

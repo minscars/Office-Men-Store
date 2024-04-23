@@ -6,7 +6,9 @@ import { XMarkIcon } from '@heroicons/react/24/outline';
 import { Avatar, Button, IconButton, Typography } from '@material-tailwind/react';
 import { useMaterialTailwindController, setOpenSidenav } from '@/context';
 import Logo from '@/components/image/logo-store.png';
-
+import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import Alert from '@/components/alert';
 export function Sidenav({ brandImg, brandName, routes }) {
   const [controller, dispatch] = useMaterialTailwindController();
   const { sidenavColor, sidenavType, openSidenav } = controller;
@@ -14,6 +16,24 @@ export function Sidenav({ brandImg, brandName, routes }) {
     dark: 'bg-gradient-to-br from-gray-800 to-gray-900',
     white: 'bg-white shadow-sm',
     transparent: 'bg-transparent',
+  };
+  const navigate = useNavigate();
+  const handleLogout = async () => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to log-out?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, I want it!',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        window.localStorage.removeItem('token');
+        Alert.showSuccessAlert('You have been log-outed sucessfully!');
+        navigate(`/auth/sign-in`);
+      }
+    });
   };
 
   return (
@@ -83,7 +103,9 @@ export function Sidenav({ brandImg, brandName, routes }) {
         ))}
       </div>
       <div className="flex justify-center">
-        <Button color="red">Sign out</Button>
+        <Button onClick={() => handleLogout()} color="red">
+          Sign out
+        </Button>
       </div>
     </aside>
   );

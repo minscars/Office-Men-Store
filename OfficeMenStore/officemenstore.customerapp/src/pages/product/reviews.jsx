@@ -40,7 +40,8 @@ export function ReviewsTab(props) {
       console.log('dto', dto);
       console.log('res:', res);
       if (res.statusCode === 200) {
-        setTrigger(Math.random() + 1)
+        props
+          .setTrigger(Math.random() + 1)
           ?.toString(36)
           .substring(7);
         Alert.showSuccessAlert(res.message);

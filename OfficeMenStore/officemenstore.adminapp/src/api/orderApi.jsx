@@ -12,5 +12,8 @@ const orderApi = {
   GetAllPromotions: () => {
     return API.get('/Orders/promotions');
   },
+  GetDetailPromotion: (promotionId) => {
+    return API.get(`/Orders/GetDetailPromotion/${promotionId}`);
+  },
 };
 export default orderApi;

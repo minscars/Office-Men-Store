@@ -7,6 +7,8 @@ export * from '@/pages/product/addproducts';
 export * from '@/pages/product/updateproduct';
 export * from '@/pages/category';
 export * from '@/pages/promotion';
+export * from '@/pages/promotion/detail';
+export * from '@/pages/promotion/addPromotion';
 export * from '@/pages/statistic';
 export * from '@/pages/category/addCategory';
 export * from '@/pages/category/updateCategory';

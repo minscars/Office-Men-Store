@@ -352,12 +352,13 @@ namespace OfficeMenStore.Application.Services
 
         public async Task<ApiResult<GetAllPromotionResponse>> GetDetailPromotion(string promotionId)
         {
-            var result = await _context.Promotions.Where(p => p.IsDeleted != true && p.EndDate >= DateTime.Now && p.Id == promotionId).Select(p => new GetAllPromotionResponse
+            var result = await _context.Promotions.Include(p=> p.PromotionType).Where(p => p.IsDeleted != true && p.EndDate >= DateTime.Now && p.Id == promotionId).Select(p => new GetAllPromotionResponse
             {
                 Id = p.Id,
                 Code = p.Code,
                 StartDate = p.StartDate,
                 EndDate = p.EndDate,
+                PromotionType = p.PromotionTypeId,
                 LeastValueCondition = p.LeastValueCondition,
                 Discount = p.Discount,
                 DiscountPercent = p.DiscountPercent,

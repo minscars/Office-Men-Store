@@ -29,6 +29,8 @@ import {
   Dashboard,
   AddCategory,
   UpdateCategory,
+  PromotionDetail,
+  AddPromotion,
 } from '@/pages/admin';
 const icon = {
   className: 'w-5 h-5 text-inherit',
@@ -69,6 +71,8 @@ export const routes = [
 
       { icon: <NewspaperIcon {...icon} />, name: 'Orders management', path: '/orders', element: <Oders /> },
       { icon: <SwatchIcon {...icon} />, name: 'promotion management', path: '/promotion', element: <Promotions /> },
+      { path: '/promotion/detail/:id', element: <PromotionDetail /> },
+      { path: '/promotion/addPromotion', element: <AddPromotion /> },
       { icon: <ChartBarIcon {...icon} />, name: 'Statistic', path: '/statistic', element: <Statistic /> },
       { path: '/orders/detail/:id', element: <OdersDetails /> },
 

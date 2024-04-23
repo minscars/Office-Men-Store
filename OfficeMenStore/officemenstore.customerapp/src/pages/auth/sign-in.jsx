@@ -48,7 +48,7 @@ export function SignIn() {
           // end
           Alert.showSuccessAlert(
             response.message,
-            () => (window.location.href = user.roles === 'User' ? '/user/home' : ''),
+            () => (window.location.href = user.roles === 'User' ? '/user/product' : ''),
           );
         } else {
           Alert.showErrorAlert(response.message);
